@@ -2,7 +2,10 @@ import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import userAuthSlice from '../slices/userSlice';
-
+import adminAuthSlice from '../slices/adminSlice';
+import ProfileSlice from '../slices/profileSlice';
+import TravelelrSlice from '../slices/travellersSlice';
+import authorityAuthSlice from '../slices/authoritySlice'
 
 const persistConfiguration = {
     key: 'root',
@@ -12,6 +15,10 @@ const persistConfiguration = {
 
 const rootReducer = combineReducers({
     UserAuth: userAuthSlice.reducer,
+    AdminAuth: adminAuthSlice.reducer,
+    ProfileAuth :ProfileSlice.reducer,
+    TravellerAuth:TravelelrSlice.reducer,
+    AuthorityAuth:authorityAuthSlice.reducer
 })
 
 const persistedReducer = persistReducer(persistConfiguration, rootReducer);

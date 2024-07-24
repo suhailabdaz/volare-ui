@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 function Offers() {
   const [offerType, setOfferType] = useState('All');
 
-  const handleOfferTypeChange = (type) => {
+  const handleOfferTypeChange = (type:any) => {
     setOfferType(type);
   };
 
