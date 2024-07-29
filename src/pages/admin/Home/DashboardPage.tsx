@@ -1,20 +1,17 @@
-import React from 'react';
-import Navbar from '../../../components/admin/Home/Navbar';
-import Sidebar from '../../../components/admin/Home/Sidebar';
-import Content from '../../../components/admin/Home/Content';
+import AdminNavbar from '../../../components/admin/Home/AdminNavbar'
+import HomeContent from '../../../components/admin/Home/HomeContent';
+import cloudImage from '../../../assets/images/White aesthetic widget in 2022 _ Black and white clouds, White clouds, Cloud wallpaper.jpeg'
 
-function DashboardPage() {
+const DashboardPage = () => {
+  const backgroundImage = `url(${cloudImage})`;
+
   return (
-    <div className="flex flex-col min-h-screen">
-      <Navbar />
-      <div className="flex flex-grow">
-        <Sidebar />
-        <div className="flex-grow p-4">
-          <Content />
-        </div>
-      </div>
+    <div style={{ backgroundImage: backgroundImage, backgroundSize: 'cover', height: '100vh' }}>
+      <AdminNavbar />
+      <HomeContent/>
     </div>
   );
-}
+};
 
-export default DashboardPage;
+
+export default DashboardPage

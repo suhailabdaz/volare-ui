@@ -13,3 +13,27 @@
   font-weight: 400;
   font-style: normal;
 }
+@font-face {
+  font-family: 'Durk-bold-italic-1000';
+  src: url('./assets/fonts/DrukTextWide-BoldItalic-Trial.otf') format('opentype');
+  font-weight: 1000;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Durk-bold-italic-500';
+  src: url('./assets/fonts/Druk-BoldItalic-Trial.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Durk-bold-400';
+  src: url('./assets/fonts/DrukTextWide-Medium-Trial.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'PPsans-400';
+  src: url('./assets/fonts/ObjectSans-Heavy.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+}

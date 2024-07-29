@@ -44,7 +44,7 @@ const userAxios = axios.create({
                 localStorage.removeItem('auhtorityAccessToken');
                 const dispatch=useDispatch()
                 dispatch(authorityLogout())
-                window.location.href = '/';
+                window.location.href = '/admin';
                 return Promise.reject(error);
             }
             try {
@@ -65,7 +65,7 @@ const userAxios = axios.create({
                 localStorage.removeItem('auhtorityRefreshToken');
                 const dispatch=useDispatch()
                 dispatch(authorityLogout())
-                window.location.href = '/';
+                window.location.href = '/authority';
                 return Promise.reject(refreshError);
             }
         }

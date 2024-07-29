@@ -2,7 +2,7 @@ import React from 'react';
 
 function Hero() {
   return (
-    <div className="mx-[13%] mt-8 p-6">
+    <div className="mx-[13%] mt-8 p-6 pb-24">
       <h2 className="text-3xl font-bold mb-6">Book Your Flight</h2>
       <form className="bg-white p-6 rounded shadow-md">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

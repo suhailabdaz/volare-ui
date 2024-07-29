@@ -5,7 +5,8 @@ import userAuthSlice from '../slices/userSlice';
 import adminAuthSlice from '../slices/adminSlice';
 import ProfileSlice from '../slices/profileSlice';
 import TravelelrSlice from '../slices/travellersSlice';
-import authorityAuthSlice from '../slices/authoritySlice'
+import authorityAuthSlice from '../slices/authoritySlice';
+import airlineAuthSlice from '../slices/airlineSlice';
 
 const persistConfiguration = {
     key: 'root',
@@ -18,7 +19,8 @@ const rootReducer = combineReducers({
     AdminAuth: adminAuthSlice.reducer,
     ProfileAuth :ProfileSlice.reducer,
     TravellerAuth:TravelelrSlice.reducer,
-    AuthorityAuth:authorityAuthSlice.reducer
+    AuthorityAuth:authorityAuthSlice.reducer,
+    AirlineAuth:airlineAuthSlice.reducer
 })
 
 const persistedReducer = persistReducer(persistConfiguration, rootReducer);

@@ -30,8 +30,8 @@ function AuthNavbar() {
     <div className="mx-[11%] pt-8 pb-3 border-b-2 border-black bg-transparent font-PlayfairDisplay">
       <div className="flex justify-between items-center">
         <div>
-          <button onClick={()=>navigate('/authority')}>
-        <h1 className="text-3xl font-bold">Airline </h1>
+          <button className='text-left' onClick={()=>navigate('/authority')}>
+        <h1 className="text-3xl font-bold"> Airline </h1>
         <h1 className="text-3xl font-bold"> Authority</h1>
         </button>
         </div>

@@ -23,15 +23,22 @@ function Navbar() {
 
 
   return (
-    <div className="mx-[11%] pt-6 pb-3 border-b-2 bg-transparent">
-      <div className="flex justify-between items-center">
-        <h1 className="text-xl font-bold">VOLARE</h1>
-        <div className="space-x-4">
-          <a href="#" className="text-lg">My Trips</a>
+    <div className="mx-[11%] pt-6 pb-3 bg-transparent font-PlusJakartaSans">
+      <div className="flex justify-between items-center  text-white ">
+        
+        <Link to='/'>
+        <h1 className="text-3xl font-extrabold p-2 border-2 border-white ">VOLARE</h1>
+        </Link>
+        <div className="space-x-4 text-white">
+          <Link to='/authority ' className='mx-3 text-sm px-3'>Authority</Link> |
+          <Link to='/admin'className='mx-3 text-sm px-3'>Admin</Link> |
+          <Link to='/airline'className='mx-3 text-sm px-3'>Airline</Link> |
+          {/* <a href="#" className='mx-3 text-sm'>My Trips</a> | */}
           {isAuthenticated ? (
-            <Link to="/profile" className="text-lg">My Account</Link>
+            
+            <Link to="/profile"className='ml-3 p-3 border-2 border-white font-semibold'>My Account</Link>
           ) : (
-            <button className="text-lg" onClick={() => openModal('login')}>Login / Create</button>
+            <button className='ml-3 p-3 border-2 border-white font-semibold 'onClick={() => openModal('login')}>Login / Create</button> 
           )}
         </div>
       </div>
