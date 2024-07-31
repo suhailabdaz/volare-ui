@@ -1,14 +1,11 @@
 import axios from "axios";
 import { API_GATEWAY_BASE_URL } from "../endpoints/AuthorityEndpoints";
 import { useDispatch } from "react-redux";
-import { logout as authorityLogout } from "../../redux/slices/authoritySlice";
+import { airlinelogout as authorityLogout } from "../../redux/slices/airlineSlice";
 
 export const createAxios=()=>{
 const airlineAxios = axios.create({
     baseURL: API_GATEWAY_BASE_URL,
-    headers:{
-        "Content-Type":"application/json",
-    },
     withCredentials:true,
 });
     airlineAxios.interceptors.request.use(
@@ -44,7 +41,7 @@ const airlineAxios = axios.create({
                 localStorage.removeItem('airlineAccessToken');
                 const dispatch=useDispatch()
                 dispatch(authorityLogout())
-                window.location.href = '/authority';
+                window.location.href = '/airline';
                 return Promise.reject(error);
             }
             try {

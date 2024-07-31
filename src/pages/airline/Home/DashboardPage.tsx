@@ -1,12 +1,12 @@
 import AirNavbar from '../../../components/airline/home/AirNavbar'
 import HomeContent from '../../../components/airline/home/HomeContent';
-import cloudImage from '../../../assets/images/White aesthetic widget in 2022 _ Black and white clouds, White clouds, Cloud wallpaper.jpeg'
+import cloudImage from '../../../assets/images/Premium Vector _ Abstract gradient purple and blue background.jpeg'
 
 const DashboardPage = () => {
   const backgroundImage = `url(${cloudImage})`;
 
   return (
-    <div style={{ backgroundImage: backgroundImage, backgroundSize: 'cover', height: '100vh' }}>
+    <div className='min-h-screen' style={{ backgroundImage: backgroundImage, backgroundSize: 'cover',opacity:'0.99' }}>
       <AirNavbar />
       <HomeContent/>
     </div>

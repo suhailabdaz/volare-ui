@@ -18,7 +18,7 @@ const CustomField: React.FC<CustomFieldProps> = ({ label, ...props }) => {
   };
 
   return (
-    <div className={`relative w-full rounded-lg overflow-hidden p-[0.1rem]  ${isFocused && 'bg-gradient-to-r from-pink-500 via-purple-600 to-blue-600'}`}>
+    <div className={`relative w-full rounded-lg overflow-hidden p-[0.1rem] ${isFocused && 'bg-gradient-to-r from-pink-500 via-purple-600 to-blue-600'}`}>
       <Field
         {...field}
         {...props}
@@ -26,12 +26,14 @@ const CustomField: React.FC<CustomFieldProps> = ({ label, ...props }) => {
         onBlur={handleBlur}
         className={`w-full p-5 border-2 bg-white rounded-lg focus:outline-none placeholder-black ${
           isFocused
-            ? 'border-transparent' // The border is hidden by the gradient background
+            ? 'border-transparent'
             : meta.touched && meta.error
             ? 'border-red-500'
-            : 'border-white bg-gray-300 '
+            : 'border-white bg-gray-300'
         }`}
         placeholder={label}
+        // Add condition to not set value for file inputs
+        value={props.type === 'file' ? undefined : field.value || ''}
       />
     </div>
   );

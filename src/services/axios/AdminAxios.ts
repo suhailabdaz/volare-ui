@@ -1,7 +1,7 @@
 import axios from "axios";
 import { API_GATEWAY_BASE_URL } from "../endpoints/AuthorityEndpoints";
 import { useDispatch } from "react-redux";
-import { logout as authorityLogout } from "../../redux/slices/authoritySlice";
+import { logout as authorityLogout } from "../../redux/slices/adminSlice";
 
 export const createAxios=()=>{
 const adminAxios = axios.create({

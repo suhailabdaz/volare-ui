@@ -25,7 +25,7 @@ const rootReducer = combineReducers({
 
 const persistedReducer = persistReducer(persistConfiguration, rootReducer);
 
-const store = configureStore({
+const store:any = configureStore({
     reducer: persistedReducer,
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({

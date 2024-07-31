@@ -15,6 +15,15 @@ export default {
         custom: '0 4px 6px rgba(0, 0, 0, 0.1)',
         neon: '0 0 50px rgba(255, 105, 180, 0.6), 0 5px 10px rgba(126, 34, 206, 0.3)',
       },
+      animation: {
+        scroll: 'scroll 15s linear infinite',
+      },
+      keyframes: {
+        scroll: {
+          '0%': { transform: 'translateX(100%)' },
+          '100%': { transform: 'translateX(-100%)' },
+        },
+      },
     },
   },
   plugins: [],

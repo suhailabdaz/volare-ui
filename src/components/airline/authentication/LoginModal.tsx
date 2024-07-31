@@ -3,9 +3,9 @@ import * as Yup from 'yup';
 import { Form, Formik } from 'formik';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
-import { createAxios } from '../../../services/axios/UserAxios';
-import { authorityEndpoints } from '../../../services/endpoints/AuthorityEndpoints';
-import { login } from '../../../redux/slices/authoritySlice';
+import { createAxios } from '../../../services/axios/AirlineAxios';
+import { airlineEndpoints } from '../../../services/endpoints/AirlineEndpoints';
+import { airlinelogin as login } from '../../../redux/slices/airlineSlice';
 import CustomField from './CustomField';
 import { ArrowRightCircleIcon } from '@heroicons/react/24/outline';
 
@@ -37,20 +37,20 @@ const LoginModal: React.FC<LoginModalProps> = ({ setIsLogin }) => {
   ) => {
     try {
       const response = await createAxios().post(
-        authorityEndpoints.login,
+        airlineEndpoints.login,
         values
       );
       if (!response.data.success) {
-        toast.error('Incorrect Password');
+        toast.error(response.data.message);
       } else {
-        localStorage.setItem('authorityAccessToken', response.data.accessToken);
+        localStorage.setItem('airlineAccessToken', response.data.accessToken);
         localStorage.setItem(
-          'authorityRefreshToken',
+          'airlineRefreshToken',
           response.data.refreshToken
         );
-        dispatch(login({ token: response.data.accessToken }));
+        dispatch(login({ token: response.data.accessToken, airline_data:response.data.airline }));
         toast.success('Access granted');
-        navigate('/authority/dashboard');
+        navigate('/airline/dashboard');
       }
     } catch (error) {
       toast.error('An error occurred. Please try again');

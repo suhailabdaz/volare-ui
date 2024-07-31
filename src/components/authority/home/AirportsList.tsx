@@ -60,7 +60,7 @@ function AirportList()  {
         </div>
           <div className=' mt-8  text-gray-600 text-xs'>
             <ul className='space-y-6'>
-            {airportsData.map((airport,index) => (
+            {airportsData.map((airport:any,index:any) => (
         <li key={airport._id} className='mb-4 group'>
         <div className='relative flex items-center text-black'>
         <div className='font-bold  mx-4 text-xl'>{ index+ 1}.  </div>
