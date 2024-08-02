@@ -54,7 +54,7 @@ const ViewTraveller: React.FC<ProfileModalProps> = ({ closeModal, openModal,trav
     const travellers = state.TravellerAuth.travellers; // Access travellers array
     if (!travellers) return null; // Handle empty array case
   
-    return travellers.find((traveller) => traveller._id === travellerId);
+    return travellers.find((traveller:any) => traveller._id === travellerId);
   }); 
 
 

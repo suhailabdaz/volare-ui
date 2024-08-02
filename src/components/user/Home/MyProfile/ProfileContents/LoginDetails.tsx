@@ -27,7 +27,7 @@ function ProfileDetails()  {
   };
 
   return (
-    <div className='flex justify-center font-PlusJakartaSans  mb-7 ' id='loginDetails'>
+    <div className='flex justify-center  font-PlusJakartaSans  mb-7 ' id='loginDetails'>
     <div className='bg-white w-[90%] shadow-custom rounded-xl border-l-4 border-l-gray-400'>
       <div className='px-10 py-6'>
         <div className='flex justify-between'>

@@ -51,7 +51,7 @@ function UsersList()  {
         </div>
           <div className=' mt-8  text-gray-600 text-xs'>
             <ul className='space-y-6'>
-            {userData.map((user,index) => (
+            {userData.map((user:any,index:any) => (
         <li key={user._id} className='mb-4 group'>
         <div className='relative flex items-center text-black'>
         <div className='font-bold  mx-4 text-xl'>{ index+ 1}.  </div>

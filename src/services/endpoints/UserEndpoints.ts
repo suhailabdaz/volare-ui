@@ -16,5 +16,6 @@ export const userEndpoints = {
     addTraveller:`${API_GATEWAY_BASE_URL}/api/v1/user/add-traveller`,
     getTravellers:`${API_GATEWAY_BASE_URL}/api/v1/user/get-travellers`,
     saveTravellers:`${API_GATEWAY_BASE_URL}/api/v1/user/save-travellers`,
-    deleteTraveller:`${API_GATEWAY_BASE_URL}/api/v1/user/delete-traveller`
+    deleteTraveller:`${API_GATEWAY_BASE_URL}/api/v1/user/delete-traveller`,
+    imageUpload: `${API_GATEWAY_BASE_URL}/api/v1/user/image-upload`,
 }

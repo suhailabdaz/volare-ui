@@ -65,7 +65,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ closeModal,openModal}) => {
   };
   return (
     <>
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
         <div className="bg-white px-8 py-6  shadow-lg w-1/3 rounded-lg">
         <div className='flex justify-between items-center'>
         <h2 className="text-3xl mb-5 text-left font-PlusJakartaSans font-bold  ">Edit Profile</h2>

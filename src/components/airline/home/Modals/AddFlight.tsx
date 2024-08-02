@@ -30,7 +30,7 @@ const validationSchema = Yup.object({
     .required('First class seats are required'),
 });
 
-const AddFlight: React.FC<ProfileModalProps> = ({ closeModal, openModal }) => {
+const AddFlight: React.FC<ProfileModalProps> = ({ closeModal }) => {
   const airlineData = useSelector(
     (state: RootState) => state.AirlineAuth.airlineData
   );

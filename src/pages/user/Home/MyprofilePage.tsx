@@ -1,8 +1,6 @@
 import  { useEffect, useState } from 'react';
 import SideBar from '../../../components/user/Home/MyProfile/SideBar';
 import Content from '../../../components/user/Home/MyProfile/Content';
-import Navbar from '../../../components/user/Home/Homepage/Navbar';
-import BreadCrumbs from '../../../components/user/Home/MyProfile/BreadCrumbs';
 import ProfileShimmer from '../../../components/user/Home/Shimmers/ProfileShimmer';
 import createAxios from '../../../services/axios/UserAxios';
 import { userEndpoints } from '../../../services/endpoints/UserEndpoints';
@@ -12,6 +10,7 @@ import { toast } from 'sonner';
 import { userProfileDetails as Profile } from '../../../redux/slices/profileSlice';
 import { useDispatch } from 'react-redux';
 import { setTravellers } from '../../../redux/slices/travellersSlice';
+import PrNavbar from '../../../components/user/Home/Homepage/PrNavbar'
 
 
 
@@ -71,7 +70,7 @@ function MyProfilePage() {
   }
   return (
     <div className='bg-[#F6F6F6]'>
-      <Navbar />
+      <PrNavbar />
       {/* <BreadCrumbs/> */}
     <div className="flex mx-[11%]">
       <div className="w-1/4 ">

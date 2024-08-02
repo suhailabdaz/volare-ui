@@ -29,7 +29,7 @@ const ViewUser: React.FC<ProfileModalProps> = ({ closeModal, openModal,userId })
   const foundUser = useSelector((state: RootState) => {
     const users = state.AdminAuth.users; // Access travellers array
     if (!users) return null; // Handle empty array case
-    return users.find((user) => user._id === userId);
+    return users.find((user:any) => user._id === userId);
   }); 
 
   var initialValues = {

@@ -18,7 +18,7 @@ interface FlightData {
   economy_seats: number;
   business_seats: number;
   first_class_seats: number;
-  status:Boolean;
+  status: Boolean;
   schedules?: Schedule[];
 }
 
@@ -35,52 +35,69 @@ interface AirlineState {
   isAuthenticated: boolean;
   token: string | null;
   airlineData: AirlineData | null;
-  fleet:FlightData[]
+  fleet: FlightData[];
 }
 
 const initialState: AirlineState = {
   isAuthenticated: false,
   token: null,
   airlineData: null,
-  fleet:[]
+  fleet: [],
 };
 
 const airlineAuthSlice = createSlice({
-  name: "AirlineAuth",
+  name: 'AirlineAuth',
   initialState,
   reducers: {
-    airlinelogin: (state, action: PayloadAction<{ token: string; airline_data: AirlineData }>) => {
-      console.log("Redux User Slice: ", action.payload);
+    airlinelogin: (
+      state,
+      action: PayloadAction<{ token: string; airline_data: AirlineData }>
+    ) => {
       state.isAuthenticated = true;
       state.token = action.payload.token;
       state.airlineData = action.payload.airline_data;
+    },
+    newToken: (state, action: PayloadAction<{ token: string }>) => {
+      state.isAuthenticated = true;
+      state.token = action.payload.token;
     },
     airlinelogout: (state) => {
       state.isAuthenticated = false;
       state.token = null;
       state.airlineData = null;
-      state.fleet=[]
+      state.fleet = [];
     },
-    airlineProfileDetails: (state, action: PayloadAction<{ airline_data: AirlineData }>) => {
+    airlineProfileDetails: (
+      state,
+      action: PayloadAction<{ airline_data: AirlineData }>
+    ) => {
       state.airlineData = action.payload.airline_data;
     },
     setFlightDetails: (state, action: PayloadAction<FlightData>) => {
-        const fleet = state.fleet || [];
-        const index = fleet.findIndex(flight => flight._id === action.payload._id);
-        if (index >= 0) {
-          // Update existing flight
-          fleet[index] = action.payload;
-        } else {
-          // Add new flight
-          fleet.push(action.payload);
-        }
-      
+      const fleet = state.fleet || [];
+      const index = fleet.findIndex(
+        (flight) => flight._id === action.payload._id
+      );
+      if (index >= 0) {
+        // Update existing flight
+        fleet[index] = action.payload;
+      } else {
+        // Add new flight
+        fleet.push(action.payload);
+      }
     },
     setFlights: (state, action: PayloadAction<[FlightData]>) => {
-        state.fleet = action.payload;
-      },
-  }
+      state.fleet = action.payload;
+    },
+  },
 });
 
-export const { airlinelogin, airlinelogout, airlineProfileDetails, setFlightDetails,setFlights } = airlineAuthSlice.actions;
+export const {
+  airlinelogin,
+  airlinelogout,
+  newToken,
+  airlineProfileDetails,
+  setFlightDetails,
+  setFlights,
+} = airlineAuthSlice.actions;
 export default airlineAuthSlice;

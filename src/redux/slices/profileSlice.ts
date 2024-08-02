@@ -11,7 +11,8 @@ interface UserData {
     birthday?:Date;
     pincode?:Number;
     state?:string;
-    mobile?:Number
+    mobile?:Number;
+    image_link?:string;
 }
 
 interface UserState {
@@ -30,11 +31,16 @@ const ProfileSlice = createSlice({
         userProfileDetails :(state , action:PayloadAction<{user_data:UserData}>)=>{
             state.userData= action.payload.user_data
         },
+        updateProfileImage: (state, action: PayloadAction<{ image_link: string }>) => {
+            if (state.userData) {
+              state.userData.image_link = action.payload.image_link;
+            }
+          },
         logout: (state) => {
           state.userData = null;
       },
     }
 })
 
-export const { userProfileDetails,logout} = ProfileSlice.actions;
+export const { userProfileDetails,logout,updateProfileImage} = ProfileSlice.actions;
 export default ProfileSlice;

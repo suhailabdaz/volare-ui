@@ -32,7 +32,7 @@ const validationSchema = Yup.object({
 
 const ViewFlightDetails: React.FC<ProfileModalProps> = ({
   closeModal,
-  openModal,
+
   flightId,
 }) => {
   const foundFlight = useSelector((state: RootState) => {
@@ -78,7 +78,10 @@ const ViewFlightDetails: React.FC<ProfileModalProps> = ({
 
   const handleDelete = async () => {
     if (foundFlight?._id) {
-      const response = await createAxios().post(airlineEndpoints.suspendFlight,{id:foundFlight._id});
+      const response = await createAxios().post(
+        airlineEndpoints.suspendFlight,
+        { id: foundFlight._id }
+      );
       if (response.data.success) {
         dispatch(setFlightDetails(response.data.flights));
         toast.success('Flight suspended');

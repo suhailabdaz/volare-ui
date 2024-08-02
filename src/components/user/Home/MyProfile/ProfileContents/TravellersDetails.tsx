@@ -1,5 +1,4 @@
 import  { useState } from 'react'
-import EditButton from '../../../../buttons/EditButton';
 import AddTravellerButton from '../../../../buttons/AddTravellerModal';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../../redux/store/store';
@@ -51,10 +50,12 @@ function ProfileDetails()  {
   const truncateEmail = (email:any, maxLength:number) => {
     return email.length > maxLength ? email.slice(0, maxLength) + '...' : email;
   }
+
+ 
   
 
   return (
-    <div className='flex justify-center font-PlusJakartaSans mb-7 ' id='myTravellers'>
+    <div className='flex justify-center  font-PlusJakartaSans mb-7 ' id='myTravellers'>
     <div className='bg-white w-[90%] shadow-custom rounded-xl border-l-4 border-l-gray-400'>
       <div className='px-10 py-6'>
         <div className='flex justify-between'>
@@ -84,7 +85,7 @@ function ProfileDetails()  {
             </div>
           </div>
           {/* Add a wrapper div with fixed width for consistent alignment */}
-          <div className='absolute right-4 flex items-start space-x-2 transition-all duration-300 delay-200'>
+          <div className='absolute  right-4 flex items-start space-x-2 transition-all duration-300 delay-200'>
           <div className=' text-xs pr-16 font-semibold'>{truncateEmail(traveller.email, 15)}</div>
             <div className=' text-xs pr-12 font-semibold'>+91-{traveller.phone}</div>
             <button onClick={()=>openModal('viewTraveller',traveller._id)} >

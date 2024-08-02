@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import AddTravellerButton from '../../buttons/AddTravellerModal';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store/store';
 import ModalManager from './Modals/ModalManager';
@@ -23,16 +22,6 @@ function FlightList() {
   const closeModal = () => {
     setActiveModal(null);
     setSelectedFlighttId(null);
-  };
-
-  const options: Intl.DateTimeFormatOptions = {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  };
-  const formatDate = (dateString: any) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-GB', options).replace(/\//g, '-');
   };
 
   const calculateTotalSeats = (flight: any) => {
