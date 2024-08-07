@@ -57,7 +57,7 @@ const AddMobileModal: React.FC<PasswordModalProps> = ({ closeModal, openModal })
 
   return (
     <>
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="fixed z-10 inset-0 flex items-center justify-center bg-black bg-opacity-50">
         <div className="bg-white px-8 py-6 shadow-lg w-1/3 rounded-lg">
           <div className='items-center mb-5'>
             <h2 className="text-3xl mb-1 text-left font-PlusJakartaSans font-extrabold">Add Your Mobile Number</h2>

@@ -8,6 +8,12 @@
   font-style: normal;
 }
 @font-face {
+  font-family: 'PlusJakartaSans-1000';
+  src: url('./assets/fonts/PlusJakartaSans-VariableFont_wght.ttf') format('truetype');
+  font-weight: 1000;
+  font-style: normal;
+}
+@font-face {
   font-family: 'PlayfairDisplay';
   src: url('./assets/fonts/PlayfairDisplay-VariableFont_wght.ttf') format('truetype');
   font-weight: 400;
@@ -36,4 +42,15 @@
   src: url('./assets/fonts/ObjectSans-Heavy.otf') format('opentype');
   font-weight: 500;
   font-style: normal;
+}
+input[type="date"]::-webkit-clear-button {
+  display: none;
+}
+
+input[type="date"]::-ms-clear {
+  display: none;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  display: none;
 }

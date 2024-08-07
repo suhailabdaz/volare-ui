@@ -8,6 +8,7 @@ import TravellerSlice from '../slices/travellersSlice';
 import authorityAuthSlice from '../slices/authoritySlice';
 import airlineAuthSlice from '../slices/airlineSlice';
 import { airlineApi } from '../apis/airlineApiSlice';
+import {userApi} from '../apis/userApiSlice'
 
 const persistConfiguration = {
   key: 'root',
@@ -22,7 +23,8 @@ const rootReducer = combineReducers({
     TravellerAuth:TravellerSlice.reducer,
     AuthorityAuth:authorityAuthSlice.reducer,
     AirlineAuth:airlineAuthSlice.reducer,
-  [airlineApi.reducerPath]: airlineApi.reducer, // Include the RTK Query API slice
+  [airlineApi.reducerPath]: airlineApi.reducer, 
+  [userApi.reducerPath]: userApi.reducer, 
 });
 
 const persistedReducer = persistReducer(persistConfiguration, rootReducer);
@@ -34,7 +36,9 @@ const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }).concat(airlineApi.middleware), // Add RTK Query middleware
+    }).concat(airlineApi.middleware)
+    .concat(userApi.middleware), 
+
 });
 
 export const persistor = persistStore(store);

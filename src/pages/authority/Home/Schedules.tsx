@@ -37,7 +37,7 @@ function Schedules() {
     const fetchAirportsData = async () => {
       try {
         if (authState && (!airportsData || airportsData.length === 0)) {
-          const response = await createAxios().get(authorityEndpoints.getAirports);
+          const response = await createAxios(dispatch).get(authorityEndpoints.getAirports);
           dispatch(setAirports(response.data.airports));
         }
       } catch (err) {

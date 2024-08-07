@@ -1,96 +1,69 @@
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import * as Yup from 'yup';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
-import { toast } from 'sonner';
-import { createAxios } from '../../../../services/axios/AirlineAxios';
-import { airlineEndpoints } from '../../../../services/endpoints/AirlineEndpoints';
+
 import { RootState } from '../../../../redux/store/store';
-import { setFlightDetails } from '../../../../redux/slices/airlineSlice';
+import { useGetFlightsQuery } from '../../../../redux/apis/airlineApiSlice';
 
 interface ProfileModalProps {
-  closeModal: () => any;
-  openModal: (modalName: string) => any;
+  closeModal2: () => any;
   flightId: string;
 }
 
-const validationSchema = Yup.object({
-  flight_code: Yup.string()
-    .matches(/^[A-Za-z0-9]{6,7}$/, 'Code must be 6 to 7 letters')
-    .required('Flight code is required'),
-  manufacturer: Yup.string().required('Manufacturer is required'),
-  economy_seats: Yup.number()
-    .min(0, 'Economy seats must be zero or more')
-    .required('Economy seats are required'),
-  business_seats: Yup.number()
-    .min(0, 'Business seats must be zero or more')
-    .required('Business seats are required'),
-  first_class_seats: Yup.number()
-    .min(0, 'First class seats must be zero or more')
-    .required('First class seats are required'),
-});
-
-const ViewFlightDetails: React.FC<ProfileModalProps> = ({
-  closeModal,
-
+const SeeFlight: React.FC<ProfileModalProps> = ({
+  closeModal2,
   flightId,
 }) => {
-  const foundFlight = useSelector((state: RootState) => {
-    const flights = state.AirlineAuth.fleet;
-    if (!flights) return null;
-    return flights.find((flight: any) => flight._id === flightId);
+  const airlineId = useSelector((state: RootState) => state.AirlineAuth.airlineData?._id);
+  
+  const [foundFlight, setFoundFlight] = useState<any>(null);
+  const [formValues, setFormValues] = useState({
+    _id: '',
+    flight_code: '',
+    business_seats: '',
+    economy_seats: '',
+    first_class_seats: '',
+    manufacturer: '',
   });
 
-  const initialValues = {
-    _id: foundFlight?._id,
-    flight_code: foundFlight?.flight_code || '',
-    business_seats: foundFlight?.business_seats || '',
-    economy_seats: foundFlight?.economy_seats || '',
-    first_class_seats: foundFlight?.first_class_seats || '',
-    manufacturer: foundFlight?.manufacturer || '',
-  };
+  const { data, isLoading, error } = useGetFlightsQuery(airlineId, {
+    pollingInterval: 60000,
+    refetchOnMountOrArgChange: true,
+  });
 
-  const dispatch = useDispatch();
-
-  const onSubmit = async (
-    values: typeof initialValues,
-    { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
-  ) => {
-    try {
-      const response = await createAxios(dispatch).post(
-        airlineEndpoints.saveFlight,
-        values
-      );
-      if (response.data.success) {
-        toast.success('Saved Successfully');
-        dispatch(setFlightDetails(response.data.flights));
-        closeModal();
-      } else {
-        toast.error('Error while saving');
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error('An error occurred');
-    } finally {
-      setSubmitting(false);
+  useEffect(() => {
+    if (data && data.flights) {
+      console.log('propid', flightId);
+      const flight = data.flights.find((flight: any) => flight._id === flightId);
+      console.log('Found flight:', flight);
+      setFoundFlight(flight || null);
     }
+  }, [data, flightId]);
+
+  useEffect(() => {
+    if (foundFlight) {
+      setFormValues({
+        _id: foundFlight._id || '',
+        flight_code: foundFlight.flight_code || '',
+        business_seats: foundFlight.business_seats || '',
+        economy_seats: foundFlight.economy_seats || '',
+        first_class_seats: foundFlight.first_class_seats || '',
+        manufacturer: foundFlight.manufacturer || '',
+      });
+    }
+  }, [foundFlight]);
+
+  const onSubmit = async () => {
+    // Your submit logic here (if needed)
   };
 
-  const handleDelete = async () => {
-    if (foundFlight?._id) {
-      const response = await createAxios(dispatch).post(
-        airlineEndpoints.suspendFlight,
-        { id: foundFlight._id }
-      );
-      if (response.data.success) {
-        dispatch(setFlightDetails(response.data.flights));
-        toast.success('Flight suspended');
-        closeModal();
-      } else {
-        toast.error('Task Failed');
-      }
-    }
-  };
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading flight data</div>;
+  }
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
@@ -101,18 +74,12 @@ const ViewFlightDetails: React.FC<ProfileModalProps> = ({
         <div className="relative">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-3xl text-left font-Durk_bold_italic_1000 font-bold mb-3 text-white">
-              Edit Flight Info
+              Flight Info
             </h2>
-            <button
-              onClick={handleDelete}
-              className="border-2 border-white text-white p-1 font-bold hover:scale-105 transition-all ease-in-out duration-150"
-            >
-              Suspend
-            </button>
           </div>
           <Formik
-            initialValues={initialValues}
-            validationSchema={validationSchema}
+            initialValues={formValues}
+            enableReinitialize={true}
             onSubmit={onSubmit}
           >
             {({ isSubmitting }) => (
@@ -130,6 +97,7 @@ const ViewFlightDetails: React.FC<ProfileModalProps> = ({
                       name="flight_code"
                       id="flight_code"
                       className="p-3 border border-gray-500 rounded-lg"
+                      readOnly
                     />
                     <ErrorMessage
                       name="flight_code"
@@ -150,6 +118,7 @@ const ViewFlightDetails: React.FC<ProfileModalProps> = ({
                       name="manufacturer"
                       id="manufacturer"
                       className="p-3 border border-gray-500 rounded-lg"
+                      readOnly
                     />
                     <ErrorMessage
                       name="manufacturer"
@@ -170,6 +139,7 @@ const ViewFlightDetails: React.FC<ProfileModalProps> = ({
                       name="economy_seats"
                       id="economy_seats"
                       className="p-3 border border-gray-500 rounded-lg"
+                      readOnly
                     />
                     <ErrorMessage
                       name="economy_seats"
@@ -190,6 +160,7 @@ const ViewFlightDetails: React.FC<ProfileModalProps> = ({
                       name="business_seats"
                       id="business_seats"
                       className="p-3 border border-gray-500 rounded-lg"
+                      readOnly
                     />
                     <ErrorMessage
                       name="business_seats"
@@ -210,6 +181,7 @@ const ViewFlightDetails: React.FC<ProfileModalProps> = ({
                       name="first_class_seats"
                       id="first_class_seats"
                       className="p-3 border border-gray-500 rounded-lg"
+                      readOnly
                     />
                     <ErrorMessage
                       name="first_class_seats"
@@ -222,17 +194,10 @@ const ViewFlightDetails: React.FC<ProfileModalProps> = ({
                 <div className="flex justify-end mt-4 space-x-4">
                   <button
                     type="button"
-                    onClick={closeModal}
+                    onClick={closeModal2}
                     className="px-6 py-2 font-semibold text-black bg-white rounded-lg transition-transform ease-in-out duration-150 hover:scale-101"
                   >
                     CANCEL
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-8 py-2 text-white font-semibold rounded-lg bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-transform ease-in-out duration-150 "
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? 'Submitting...' : 'SAVE'}
                   </button>
                 </div>
               </Form>
@@ -244,4 +209,4 @@ const ViewFlightDetails: React.FC<ProfileModalProps> = ({
   );
 };
 
-export default ViewFlightDetails;
+export default SeeFlight;

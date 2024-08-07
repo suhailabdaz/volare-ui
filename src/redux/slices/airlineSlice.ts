@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import airlineApi from '../apis/airlineApiSlice';
 
 interface Schedule {
   _id: string;
@@ -66,6 +67,8 @@ const airlineAuthSlice = createSlice({
       state.token = null;
       state.airlineData = null;
       state.fleet = [];
+      localStorage.removeItem("airlineAccessToken")
+      localStorage.removeItem("airlineRefreshToken")
     },
     airlineProfileDetails: (
       state,

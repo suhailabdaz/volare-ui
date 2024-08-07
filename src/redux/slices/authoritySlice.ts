@@ -62,6 +62,10 @@ const authorityAuthSlice = createSlice({
     clearAirports: (state) => {
       state.airports = [];
     },
+    newToken: (state, action: PayloadAction<{ token: string }>) => {
+      state.isAuthenticated = true;
+      state.token = action.payload.token;
+    },
     setSchedule: (state, action: PayloadAction<Schedule>) => {
       const index = state.schedules.findIndex(schedule => schedule._id === action.payload._id);
       if (index >= 0) {
@@ -93,6 +97,7 @@ export const {
   setSchedules,
   removeSchedule,
   clearSchedules,
+  newToken
 } = authorityAuthSlice.actions;
 
 export default authorityAuthSlice;

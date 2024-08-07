@@ -48,9 +48,13 @@ const userAuthSlice = createSlice({
         },
         userProfileDetails :(state , action:PayloadAction<{user_data:UserData}>)=>{
             state.userData= action.payload.user_data
-        }
+        },
+        newToken: (state, action: PayloadAction<{ token: string }>) => {
+            state.isAuthenticated = true;
+            state.token = action.payload.token;
+          },
     }
 })
 
-export const { login, logout ,updateUserEmail , userProfileDetails} = userAuthSlice.actions;
+export const { login, logout ,updateUserEmail ,newToken, userProfileDetails} = userAuthSlice.actions;
 export default userAuthSlice;

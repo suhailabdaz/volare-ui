@@ -3,6 +3,7 @@ import {  airlinelogout as logout } from '../../../redux/slices/airlineSlice';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { RootState } from '../../../redux/store/store';
+import airlineApi from "../../../redux/apis/airlineApiSlice";
 
 
 function AirNavbar() {
@@ -15,8 +16,7 @@ function AirNavbar() {
   const handleLogout = (): void => {
     try {      
       dispatch(logout())
-      localStorage.removeItem("airlineAccessToken")
-      localStorage.removeItem("airlineRefreshToken")
+      dispatch(airlineApi.util.invalidateTags([{ type: 'Schedule' }]));
     } catch (error) {
       console.error("Error during logout:", error);
       toast.error("Error occurred. Please try again!!");

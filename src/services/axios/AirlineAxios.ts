@@ -3,7 +3,7 @@ import { API_GATEWAY_BASE_URL } from "../endpoints/AuthorityEndpoints";
 import { useDispatch } from "react-redux";
 import { newToken,airlinelogout as authorityLogout } from "../../redux/slices/airlineSlice";
 
-export const createAxios=()=>{
+export const createAxios=(dispatch:any)=>{
 const airlineAxios = axios.create({
     baseURL: API_GATEWAY_BASE_URL,
     withCredentials:true,
@@ -39,7 +39,6 @@ const airlineAxios = axios.create({
             console.log("refresh token",refreshToken);
             if (!refreshToken) {
                 localStorage.removeItem('airlineAccessToken');
-                const dispatch=useDispatch()
                 dispatch(authorityLogout())
                 window.location.href = '/airline';
                 return Promise.reject(error);
@@ -50,7 +49,6 @@ const airlineAxios = axios.create({
                 const newAccessToken = response.data.token;
                 const newRefreshToken = response.data.refreshToken;
                 localStorage.setItem('airlineAccessToken', newAccessToken);
-                const dispatch=useDispatch()
                 dispatch(newToken({ token: newAccessToken }));
                 if (newRefreshToken) {
                     localStorage.setItem('airlineRefreshToken', newRefreshToken);

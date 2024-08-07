@@ -33,13 +33,12 @@ const SchedulesList: React.FC<SchedulesListProps> = ({ fromAirport, toAirport })
     return airports.find(airport => airport._id === id) || null;
   };
 
-  const fromAirportData = fromAirportstate ? getAirportById(fromAirportstate.value) : null;
-  const toAirportData = toAirportstate ? getAirportById(toAirportstate.value) : null;
+
 
   const fetchSchedules = async () => {
     if (fromAirport && toAirport) {
       try {
-        const response = await createAxios().get(authorityEndpoints.getSchedules, {
+        const response = await createAxios(dispatch).get(authorityEndpoints.getSchedules, {
           params: {
             fromAirportId: fromAirport.value,
             toAirportId: toAirport.value,
@@ -70,7 +69,7 @@ const SchedulesList: React.FC<SchedulesListProps> = ({ fromAirport, toAirport })
 
   const suspendSchedule = async (id:string) =>{
     try {
-      const response = await createAxios().post(authorityEndpoints.suspendSchedule, id);
+      const response = await createAxios(dispatch).post(authorityEndpoints.suspendSchedule, id);
       if (response.data.success) {
         dispatch(setSchedule(response.data.schedule));
         toast.success('Saved Successfully');

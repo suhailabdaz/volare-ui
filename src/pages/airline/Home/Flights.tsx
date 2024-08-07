@@ -24,7 +24,7 @@ function Flights() {
     const fetchFlightsData = async()=>{
       try{
           if(authState && (!flightData || flightData.length===0)){
-            const response = await createAxios().get(airlineEndpoints.getFlights, {
+            const response = await createAxios(dispatch).get(airlineEndpoints.getFlights, {
               params: {
                 key: airlineData?._id,
               },

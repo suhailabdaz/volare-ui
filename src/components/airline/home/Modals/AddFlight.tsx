@@ -54,7 +54,7 @@ const AddFlight: React.FC<ProfileModalProps> = ({ closeModal }) => {
     { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
   ) => {
     try {
-      const response = await createAxios().post(
+      const response = await createAxios(dispatch).post(
         airlineEndpoints.addFlight,
         values
       );

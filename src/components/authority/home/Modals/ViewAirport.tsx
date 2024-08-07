@@ -55,7 +55,7 @@ const ViewAirport: React.FC<ProfileModalProps> = ({
     { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
   ) => {
     try {
-      const response = await createAxios().post(
+      const response = await createAxios(dispatch).post(
         authorityEndpoints.saveAirport,
         values
       );
@@ -77,7 +77,7 @@ const ViewAirport: React.FC<ProfileModalProps> = ({
 
   const handleDelete = async () => {
     if (foundAirport?._id) {
-      const response = await createAxios().delete(
+      const response = await createAxios(dispatch).delete(
         `${authorityEndpoints.deleteAirport}/${foundAirport._id}`
       );
       if (response.data.success) {

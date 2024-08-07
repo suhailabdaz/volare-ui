@@ -9,9 +9,11 @@ import { RootState } from '../../../redux/store/store';
 import { useEffect, useState } from 'react';
 import createAxios from '../../../services/axios/AirlineAxios';
 import { airlineEndpoints } from '../../../services/endpoints/AirlineEndpoints';
+import { useDispatch } from 'react-redux';
 
 function HomeContent() {
   const navigate = useNavigate();
+  const dispatch = useDispatch()
   const airlineData = useSelector(
     (state: RootState) => state.AirlineAuth.airlineData
   );
@@ -21,13 +23,11 @@ function HomeContent() {
 
   const fetchImageUrl = async () => {
     try {
-      const response = await createAxios().get(airlineEndpoints.getImageLink, {
+      const response = await createAxios(dispatch).get(airlineEndpoints.getImageLink, {
         params: {
           key: airlineData?.airline_image_link,
         },
       });
-      console.log(response);
-
       setImageUrl(response.data);
       setLoading(false);
       setError(false);
@@ -70,7 +70,7 @@ function HomeContent() {
   const { firstPart, secondPart } = splitText(airlineData?.airline_name || '');
 
   return (
-    <div className="mx-[11%] pt-8 pb-3 h-[30%]  bg-transparent font-PlayfairDisplay">
+    <div className="mx-[11%] pt-8 pb-3 h-[30%] bg-transparent font-PlayfairDisplay">
       <div className="mt-5 flex justify-start">
         <div className="mb-4 bg-transparent border-2 border-white w-[17%] rounded-xl h-44 flex justify-center items-center relative">
           {loading ? (
@@ -127,20 +127,20 @@ function HomeContent() {
             </button>
           </div>
           <div className="mx-12 flex space-x-6  text-white font-Durk_bold_400 py-6">
-            <button
+            {/* <button
               onClick={() => navigate('/airline/flights')}
               className="text-xl font-bold p-2 rounded-2xl border-2  border-white h-16 transition-all hover:scale-105 delay-100 duration-500"
             >
               <div className="flex items-center space-x-4">
                 <span>Analytics</span> <ArrowRightCircleIcon className="h-6" />{' '}
               </div>
-            </button>
+            </button> */}
             <button
-              onClick={() => navigate('/airline/schedules')}
-              className="text-xl font-bold p-2 rounded-2xl border-2 border-white h-16 transition-all hover:scale-105 delay-100 duration-500"
+              onClick={() => navigate('/airline/available-schedules')}
+              className="text-xl font-bold p-2 rounded-2xl border-2 border-white transition-all hover:scale-105 delay-100 duration-500"
             >
-              <div className="flex items-center space-x-2">
-                <span>LOGOUT</span> <ArrowRightCircleIcon className="h-6" />{' '}
+              <div className="flex  items-center space-x-2">
+                <span className='py-3 px-7'>Available Scchedules</span> <ArrowRightCircleIcon className="h-6" />{' '}
               </div>
             </button>
           </div>

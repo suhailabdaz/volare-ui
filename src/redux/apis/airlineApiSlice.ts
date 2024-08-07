@@ -25,14 +25,15 @@ const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
       window.location.href = '/airline';
       return result;
     }
-
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_GATEWAY_BASE_URL}/api/v1/auth/refresh`, {
-        token: refreshToken,
-      });
-
-      const { token: newAccessToken, refreshToken: newRefreshToken } = response.data;
-
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_GATEWAY_BASE_URL}/api/v1/auth/refresh`,
+        {
+          token: refreshToken,
+        }
+      );
+      const newAccessToken = response.data.token;
+      const newRefreshToken = response.data.refreshToken;
       localStorage.setItem('airlineAccessToken', newAccessToken);
       if (newRefreshToken) {
         localStorage.setItem('airlineRefreshToken', newRefreshToken);
@@ -40,7 +41,6 @@ const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
 
       api.dispatch(newToken({ token: newAccessToken }));
 
-      // Retry the original query with the new token
       result = await baseQuery(args, api, extraOptions);
     } catch (refreshError) {
       api.dispatch(airlinelogout());
@@ -54,20 +54,62 @@ const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
 export const airlineApi = createApi({
   reducerPath: 'airlineApi',
   baseQuery: baseQueryWithReauth,
+  tagTypes: ['Schedule', 'Airport', 'flight'],
   endpoints: (builder) => ({
-    getFlights: builder.query({
-      query: () => '/api/v1/airline/get-flights',
+    getFreeSchedules: builder.query({
+      query: () => ({
+        url: '/api/v1/authority/available-schedules',
+        method: 'GET',
+      }),
+      providesTags: ['Schedule'],
     }),
-    addFlight: builder.mutation({
-      query: (flight) => ({
-        url: '/api/v1/airline/add-flight',
+    getAirportDetails: builder.query({
+      query: () => ({
+        url: '/api/v1/authority/get-airports',
+        method: 'GET',
+      }),
+      providesTags: ['Airport'],
+    }),
+    getSchedule: builder.query({
+      query: (id) => ({
+        url: `/api/v1/authority/get-schedule`,
+        method: 'GET',
+        params: { id },
+      }),
+      providesTags: ['Schedule'],
+    }),
+    getFlights: builder.query({
+      query: (airlineId) => ({
+        url: `/api/v1/airline/get-flights`,
+        method: 'GET',
+        params: { key: airlineId },
+      }),
+      providesTags: ['flight'],
+    }),
+    submitSchedule: builder.mutation({
+      query: (schedule) => ({
+        url: '/api/v1/authority/save-schedule',
         method: 'POST',
-        body: flight,
+        body: schedule,
       }),
     }),
-    // Add more endpoints as needed
+    getMySchedules: builder.query({
+      query: (id) => ({
+        url: `/api/v1/authority/airline-schedules`,
+        method: 'GET',
+        params: { id },
+      }),
+      providesTags: ['Schedule'],
+    }),
   }),
 });
 
-export const { useGetFlightsQuery, useAddFlightMutation } = airlineApi;
+export const {
+  useGetFreeSchedulesQuery,
+  useGetAirportDetailsQuery,
+  useGetScheduleQuery,
+  useGetFlightsQuery,
+  useSubmitScheduleMutation,
+  useGetMySchedulesQuery,
+} = airlineApi;
 export default airlineApi;
