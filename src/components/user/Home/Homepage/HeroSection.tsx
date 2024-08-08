@@ -2,25 +2,28 @@ import {
   useState,
   ChangeEvent,
   FormEvent,
-  SetStateAction,
   useRef,
+  useEffect,
 } from 'react';
 import ModalManager from './Modals/ModalManager';
 import Tooltip from './Modals/ToolTip';
 import { ArrowsRightLeftIcon } from '@heroicons/react/24/solid';
+import { ChevronDownIcon } from '@heroicons/react/24/outline';
+import {
+  setFromAirport,
+  setToAirport,
+  setDepartureDate,
+  setReturnDate,
+  setTripType,
+  setSelectedValue,
+  validateState
+} from '../../../../redux/slices/HeroSlice';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../../redux/store/store';
+import { useDispatch } from 'react-redux';
+import { toast } from 'sonner';
 
-interface Airport {
-  _id: string;
-  airport_code: string;
-  city: string;
-  airport_name: string;
-  country: string;
-}
 
-interface DepartureDateState {
-  date: Date | null;
-  weekday: string;
-}
 
 function Hero() {
   const [activeModal, setActiveModal] = useState<string | null>(null);
@@ -30,29 +33,34 @@ function Hero() {
   };
 
   const handleChange = (event: {
-    target: { value: SetStateAction<string> };
+    target: { value: string };
   }) => {
-    setSelectedValue(event.target.value);
+    dispatch(setSelectedValue(event.target.value));
   };
   const openModal = (modalName: string) => {
     setActiveModal(modalName);
   };
 
-  const today = new Date();
+  const dispatch = useDispatch()
+
   const returnDateInputRef = useRef<HTMLInputElement>(null);
   const dateInputRef = useRef<HTMLInputElement>(null);
-  const [tripType, setTripType] = useState<'oneWay' | 'roundTrip'>('oneWay');
-  const [selectedValue, setSelectedValue] = useState('Regular');
-  const [fromAirport, setFromAirport] = useState<Airport | null>(null);
-  const [toAirport, setToAirport] = useState<Airport | null>(null);
-  const [departureDate, setdepartureDate] = useState<DepartureDateState>({
-    date: today,
-    weekday: today.toLocaleDateString('en-US', { weekday: 'long' }),
-  });
-  const [returnDate, setreturnDate] = useState<DepartureDateState>({
-    date: null,
-    weekday: '',
-  });
+
+  const tripType = useSelector((state: RootState) => state.HeroAuth.tripType);
+  const values = useSelector((state: RootState) => state.HeroAuth);
+
+  const selectedValue = useSelector((state:RootState)=>state.HeroAuth.selectedValue)
+  const classState = useSelector((state:RootState)=>state.HeroAuth.classState)
+  const fromAirport = useSelector((state:RootState)=>state.HeroAuth.fromAirport)
+  const toAirport = useSelector((state:RootState)=>state.HeroAuth.toAirport)
+  const departureDate = useSelector((state:RootState)=>state.HeroAuth.departureDate)
+  const returnDate = useSelector((state:RootState)=>state.HeroAuth.returnDate)
+  const travellers = useSelector((state:RootState)=>state.HeroAuth.travellers)
+  const hasErrors = useSelector((state: RootState) => state.HeroAuth.hasErrors);
+
+  const [shouldSubmit, setShouldSubmit] = useState(false);
+
+
 
   const handleReturnDateChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -61,50 +69,44 @@ function Hero() {
 
     if (event.target.value == '') {
       const today = new Date();
-      setreturnDate({
+      dispatch(setReturnDate({
         date: today,
         weekday: today.toLocaleDateString('en-US', { weekday: 'long' }),
-      });
+      }));
     }
     const date = new Date(event.target.value);
     const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
 
-    setreturnDate({
+    dispatch(setReturnDate({
       date: date,
       weekday: weekday,
-    });
+    }));
   };
 
   const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value == '') {
-      const today = new Date();
-      setdepartureDate({
-        date: today,
-        weekday: today.toLocaleDateString('en-US', { weekday: 'long' }),
-      });
+    let date = new Date(event.target.value);
+    
+    if (isNaN(date.getTime())) {
+      date = new Date(); 
     }
-    const date = new Date(event.target.value);
+  
     const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
-
-    setdepartureDate({
+  
+    dispatch(setDepartureDate({
       date: date,
       weekday: weekday,
-    });
+    }));
   };
+  
 
   const swap = () => {
-    setFromAirport(toAirport);
-    setToAirport(fromAirport);
+    dispatch(setFromAirport(toAirport));
+    dispatch(setToAirport(fromAirport));
   };
 
   const handleTripTypeChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setTripType(e.target.value as 'oneWay' | 'roundTrip');
-    if(e.target.value == 'oneWay'){
-      setreturnDate({
-         date:null,
-         weekday:''
-      })
-    }
+    dispatch(setTripType(e.target.value as 'oneWay' | 'roundTrip'));
+
   };
 
   const handleParentDivClick = () => {
@@ -122,29 +124,66 @@ function Hero() {
   };
 
   const handleCombinedClick = () => {
-    setTripType('roundTrip');
+    dispatch(setTripType('roundTrip'));
     returnhandleParentDivClick();
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  useEffect(() => {
+    const submitFormIfValid = async () => {
+      if (!hasErrors && shouldSubmit) {
+        try {
+         
+
+          toast.success('Form submitted successfully');
+        } catch (error) {
+          console.error('There has been a problem with your fetch operation:', error);
+          toast.error('Failed to submit form');
+        } finally {
+          setShouldSubmit(false); 
+        }
+      }
+    };
+
+    submitFormIfValid();
+  }, [hasErrors, shouldSubmit]); 
+
+  
+
+
+  const handleSubmit = async (e:React.FormEvent) => {
     e.preventDefault();
+    dispatch(validateState());
+    setShouldSubmit(true); // Indicate that form submission should be attempted
+
   };
+
+ 
 
   const formatDate = (date: Date | null): string => {
     if (!date) return '';
-
-    const day = date.toLocaleDateString('en-US', { day: 'numeric' });
-    const month = date.toLocaleDateString('en-US', { month: 'short' });
-    const year = date.toLocaleDateString('en-US', { year: '2-digit' });
-
-    return `<span class="text-black text-3xl m-1 font-PlusJakartaSans1000">${day}</span> <span class="text-black text-lg">${month}'</span> <span class="text-black text-xl">${year}</span>`;
+  
+    const validDate = new Date(date);
+    if (isNaN(validDate.getTime())) {
+      throw new Error('Invalid date');
+    }
+  
+    const day = validDate.toLocaleDateString('en-US', { day: 'numeric' });
+    const month = validDate.toLocaleDateString('en-US', { month: 'short' });
+    const year = validDate.toLocaleDateString('en-US', { year: '2-digit' });
+  
+    return `
+      <span class="text-black text-3xl m-1 font-PlusJakartaSans1000">${day}</span>
+      <span class="text-black text-lg">${month}'</span>
+      <span class="text-black text-xl">${year}</span>
+    `;
   };
+  
 
   return (
     <div className="mx-[13%] mt-8 p-6 pb-24 font-PlusJakartaSans ">
       <form
+      onSubmit={handleSubmit}
         className="bg-white p-6 relative  shadow-md flex flex-col rounded-xl"
-        onSubmit={handleSubmit}
       >
         <div className="flex justify-start space-x-4 font-bold mb-4">
           <label className="inline-flex items-center">
@@ -172,6 +211,8 @@ function Hero() {
         </div>
         <div className="flex flex-wrap ">
           <button
+          type='button'
+
             className="btn"
             onClick={() => {
               openModal('FromAirportSearch');
@@ -207,6 +248,7 @@ function Hero() {
             <ArrowsRightLeftIcon className="h-4 w-4 text-purple-800" />
           </div>
           <button
+          type='button'
             className="btn"
             onClick={() => {
               openModal('ToAirportSearch');
@@ -239,14 +281,15 @@ function Hero() {
             onClick={() => handleParentDivClick()}
             className="flex-1 min-w-[130px] hover:bg-blue-200 w-full p-2 border-l-2 border-t-2 border-b-2 h-32 border-gray-300"
           >
-            <label className="block text-gray-700 mb-2">Departure</label>
+            <label className="flex text-gray-700 mb-2 items-end ">
+              Departure <ChevronDownIcon className="text-blue-500 h-5 ml-2" />
+            </label>
             <input
               type="date"
               ref={dateInputRef}
               onChange={handleDateChange}
               className="border border-gray-300 rounded-md py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               style={{ opacity: 0, position: 'absolute', zIndex: -1 }}
-              required={true}
             />
             <div className="mt-2 text-gray-700">
               {departureDate.date ? (
@@ -269,7 +312,9 @@ function Hero() {
             onClick={() => handleCombinedClick()}
             className="flex-1 min-w-[130px] w-full p-2 border-l-2 border-t-2 border-b-2 h-32 border-gray-300 "
           >
-            <label className="block text-gray-700 mb-2">Return </label>
+            <label className="flex text-gray-700 mb-2 items-end">
+              Return <ChevronDownIcon className="text-blue-500 h-5 ml-2" />{' '}
+            </label>
             {tripType === 'roundTrip' ? (
               <div>
                 <input
@@ -278,24 +323,23 @@ function Hero() {
                   onChange={handleReturnDateChange}
                   className="border border-gray-300 rounded-md py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   style={{ opacity: 0, position: 'absolute', zIndex: -1 }}
-                  required={true}
                 />
-                  <div className="mt-2 text-gray-700">
-              {returnDate.date ? (
-                <div className="items-center">
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: formatDate(returnDate.date),
-                    }}
-                  />
-                  <div className="m-2"> {returnDate.weekday}</div>
+                <div className="mt-2 text-gray-700">
+                  {returnDate.date ? (
+                    <div className="items-center">
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: formatDate(returnDate.date),
+                        }}
+                      />
+                      <div className="m-2"> {returnDate.weekday}</div>
+                    </div>
+                  ) : (
+                    <p className="p-2 text-gray-400 text-sm font-bold cursor-pointer">
+                      Tap to add a Date.
+                    </p>
+                  )}
                 </div>
-              ) : (
-                <p className="p-2 text-gray-400 text-sm font-bold cursor-pointer">
-                  Tap to add a Date.
-                </p>
-              )}
-            </div>
               </div>
             ) : (
               <div>
@@ -306,15 +350,38 @@ function Hero() {
             )}
           </div>
           <button
+          type='button'
             className=""
             onClick={() => {
               openModal('TravAndClass');
             }}
           >
-            <div className="flex-1 min-w-[200px] h-32 border-2  rounded-r-lg border-gray-300">
-              <label className="block text-black mb-2 text-left px-4 py-2 text-base ">
-                Travellers & class
+            <div
+              onClick={() => openModal('TravAndClass')}
+              className="flex-1 min-w-[200px] h-32 border-2  rounded-r-lg border-gray-300"
+            >
+              <label className="flex text-black mb-1 text-left px-4 py-2 text-base items-end ">
+                Travellers & class{' '}
+                <ChevronDownIcon className="text-blue-500 h-5 ml-2" />
               </label>
+              {travellers ? (
+                <div>
+                  <div className="flex items-end justify-start mx-3">
+                    <div className="mx-2 font-PlusJakartaSans1000 text-3xl">
+                      {' '}
+                      {travellers.total}
+                    </div>
+                    <p className="text-gray-500 text-xl">Travellers</p>
+                  </div>
+                  <div className="flex justify-start  items-center mx-5 mb-2 mt-1 text-md font-normal">
+                    <p>{classState}</p>
+                  </div>
+                </div>
+              ) : (
+                <p className="p-2 text-gray-400 text-sm font-bold cursor-pointer">
+                  Tap to add Details.
+                </p>
+              )}
             </div>
           </button>
         </div>
@@ -512,9 +579,8 @@ function Hero() {
       <ModalManager
         activeModal={activeModal || ''}
         closeModal={closeModal}
-        setToAirport={setToAirport}
-        setFromAirport={setFromAirport}
       />
+      
     </div>
   );
 }

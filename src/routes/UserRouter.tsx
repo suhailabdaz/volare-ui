@@ -3,6 +3,7 @@ import PrivateRouter from "../utils/user/PrivateRouter";
 import PublicRouter from "../utils/user/PublicRouter";
 import HomePage from "../pages/user/Home/HomePage";
 import MyprofilePage from "../pages/user/Home/MyprofilePage";
+import SearchResults from "../pages/user/Home/SearchResults";
 
 
 const UserRoute = () => {
@@ -14,6 +15,7 @@ const UserRoute = () => {
         </Route>
         <Route element={<PublicRouter />}>
           <Route path="/" element={<HomePage />} />
+          <Route path="/search" element={<SearchResults />} />
         </Route>
       </Routes>
     </>

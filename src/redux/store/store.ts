@@ -7,6 +7,7 @@ import ProfileSlice from '../slices/profileSlice';
 import TravellerSlice from '../slices/travellersSlice';
 import authorityAuthSlice from '../slices/authoritySlice';
 import airlineAuthSlice from '../slices/airlineSlice';
+import Heroslice from '../slices/HeroSlice';
 import { airlineApi } from '../apis/airlineApiSlice';
 import {userApi} from '../apis/userApiSlice'
 
@@ -23,6 +24,7 @@ const rootReducer = combineReducers({
     TravellerAuth:TravellerSlice.reducer,
     AuthorityAuth:authorityAuthSlice.reducer,
     AirlineAuth:airlineAuthSlice.reducer,
+    HeroAuth:Heroslice.reducer,
   [airlineApi.reducerPath]: airlineApi.reducer, 
   [userApi.reducerPath]: userApi.reducer, 
 });

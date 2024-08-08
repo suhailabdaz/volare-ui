@@ -14,6 +14,9 @@ interface UserData {
     mobile?:Number
 }
 
+
+
+
 interface UserState {
     isAuthenticated: boolean;
     token: string | null;

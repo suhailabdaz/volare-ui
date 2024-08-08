@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useGetsearchAirportsQuery } from '../../../../../redux/apis/userApiSlice';
 import airportImage from '../../../../../assets/images/departure (1).png'
+import { setFromAirport } from '../../../../../redux/slices/HeroSlice';
+import { useDispatch } from 'react-redux';
 
 interface Airport {
   _id: string;
@@ -12,12 +14,12 @@ interface Airport {
 
 interface ModalProps {
   closeModal: () => any;
-  setFromAirport: React.Dispatch<React.SetStateAction<Airport | null>>;
 }
 
-const FromAirportSearch: React.FC<ModalProps> = ({ closeModal, setFromAirport }) => {
+const FromAirportSearch: React.FC<ModalProps> = ({ closeModal }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const modalRef = useRef<HTMLDivElement>(null);
+  const dispatch = useDispatch()
 
   const { data, isLoading, error } = useGetsearchAirportsQuery(
     {},
@@ -44,7 +46,7 @@ const FromAirportSearch: React.FC<ModalProps> = ({ closeModal, setFromAirport })
   };
 
   const handleSelectAirport = (airport: Airport) => {
-    setFromAirport(airport); 
+    dispatch(setFromAirport(airport)); 
     closeModal();
   };
 
