@@ -1,7 +1,6 @@
 import {
   useState,
   ChangeEvent,
-  FormEvent,
   useRef,
   useEffect,
 } from 'react';
@@ -22,11 +21,14 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../../redux/store/store';
 import { useDispatch } from 'react-redux';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 
 
 function Hero() {
   const [activeModal, setActiveModal] = useState<string | null>(null);
+  const navigate = useNavigate()
+
 
   const closeModal = () => {
     setActiveModal(null);
@@ -47,7 +49,6 @@ function Hero() {
   const dateInputRef = useRef<HTMLInputElement>(null);
 
   const tripType = useSelector((state: RootState) => state.HeroAuth.tripType);
-  const values = useSelector((state: RootState) => state.HeroAuth);
 
   const selectedValue = useSelector((state:RootState)=>state.HeroAuth.selectedValue)
   const classState = useSelector((state:RootState)=>state.HeroAuth.classState)
@@ -132,12 +133,9 @@ function Hero() {
     const submitFormIfValid = async () => {
       if (!hasErrors && shouldSubmit) {
         try {
-         
-
-          toast.success('Form submitted successfully');
+          navigate(`/search/${fromAirport?._id}/${toAirport?._id}/${departureDate?.weekday}`);
         } catch (error) {
-          console.error('There has been a problem with your fetch operation:', error);
-          toast.error('Failed to submit form');
+          toast.error('error occured');
         } finally {
           setShouldSubmit(false); 
         }

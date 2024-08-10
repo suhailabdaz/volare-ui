@@ -15,8 +15,8 @@ const UserRoute = () => {
         </Route>
         <Route element={<PublicRouter />}>
           <Route path="/" element={<HomePage />} />
-          <Route path="/search" element={<SearchResults />} />
-        </Route>
+          <Route path="/search/:from/:to/:weekday" element={<SearchResults />} />
+          </Route>
       </Routes>
     </>
   );

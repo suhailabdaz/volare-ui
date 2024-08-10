@@ -12,20 +12,20 @@ interface LoginModalProps {
   openModal: (modalName: string) => any;
 }
 
-
-const ModalManager :React.FC<LoginModalProps> =({ activeModal, closeModal, openModal }) => {
-  if(activeModal==null){
-    return null
+const ModalManager: React.FC<LoginModalProps> = ({ activeModal, closeModal, openModal }) => {
+  if (activeModal == null) {
+    return null;
   }
+  
   return (
-    <>
-      {activeModal === 'login' && <LoginModal closeModal={closeModal} openModal={openModal} />}
-      {activeModal === 'password' && <PasswordModal closeModal={closeModal} openModal={openModal} />}
-      {activeModal === 'otp' && <OtpModal closeModal={closeModal} openModal={openModal}/>}
-      {activeModal === 'signup' && <SignupModal closeModal={closeModal} openModal={openModal} />}
-      {activeModal === 'reset' && <ResetPasswordModal closeModal={closeModal} openModal={openModal} />}
-      {activeModal === 'resetotp' && <ResetOtpModal closeModal={closeModal} openModal={openModal} />}
-    </>
+    <div className="z-50 flex items-center justify-center">
+        {activeModal === 'login' && <LoginModal closeModal={closeModal} openModal={openModal} />}
+        {activeModal === 'password' && <PasswordModal closeModal={closeModal} openModal={openModal} />}
+        {activeModal === 'otp' && <OtpModal closeModal={closeModal} openModal={openModal} />}
+        {activeModal === 'signup' && <SignupModal closeModal={closeModal} openModal={openModal} />}
+        {activeModal === 'reset' && <ResetPasswordModal closeModal={closeModal} openModal={openModal} />}
+        {activeModal === 'resetotp' && <ResetOtpModal closeModal={closeModal} openModal={openModal} />}
+    </div>
   );
 };
 

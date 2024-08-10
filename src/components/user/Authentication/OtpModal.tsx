@@ -164,7 +164,7 @@ const OtpModal: React.FC<OtpModalProps> = ({ closeModal ,openModal }) => {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
       <div className="bg-white p-8 shadow-lg w-1/3 rounded-lg">
         <div className='flex justify-end'>
           <button className='' onClick={() => closeModal()}>

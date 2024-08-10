@@ -98,7 +98,7 @@ const SignupModal: React.FC<LoginModalProps> = ({ setIsLogin }) => {
       for (const [key, value] of formData.entries()) {
         console.log(`${key}:`, value);
       }
-      const response = await createAxios().post(
+      const response = await createAxios(dispatch).post(
         airlineEndpoints.register,
         {email:values.airline_email},
         {

@@ -15,7 +15,7 @@ const AirlineRoute = () => {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/flights" element={<Flights />} />
           <Route path="/available-schedules" element={<Freeschedules/>} />
-          <Route path="/schedules" element={<Freeschedules/>} />
+          <Route path="/schedules" element={<MySchedules/>} />
         </Route>
         <Route element={<PublicRouter />}>
           <Route path="/" element={<LoginPage />} />

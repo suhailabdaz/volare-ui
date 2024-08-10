@@ -1,10 +1,15 @@
 import { useDispatch } from "react-redux";
-import {  logout,clearUsers } from '../../../redux/slices/adminSlice';
+import {  logout } from '../../../redux/slices/adminSlice';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import ConfirmModal from "./Modals/ConfirmModal";
+import { useState } from "react";
 
 
 function AuthNavbar() {
+
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -12,7 +17,6 @@ function AuthNavbar() {
   const handleLogout = (): void => {
     try {      
       dispatch(logout())
-      dispatch(clearUsers())
       localStorage.removeItem("adminAccessToken")
       localStorage.removeItem("adminRefreshToken")
     } catch (error) {
@@ -32,10 +36,21 @@ function AuthNavbar() {
         </div>
         <div className="space-x-16">
         <button onClick={()=>navigate('/admin/users')} className="text-lg" >Users</button>
-        <button onClick={()=>navigate('/admin/airlines')} className="text-lg " >Airlines</button>
-          <button className="text-xl font-bold p-2 border-2 border-black" onClick={()=>handleLogout()} >Logout</button>
+          <button className="text-xl font-bold p-2 border-2 border-black" onClick={() => setShowConfirmModal(true)} >Logout</button>
         </div>
       </div>
+      {showConfirmModal && (
+        <ConfirmModal
+          message={`Are u sure you want to Logout?`}
+          onConfirm={() => {
+            handleLogout();
+            setShowConfirmModal(false);
+          }}
+          onCancel={() => setShowConfirmModal(false)}
+          cancelLabel="Cancel"
+          confirmLabel="Logout"
+        />
+      )}
     </div>
   );
 }

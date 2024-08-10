@@ -57,7 +57,7 @@ const OtpModal: React.FC<OtpModalProps> = ({ closeModal ,openModal,formData }) =
         }
   
         // Send the POST request
-        const response = await createAxios().post(airlineEndpoints.verifyOtp, formDataToSend, {
+        const response = await createAxios(dispatch).post(airlineEndpoints.verifyOtp, formDataToSend, {
           headers: {
             "Content-Type": 'multipart/form-data'
           }
@@ -160,7 +160,7 @@ const OtpModal: React.FC<OtpModalProps> = ({ closeModal ,openModal,formData }) =
 
   const handleResendOtp = async () => {
     try {
-      const re_response = await createAxios().post(airlineEndpoints.register,{email:userEmail},{
+      const re_response = await createAxios(dispatch).post(airlineEndpoints.register,{email:userEmail},{
         headers:{
           "Content-Type":"application/json",
       },

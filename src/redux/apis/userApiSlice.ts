@@ -16,7 +16,6 @@ const baseQuery = fetchBaseQuery({
 
 const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
   let result = await baseQuery(args, api, extraOptions);
-
   if (result.error && result.error.status === 401) {
     const refreshToken = localStorage.getItem('refreshToken');
 
@@ -54,7 +53,7 @@ const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
 export const userApi = createApi({
   reducerPath: 'userApi',
   baseQuery: baseQueryWithReauth,
-  tagTypes: ['searchAirports'],
+  tagTypes: ['searchAirports','searchSchedules','searchAirline'],
   endpoints: (builder) => ({
     getsearchAirports: builder.query({
       query: () => ({
@@ -63,11 +62,39 @@ export const userApi = createApi({
       }),
       providesTags: ['searchAirports'],
     }),
+    getSearchSchedules: builder.query({
+      query:(params: { from: string; to: string; weekday: string }) => ({
+        url: '/api/v1/authority/search-schedules',
+        method: 'GET',
+        params,
+      }),
+      providesTags: ['searchSchedules'],
+    }),
+    getsearchAirline: builder.query({
+      query: (id:string) => ({
+        url: '/api/v1/airline/get-airline',
+        method: 'GET',
+        params: { id },
+      }),
+      providesTags: ['searchAirline'],
+    }),
+    getsearchFlight: builder.query({
+      query: (id:string) => ({
+        url: '/api/v1/airline/get-flight',
+        method: 'GET',
+        params: { id },
+      }),
+      providesTags: ['searchAirline'],
+    }),
   }),
-});
+})
+
 
 export const {
   
   useGetsearchAirportsQuery,
+  useGetSearchSchedulesQuery,
+  useGetsearchAirlineQuery,
+  useGetsearchFlightQuery
 } = userApi;
 export default userApi;

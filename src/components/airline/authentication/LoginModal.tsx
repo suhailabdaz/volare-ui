@@ -36,7 +36,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ setIsLogin }) => {
     { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
   ) => {
     try {
-      const response = await createAxios().post(
+      const response = await createAxios(dispatch).post(
         airlineEndpoints.login,
         values
       );

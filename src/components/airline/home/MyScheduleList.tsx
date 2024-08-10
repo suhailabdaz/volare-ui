@@ -46,9 +46,8 @@ function MySchedulesList() {
 
 
   const { data, isLoading, error } = useGetMySchedulesQuery(
-    {airlineId},
+    airlineId,
     {
-      pollingInterval: 60000,
       refetchOnMountOrArgChange: true,
     }
   );
@@ -132,9 +131,9 @@ function MySchedulesList() {
               {isEmpty ? (
                 <h1 className="font-extrabold text-3xl">No Schedules Available</h1>
               ) : (
-                <h1 className="font-extrabold text-3xl">Available Schedules</h1>)
+                <h1 className="font-extrabold text-3xl">Airline Schedules</h1>)
               }
-              <p className="mt-1">Added ({data.length}) Schedules</p>
+              <p className="mt-1">({data.length}) Schedules</p>
             </div>
             
    

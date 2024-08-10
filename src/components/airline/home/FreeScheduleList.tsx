@@ -51,7 +51,6 @@ function FreeSchedulesList() {
   const { data:airportData, isLoading:airportIsLoading, error:airportError } = useGetAirportDetailsQuery(
     {},
     {
-      pollingInterval: 60000,
       refetchOnMountOrArgChange: true,
     }
   );
@@ -129,7 +128,7 @@ function FreeSchedulesList() {
               ) : (
                 <h1 className="font-extrabold text-3xl">Available Schedules</h1>)
               }
-              <p className="mt-1">Added ({data.length}) Schedules</p>
+              <p className="mt-1">({data.length}) Schedules Available</p>
             </div>
             
    

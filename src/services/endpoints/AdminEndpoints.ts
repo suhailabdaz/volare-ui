@@ -6,5 +6,4 @@ export const adminEndpoints = {
     logout: `${API_GATEWAY_BASE_URL}/api/v1/admin/logout`,
     getUsers:`${API_GATEWAY_BASE_URL}/api/v1/admin/get-users`,
     blockUser:`${API_GATEWAY_BASE_URL}/api/v1/admin/block-user`,
-    blockAirline:`${API_GATEWAY_BASE_URL}/api/v1/admin/block-airline`,
 }

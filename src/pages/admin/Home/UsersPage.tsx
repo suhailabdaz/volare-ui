@@ -8,7 +8,7 @@ import createAxios from '../../../services/axios/AdminAxios';
 import { adminEndpoints} from '../../../services/endpoints/AdminEndpoints';
 import { setUsers} from '../../../redux/slices/adminSlice';
 import { toast } from 'sonner'
-import ProfileShimmer from '../../../components/user/Home/Shimmers/ProfileShimmer';
+import ProfileShimmer from '../../../components/admin/Home/AdminShimmer';
 
 function AirlinesPage() {
 

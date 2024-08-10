@@ -47,7 +47,7 @@ const adminAxios = axios.create({
                 window.location.href = '/admin';
                 return Promise.reject(error);
             }
-            try {
+            try {  
                 const response = await axios.post(`${import.meta.env.VITE_API_GATEWAY_BASE_URL}/api/v1/auth/refresh`, { token: refreshToken });
                 console.log(response,"refresh responbseeyyy");
                 const newAccessToken = response.data.token;
@@ -59,6 +59,7 @@ const adminAxios = axios.create({
                 originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
                 adminAxios.defaults.headers['Authorization'] = `Bearer ${newAccessToken}`;
                 return adminAxios(originalRequest);
+            
             } catch (refreshError) {
                 console.log(refreshError)
                 localStorage.removeItem('adminAccessToken');

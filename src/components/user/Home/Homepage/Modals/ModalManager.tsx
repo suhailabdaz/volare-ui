@@ -4,13 +4,6 @@ import TravAndClass from './TravAndClass';
 import ToAirportSearch from './ToAirportSearch';
 
 
-interface Airport {
-  _id: string;
-  airport_code: string;
-  city: string;
-  country:string,
-  airport_name: string;
-}
 
 interface ModalProps {
   activeModal: string;

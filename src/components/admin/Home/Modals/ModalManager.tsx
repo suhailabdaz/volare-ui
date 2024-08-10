@@ -1,6 +1,5 @@
 import React from 'react';
 import ViewUser from './ViewUser';
-import AirlineView from './AirlineView';
 
 
 
@@ -18,7 +17,6 @@ const ModalManager :React.FC<LoginModalProps> =({ activeModal, closeModal, openM
   return (
     <>
       {activeModal === 'viewUser' && <ViewUser closeModal={closeModal} openModal={openModal} userId={userId||''} />}
-      {activeModal === 'viewAirline' && <AirlineView closeModal={closeModal} openModal={openModal} airlineId={userId||''} />}
     </>
   );
 };
