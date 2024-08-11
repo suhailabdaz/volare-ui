@@ -3,12 +3,14 @@ import * as Yup from 'yup';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
-import { createAxios } from "../../../services/axios/UserAxios";
+import { createAxios } from '../../../services/axios/UserAxios';
 import { login } from '../../../redux/slices/adminSlice';
 import { adminEndpoints } from '../../../services/endpoints/AdminEndpoints';
 
 const validationSchema = Yup.object({
-  email: Yup.string().email('Invalid email address').required('Email is required'),
+  email: Yup.string()
+    .email('Invalid email address')
+    .required('Email is required'),
   password: Yup.string().required('Password is required'),
 });
 
@@ -21,24 +23,28 @@ const AdminLoginModal = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const onSubmit = async (values: typeof initialValues, { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }) => {
-    console.log("Form submitted with values:", values);
+  const onSubmit = async (
+    values: typeof initialValues,
+    { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
+  ) => {
+    console.log('Form submitted with values:', values);
     try {
       const response = await createAxios().post(adminEndpoints.login, values);
       if (response.data.success) {
-        toast.success("Access granted");
-        localStorage.setItem("adminAccessToken",response.data.accessToken)
-        localStorage.setItem("adminRefreshToken",response.data.refreshToken)
-        dispatch(login(response.data.admin))
+        toast.message("Access Granted",{
+          className:'border-2 border-black font-PlusJakartaSans1000 bg-gray-100 rounded-none'
+        });        localStorage.setItem('adminAccessToken', response.data.accessToken);
+        localStorage.setItem('adminRefreshToken', response.data.refreshToken);
+        dispatch(login(response.data.admin));
         navigate('/admin/dashboard');
       } else {
-        toast.error("Login Failed");
+        toast.error('Login Failed');
       }
     } catch (error) {
       console.error('Error during login:', error);
       toast.error('An error occurred. Please try again');
     } finally {
-      console.log("Setting submitting to false");
+      console.log('Setting submitting to false');
       setSubmitting(false);
     }
   };
@@ -47,13 +53,23 @@ const AdminLoginModal = () => {
     <>
       <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30">
         <div className="bg-white p-8 shadow-lg w-1/3 rounded-lg">
-          <div className='flex justify-end'>
+          <div className="flex justify-end">
             {/* Add any close button or icon here if needed */}
           </div>
-          <h2 className="text-4xl text-center font-PlayfairDisplay font-bold">Volare Admin</h2>
-          <p className=" text-4xl  text-gray-400 text-center font-PlayfairDisplay font-bold ">Volare Admin</p>
-          <p className=" text-4xl mb-8 text-center text-gray-200 font-PlayfairDisplay font-bold ">Volare Admin</p>
-          <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
+          <h2 className="text-4xl text-center font-PlayfairDisplay font-bold">
+            Volare Admin
+          </h2>
+          <p className=" text-4xl  text-gray-400 text-center font-PlayfairDisplay font-bold ">
+            Volare Admin
+          </p>
+          <p className=" text-4xl mb-8 text-center text-gray-200 font-PlayfairDisplay font-bold ">
+            Volare Admin
+          </p>
+          <Formik
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={onSubmit}
+          >
             {({ isSubmitting }) => (
               <Form>
                 <div className="mb-4 flex flex-col items-center">
@@ -63,7 +79,11 @@ const AdminLoginModal = () => {
                     className="w-4/5 p-3 border border-gray-500 rounded-lg"
                     placeholder="Email"
                   />
-                  <ErrorMessage name="email" component="div" className="w-4/5 text-red-500 text-xs mt-1" />
+                  <ErrorMessage
+                    name="email"
+                    component="div"
+                    className="w-4/5 text-red-500 text-xs mt-1"
+                  />
                 </div>
                 <div className="mb-4 flex flex-col items-center">
                   <Field
@@ -72,7 +92,11 @@ const AdminLoginModal = () => {
                     className="w-4/5 p-3 border border-gray-500 rounded-lg"
                     placeholder="Password"
                   />
-                  <ErrorMessage name="password" component="div" className="w-4/5 text-red-500 text-xs mt-1" />
+                  <ErrorMessage
+                    name="password"
+                    component="div"
+                    className="w-4/5 text-red-500 text-xs mt-1"
+                  />
                 </div>
                 <div className="flex justify-center mb-6">
                   <button
@@ -80,15 +104,27 @@ const AdminLoginModal = () => {
                     className="w-4/5 px-4 py-3 text-white rounded-lg font-PlayfairDisplay font-semibold bg-black hover:text-black hover:bg-white hover:border-2 hover:border-black transition-all ease-in-out delay-50 duration-500 hover:scale-105"
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? 'Submitting...' : 'Continue'}
+                    {isSubmitting  ? (
+                      <div className="flex-col gap-4 w-full flex items-center justify-center">
+                        <div className="w-7 h-7 border-4 border-transparent text-gray-300 text-4xl animate-spin flex items-center justify-center border-t-gray-300 rounded-full">
+                          <div className="w-5 h-5 border-4 border-transparent text-gray-300 text-2xl animate-spin flex items-center justify-center border-t-gray-300 rounded-full"></div>
+                        </div>
+                      </div>
+                    ) : (
+                      'Login'
+                    )}
                   </button>
                 </div>
               </Form>
             )}
           </Formik>
-          <div className='flex justify-center'>
-            <p className='mx-12 mt-4 font-PlusJakartaSans text-center text-xs'>
-              Unauthorized Access is Strictly Prohibited, if found guilty <span className='font-semibold text-black-900'>Regulationary rules</span> will be imposed
+          <div className="flex justify-center">
+            <p className="mx-12 mt-4 font-PlusJakartaSans text-center text-xs">
+              Unauthorized Access is Strictly Prohibited, if found guilty{' '}
+              <span className="font-semibold text-black-900">
+                Regulationary rules
+              </span>{' '}
+              will be imposed
             </p>
           </div>
         </div>

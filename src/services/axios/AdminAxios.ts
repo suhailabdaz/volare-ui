@@ -1,9 +1,9 @@
 import axios from "axios";
 import { API_GATEWAY_BASE_URL } from "../endpoints/AuthorityEndpoints";
 import { useDispatch } from "react-redux";
-import { logout as authorityLogout } from "../../redux/slices/adminSlice";
+import { logout as authorityLogout,newToken } from "../../redux/slices/adminSlice";
 
-export const createAxios=()=>{
+export const createAxios=(dispatch:any)=>{
 const adminAxios = axios.create({
     baseURL: API_GATEWAY_BASE_URL,
     headers:{
@@ -53,6 +53,7 @@ const adminAxios = axios.create({
                 const newAccessToken = response.data.token;
                 const newRefreshToken = response.data.refreshToken;
                 localStorage.setItem('adminAccessToken', newAccessToken);
+                dispatch(newToken({ token: newAccessToken }));
                 if (newRefreshToken) {
                     localStorage.setItem('adminRefreshToken', newRefreshToken);
                 }

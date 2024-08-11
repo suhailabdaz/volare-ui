@@ -53,7 +53,7 @@ const ViewUser: React.FC<ProfileModalProps> = ({ closeModal, userId }) => {
   const onsubmit = async () => {};
   const handleDelete = async () => {
     if (foundUser?._id) {
-      const response = await createAxios().post(adminEndpoints.blockUser, {
+      const response = await createAxios(dispatch).post(adminEndpoints.blockUser, {
         Id: foundUser._id,
       });
 

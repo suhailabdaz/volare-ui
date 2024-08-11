@@ -43,8 +43,12 @@ const adminAuthSlice = createSlice({
     setUsers: (state, action: PayloadAction<UserData[]>) => {
       state.users = action.payload;
     },
+    newToken: (state, action: PayloadAction<{ token: string }>) => {
+      state.isAuthenticated = true;
+      state.token = action.payload.token;
+    },
   },
 });
 
-export const { login, logout, setUsers } = adminAuthSlice.actions;
+export const { login, logout, setUsers,newToken } = adminAuthSlice.actions;
 export default adminAuthSlice;

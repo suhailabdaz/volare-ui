@@ -1,8 +1,13 @@
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store/store'; 
 import ModalManager from './Modals/ModalManager';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import createAxios from '../../../services/axios/AdminAxios';
+import { adminEndpoints } from '../../../services/endpoints/AdminEndpoints';
+import { setUsers } from '../../../redux/slices/adminSlice';
+import { toast } from 'sonner';
+import ProfileShimmer from './AdminShimmer'
 
 function UsersList() {
   const [activeModal, setActiveModal] = useState<string | null>(null);
@@ -11,6 +16,39 @@ function UsersList() {
   const usersPerPage = 5;
 
   const userData = useSelector((state: RootState) => state.AdminAuth.users);
+  const [isLoading, setIsLoading] = useState(true);
+  const adminState = useSelector((state: RootState) => state.AdminAuth.isAuthenticated);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const fetchUsersData = async()=>{
+      try{
+          if(adminState && (!userData || userData.length===0)){
+            const response = await createAxios(dispatch).get(adminEndpoints.getUsers,{
+              params:{
+                role:"user"
+              }
+            })
+            dispatch(setUsers(response.data.users));
+          }
+
+      }catch(err){
+        toast.error("Error getting data");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    if(adminState && (!userData || userData.length===0)){
+      fetchUsersData();
+    }else{
+      setIsLoading(false);
+    }
+   
+  }, [adminState, dispatch, userData]);
+
+  if (isLoading) {
+    return <ProfileShimmer />;
+  }
 
   const openModal = (modalName: string, userId: string | null = null) => {
     setActiveModal(modalName);

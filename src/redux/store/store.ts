@@ -10,6 +10,7 @@ import airlineAuthSlice from '../slices/airlineSlice';
 import Heroslice from '../slices/HeroSlice';
 import { airlineApi } from '../apis/airlineApiSlice';
 import {userApi} from '../apis/userApiSlice'
+import {adminApi} from '../apis/adminApiSlice'
 
 const persistConfiguration = {
   key: 'root',
@@ -27,6 +28,7 @@ const rootReducer = combineReducers({
     HeroAuth:Heroslice.reducer,
   [airlineApi.reducerPath]: airlineApi.reducer, 
   [userApi.reducerPath]: userApi.reducer, 
+  [adminApi.reducerPath]: adminApi.reducer, 
 });
 
 const persistedReducer = persistReducer(persistConfiguration, rootReducer);
@@ -39,7 +41,9 @@ const store = configureStore({
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     }).concat(airlineApi.middleware)
-    .concat(userApi.middleware), 
+    .concat(userApi.middleware)
+    .concat(adminApi.middleware), 
+
 
 });
 

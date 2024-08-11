@@ -1,11 +1,8 @@
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
-import AuthNavbar from './AdminNavbar';
 
 function AdminShimmer() {
 
   return (
     <>
-    <AuthNavbar/>
     <div className='flex mx-[11%] justify-center font-PlayfairDisplay my-7 bg-transparent'>
       <div className='w-[100%] shadow-custom border-2 border-black'>
         <div className='px-10 py-6'>
