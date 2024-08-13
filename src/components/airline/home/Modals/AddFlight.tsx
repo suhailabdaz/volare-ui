@@ -28,6 +28,15 @@ const validationSchema = Yup.object({
   first_class_seats: Yup.number()
     .min(0, 'First class seats must be zero or more')
     .required('First class seats are required'),
+    economy_layout: Yup.string()
+    .matches(/^\d+(-\d+)*$/, "Invalid layout format")
+    .required("Economy layout is required"),
+  business_layout: Yup.string()
+    .matches(/^\d+(-\d+)*$/, "Invalid layout format")
+    .required("Business layout is required"),
+  first_class_layout: Yup.string()
+    .matches(/^\d+(-\d+)*$/, "Invalid layout format")
+    .required("First class layout is required"),
 });
 
 const AddFlight: React.FC<ProfileModalProps> = ({ closeModal }) => {
@@ -37,26 +46,76 @@ const AddFlight: React.FC<ProfileModalProps> = ({ closeModal }) => {
   const airlineCode = airlineData?.airline_code;
   const airlineId = airlineData?._id;
 
-
   const initialValues = {
-    airline_id:airlineId,
+    airline_id: airlineId,
     flight_code: airlineCode,
     manufacturer: '',
     economy_seats: '',
     business_seats: '',
     first_class_seats: '',
+    economy_layout: '',
+    business_layout: '',
+    first_class_layout: '',
   };
 
   const dispatch = useDispatch();
+
+  function generateSeatLayout(layout: string, totalSeats: number, className: string) {
+    const sections = layout.split('-').map(Number);
+    const seatsPerRow = sections.reduce((a, b) => a + b, 0);
+    const rows = Math.ceil(totalSeats / seatsPerRow);
+    
+    const seatLayout = [];
+    for (let row = 1; row <= rows; row++) {
+      const seats:any = [];
+      let seatIndex = 0;
+      sections.forEach((sectionSeats, sectionIndex) => {
+        for (let i = 0; i < sectionSeats; i++) {
+          let position: 'window' | 'middle' | 'aisle';
+          if (sections.length === 2) {
+            position = i === 0 ? 'window' : i === sectionSeats - 1 ? 'aisle' : 'middle';
+          } else {
+            if (sectionIndex === 0) {
+              position = i === 0 ? 'window' : i === sectionSeats - 1 ? 'aisle' : 'middle';
+            } else if (sectionIndex === sections.length - 1) {
+              position = i === sectionSeats - 1 ? 'window' : i === 0 ? 'aisle' : 'middle';
+            } else {
+              position = i === 0 || i === sectionSeats - 1 ? 'aisle' : 'middle';
+            }
+          }
+          seats.push({
+            number: `${row}${String.fromCharCode(65 + seatIndex)}`,
+            position: position,
+            isAvailable: true
+          });
+          seatIndex++;
+        }
+      });
+      seatLayout.push({ row, seats });
+    }
+    
+    return seatLayout;
+  }
 
   const onSubmit = async (
     values: typeof initialValues,
     { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
   ) => {
     try {
+      const seatLayout = {
+        economyClass: generateSeatLayout(values.economy_layout, parseInt(values.economy_seats), "economy"),
+        businessClass: generateSeatLayout(values.business_layout, parseInt(values.business_seats), "business"),
+        firstClass: generateSeatLayout(values.first_class_layout, parseInt(values.first_class_seats), "first"),
+      };
+
+      const flightData = {
+        ...values,
+        seatLayout,
+      };
+      
       const response = await createAxios(dispatch).post(
         airlineEndpoints.addFlight,
-        values
+        flightData
       );
       if (response.data.success) {
         toast.success('Saved Successfully');
@@ -180,6 +239,60 @@ const AddFlight: React.FC<ProfileModalProps> = ({ closeModal }) => {
                       />
                       <ErrorMessage
                         name="first_class_seats"
+                        component="div"
+                        className="text-red-500 text-xs mt-1"
+                      />
+                    </div>
+
+                    {/* Economy Layout */}
+                    <div className="flex flex-col">
+                      <label htmlFor="economy_layout" className="mb-1 text-sm font-semibold">
+                        Economy Layout (e.g., 3-3) <span className="text-red-900">*</span>
+                      </label>
+                      <Field
+                        type="text"
+                        name="economy_layout"
+                        id="economy_layout"
+                        className="p-3 border border-gray-500 rounded-lg text-black"
+                      />
+                      <ErrorMessage
+                        name="economy_layout"
+                        component="div"
+                        className="text-red-500 text-xs mt-1"
+                      />
+                    </div>
+
+                    {/* Business Layout */}
+                    <div className="flex flex-col">
+                      <label htmlFor="business_layout" className="mb-1 text-sm font-semibold">
+                        Business Layout (e.g., 2-2) <span className="text-red-900">*</span>
+                      </label>
+                      <Field
+                        type="text"
+                        name="business_layout"
+                        id="business_layout"
+                        className="p-3 border border-gray-500 rounded-lg text-black"
+                      />
+                      <ErrorMessage
+                        name="business_layout"
+                        component="div"
+                        className="text-red-500 text-xs mt-1"
+                      />
+                    </div>
+
+                    {/* First Class Layout */}
+                    <div className="flex flex-col">
+                      <label htmlFor="first_class_layout" className="mb-1 text-sm font-semibold">
+                        First Class Layout (e.g., 1-1) <span className="text-red-900">*</span>
+                      </label>
+                      <Field
+                        type="text"
+                        name="first_class_layout"
+                        id="first_class_layout"
+                        className="p-3 border border-gray-500 rounded-lg text-black"
+                      />
+                      <ErrorMessage
+                        name="first_class_layout"
                         component="div"
                         className="text-red-500 text-xs mt-1"
                       />

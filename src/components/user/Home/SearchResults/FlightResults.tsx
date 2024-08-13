@@ -83,11 +83,10 @@ function Content() {
           <div className="mt-8 text-gray-600 text-xs">
             <ul className="space-y-6">
               {schedules.map((schedule: any, index: any) => {
-                const { data: airlineData, isLoading: isLoadingAirline } = useGetsearchAirlineQuery(schedule.airlineId, { pollingInterval: 60000 });
-                const { data: flightData, isLoading: isLoadingFlight } = useGetsearchFlightQuery(schedule.flightId, { pollingInterval: 60000 });
+                const { data: airlineData, isLoading: isLoadingAirline } = useGetsearchAirlineQuery(schedule.airlineId, { refetchOnMountOrArgChange :true  });
+                const { data: flightData, isLoading: isLoadingFlight } = useGetsearchFlightQuery(schedule.flightId, { refetchOnMountOrArgChange: true });
 
                 if (isLoadingAirline || isLoadingFlight) return <ProfileShimmer key={index} />;
-                 
                 return (
                   <li key={index}>
                     <div className="mb-4 flex space-x-10 items-center" onMouseEnter={()=>fetchImageUrl(airlineData?.airline_data.airline_image_link)}>

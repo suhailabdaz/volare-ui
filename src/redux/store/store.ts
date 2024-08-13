@@ -11,6 +11,7 @@ import Heroslice from '../slices/HeroSlice';
 import { airlineApi } from '../apis/airlineApiSlice';
 import {userApi} from '../apis/userApiSlice'
 import {adminApi} from '../apis/adminApiSlice'
+import {authorityApi} from '../apis/authorityApiSlice'
 
 const persistConfiguration = {
   key: 'root',
@@ -29,6 +30,7 @@ const rootReducer = combineReducers({
   [airlineApi.reducerPath]: airlineApi.reducer, 
   [userApi.reducerPath]: userApi.reducer, 
   [adminApi.reducerPath]: adminApi.reducer, 
+  [authorityApi.reducerPath]: authorityApi.reducer, 
 });
 
 const persistedReducer = persistReducer(persistConfiguration, rootReducer);
@@ -42,7 +44,9 @@ const store = configureStore({
       },
     }).concat(airlineApi.middleware)
     .concat(userApi.middleware)
-    .concat(adminApi.middleware), 
+    .concat(adminApi.middleware)
+    .concat(authorityApi.middleware), 
+
 
 
 });

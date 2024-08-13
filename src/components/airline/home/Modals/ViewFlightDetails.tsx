@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
@@ -7,6 +7,7 @@ import { createAxios } from '../../../../services/axios/AirlineAxios';
 import { airlineEndpoints } from '../../../../services/endpoints/AirlineEndpoints';
 import { RootState } from '../../../../redux/store/store';
 import { setFlightDetails } from '../../../../redux/slices/airlineSlice';
+import ConfirmModal from './ConfirmModal';
 
 interface ProfileModalProps {
   closeModal: () => any;
@@ -35,6 +36,7 @@ const ViewFlightDetails: React.FC<ProfileModalProps> = ({
 
   flightId,
 }) => {
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const foundFlight = useSelector((state: RootState) => {
     const flights = state.AirlineAuth.fleet;
     if (!flights) return null;
@@ -84,7 +86,7 @@ const ViewFlightDetails: React.FC<ProfileModalProps> = ({
       );
       if (response.data.success) {
         dispatch(setFlightDetails(response.data.flights));
-        toast.success('Flight suspended');
+        toast.success('Flight status changed');
         closeModal();
       } else {
         toast.error('Task Failed');
@@ -104,10 +106,10 @@ const ViewFlightDetails: React.FC<ProfileModalProps> = ({
               Edit Flight Info
             </h2>
             <button
-              onClick={handleDelete}
+              onClick={()=>setShowConfirmModal(true)}
               className="border-2 border-white text-white p-1 font-bold hover:scale-105 transition-all ease-in-out duration-150"
             >
-              Suspend
+              {foundFlight?.status?'Suspend':'Unblock'}
             </button>
           </div>
           <Formik
@@ -240,6 +242,21 @@ const ViewFlightDetails: React.FC<ProfileModalProps> = ({
           </Formik>
         </div>
       </div>
+      {showConfirmModal && (
+        <ConfirmModal
+          message={`Are you sure you want to               ${
+            foundFlight?.status ? 'suspend' : 'Unblock'
+          }
+ this flight?`}
+          onConfirm={() => {
+            handleDelete();
+            setShowConfirmModal(false);
+          }}
+          onCancel={() => setShowConfirmModal(false)}
+          cancelLabel="Cancel"
+          confirmLabel="Continue"
+        />
+      )}
     </div>
   );
 };

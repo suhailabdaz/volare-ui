@@ -6,6 +6,7 @@ interface Airports {
   airport_name: string;
   city: string;
   country: string;
+  status:boolean;
 }
 
 interface Schedule {
@@ -16,7 +17,8 @@ interface Schedule {
   duration: string;
   departureTime: string;
   daysOfWeek: string[];
-  isSuspended: boolean;
+  status: boolean;
+  available:boolean
 }
 
 interface AuthorityState {

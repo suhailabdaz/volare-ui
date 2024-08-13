@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Formik, FormikHelpers, Form, Field, ErrorMessage } from 'formik';
+import {  useSelector } from 'react-redux';
+import { Formik, FormikHelpers, Field, ErrorMessage } from 'formik';
 import { toast } from 'sonner';
 import { useGetFlightsQuery,useSubmitScheduleMutation } from '../../../../redux/apis/airlineApiSlice';
 import { RootState } from '../../../../redux/store/store';
@@ -9,7 +9,6 @@ import * as Yup from 'yup';
 import { ArrowRightCircleIcon } from '@heroicons/react/24/outline';
 import bgimage from '../../../../assets/images/Black Purple Background ·①  WallpaperTag.jpeg';
 import { InformationCircleIcon } from '@heroicons/react/24/solid';
-import { log } from 'console';
 
 interface ProfileModalProps {
   closeModal: () => any;
@@ -30,10 +29,8 @@ interface InitialValues {
   to_code: string;
   flightId: string;
   economyPrice: string;
-  businessPrice: string;
-  firstClassPrice: string;
-  weekendIncrement: string;
-  premiumIncrement: string;
+  bussinessPrice: string;
+  firstclassPrice: string;
   airlineId:string;
   available:Boolean
 }
@@ -58,18 +55,12 @@ const ScheduleBooking: React.FC<ProfileModalProps> = ({
     economyPrice: Yup.number()
       .required('Economy price is required')
       .positive('Economy price must be a positive number'),
-    businessPrice: Yup.number()
+    bussinessPrice: Yup.number()
       .required('Business price is required')
       .positive('Business price must be a positive number'),
-    firstClassPrice: Yup.number()
+    firstclassPrice: Yup.number()
       .required('First class price is required')
       .positive('First class price must be a positive number'),
-    weekendIncrement: Yup.number()
-      .required('Weekend increment is required')
-      .positive('Weekend increment must be a positive number'),
-    premiumIncrement: Yup.number()
-      .required('Premium increment is required')
-      .positive('Premium increment must be a positive number'),
   });
 
   const initialValues: InitialValues = {
@@ -84,23 +75,17 @@ const ScheduleBooking: React.FC<ProfileModalProps> = ({
     flightId: selectedFlight || '',
     airlineId:airlineId || '',
     economyPrice: '',
-    businessPrice: '',
-    firstClassPrice: '',
-    weekendIncrement: '',
-    premiumIncrement: '',
+    bussinessPrice: '',
+    firstclassPrice: '',
     available:false
   };
 
-  const dispatch = useDispatch();
 
   const { data, isLoading, error } = useGetFlightsQuery(airlineId, {
     pollingInterval: 60000,
     refetchOnMountOrArgChange: true,
   });
   const [submitSchedule] = useSubmitScheduleMutation();
-
-  
-
 
   useEffect(() => {
     if (data) {
@@ -211,8 +196,13 @@ const ScheduleBooking: React.FC<ProfileModalProps> = ({
                         onChange={() =>
                           handleFlightSelect(flight._id, setFieldValue)
                         }
-                        className="form-radio text-white focus:outline-none"
+                        hidden
+                        
+                        className="form-radio text-white focus:outline-none peer"
                       />
+                      <div className='p-1 h-3 w-3 rounded-full bg-white peer-checked:bg-blue-500 border-2 border-white '>
+                            
+                      </div>
                       <label htmlFor={flight._id} className="text-lg">
                         {flight.flight_code}
                       </label>
@@ -221,7 +211,7 @@ const ScheduleBooking: React.FC<ProfileModalProps> = ({
                         onClick={() => handleInfo(flight._id)}
                         className="text-white"
                       >
-                        <InformationCircleIcon className="h-8 font-serif" />
+                        <InformationCircleIcon className="h-8 font-PlusJakartaSans" />
                       </button>
                     </div>
                   ))}
@@ -245,13 +235,13 @@ const ScheduleBooking: React.FC<ProfileModalProps> = ({
                     <div className="flex-1">
                       <Field
                         type="number"
-                        id="businessPrice"
-                        name="businessPrice"
-                        placeholder="Business Class Price"
+                        id="bussinessPrice"
+                        name="bussinessPrice"
+                        placeholder="Bussiness Class Price"
                         className="w-full p-2 border border-gray-300 rounded"
                       />
                       <ErrorMessage
-                        name="businessPrice"
+                        name="bussinessPrice"
                         component="div"
                         className="text-red-500 font-PlusJakartaSans text-sm"
                       />
@@ -261,8 +251,8 @@ const ScheduleBooking: React.FC<ProfileModalProps> = ({
                     <div className="flex-1">
                       <Field
                         type="number"
-                        id="firstClassPrice"
-                        name="firstClassPrice"
+                        id="firstclassPrice"
+                        name="firstclassPrice"
                         placeholder="First Class Price"
                         className="w-full p-2 border border-gray-300 rounded"
                       />
@@ -272,35 +262,9 @@ const ScheduleBooking: React.FC<ProfileModalProps> = ({
                         className="text-red-500 font-PlusJakartaSans text-sm"
                       />
                     </div>
-                    <div className="flex-1">
-                      <Field
-                        type="number"
-                        id="weekendIncrement"
-                        name="weekendIncrement"
-                        placeholder="Weekend Increment"
-                        className="w-full p-2 border border-gray-300 rounded"
-                      />
-                      <ErrorMessage
-                        name="weekendIncrement"
-                        component="div"
-                        className="text-red-500 font-PlusJakartaSans text-sm"
-                      />
-                    </div>
+                   
                   </div>
-                  <div className="flex-1">
-                    <Field
-                      type="number"
-                      id="premiumIncrement"
-                      name="premiumIncrement"
-                      placeholder="Premium Increment"
-                      className="w-full p-2 border border-gray-300 rounded"
-                    />
-                    <ErrorMessage
-                      name="premiumIncrement"
-                      component="div"
-                      className="text-red-500 font-PlusJakartaSans text-sm"
-                      />
-                  </div>
+        
                 </div>
                 <div className="flex justify-end space-x-5 mt-2">
                   <button

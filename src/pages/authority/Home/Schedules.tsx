@@ -5,13 +5,14 @@ import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import Select, { SingleValue } from 'react-select';
 import AuthNavbar from '../../../components/authority/home/AuthNavbar';
-import ProfileShimmer from '../../../components/user/Home/Shimmers/ProfileShimmer';
+import LoaderAuth from '../../../components/authority/home/LoaderAuth';
 import SchedulesList from '../../../components/authority/home/SchedulesList';
 import { RootState } from '../../../redux/store/store';
 import createAxios from '../../../services/axios/AuthorityAxios';
 import { authorityEndpoints } from '../../../services/endpoints/AuthorityEndpoints';
 import { setAirports } from '../../../redux/slices/authoritySlice';
 import cloudImage from '../../../assets/images/White aesthetic widget in 2022 _ Black and white clouds, White clouds, Cloud wallpaper.jpeg';
+import { ArrowsRightLeftIcon } from '@heroicons/react/24/outline';
 
 interface AirportOption {
   value: string;
@@ -54,7 +55,7 @@ function Schedules() {
   }, [authState, dispatch, airportsData]);
 
   if (isLoading) {
-    return <ProfileShimmer />;
+    return <LoaderAuth />;
   }
 
   const formatAirportOption = (airport: any): AirportOption => ({
@@ -73,11 +74,23 @@ function Schedules() {
   );
 
   const handleSubmit = (values: { fromAirport: AirportOption | null, toAirport: AirportOption | null }) => {
-    console.log('Submitting:', values); // Check the form values
     setSelectedFromAirport(values.fromAirport);
     setSelectedToAirport(values.toAirport);
-    setSearchTriggered(true); // Set searchTriggered to true on form submit
+    setSearchTriggered(true);
   };
+
+  const customStyles = {
+    option: (provided: any, state: any) => ({
+      ...provided,
+      backgroundColor: state.isFocused ? '#D1D5DB' : '#FFFFFF', 
+      color: state.isFocused ? '#000000' : '#000000', 
+    }),
+    control: (provided: any, state: any) => ({
+      ...provided,
+      borderColor: state.isFocused ? '#808080' : '#D1D5DB', 
+    }),
+  };
+  
 
   return (
     <div style={{ backgroundImage: `url(${cloudImage})`, backgroundSize: 'cover', height: '100vh' }}>
@@ -90,7 +103,8 @@ function Schedules() {
         >
           {({ setFieldValue, errors, touched }) => (
             <Form className='flex items-center justify-center space-x-4'>
-              <div className='border-2 border-black'>
+              <div>
+              <div className='border-2 w-[25vw] border-black'>
                 <Field
                   name="fromAirport"
                   component={({ field }: { field: any }) => (
@@ -103,16 +117,28 @@ function Schedules() {
                           setSelectedFromAirport(option);
                         }}
                         placeholder="Select From Airport"
+                        styles={customStyles}
                         isClearable
                       />
-                      {touched.fromAirport && errors.fromAirport && (
-                        <div className="text-red-600">{errors.fromAirport}</div>
-                      )}
+                     
                     </div>
                   )}
                 />
               </div>
-              <div className='border-2 border-black'>
+              {touched.fromAirport && errors.fromAirport && (
+                        <div className="text-red-600">{errors.fromAirport}</div>
+                      )}
+                      </div>
+                      <div className='flex items-center justify-center border-2 rounded-full border-black'>
+                        <button onClick={()=>{
+                          setFieldValue('fromAirport', selectedToAirport);
+                          setFieldValue('toAirport', selectedFromAirport);
+                          setSelectedFromAirport(selectedToAirport);
+                          setSelectedToAirport(selectedFromAirport);
+                        }}><ArrowsRightLeftIcon className='h-8 p-2'/></button>
+                      </div>
+              <div>
+              <div className='border-2 w-[25vw] border-black'>
                 <Field
                   name="toAirport"
                   component={({ field }: { field: any }) => (
@@ -125,15 +151,18 @@ function Schedules() {
                           setSelectedToAirport(option);
                         }}
                         placeholder="Select To Airport"
+                        styles={customStyles}
                         isClearable
                       />
-                      {touched.toAirport && errors.toAirport && (
-                        <div className="text-red-600">{errors.toAirport}</div>
-                      )}
+                     
                     </div>
                   )}
                 />
               </div>
+              {touched.toAirport && errors.toAirport && (
+                        <div className="text-red-600">{errors.toAirport}</div>
+                      )}
+                      </div>
               <button type="submit" className='px-2 py-1 mx-2 border-2 border-black font-bold text-lg'>
                 Search
               </button>

@@ -140,7 +140,7 @@ function HomeContent() {
               className="text-xl font-bold p-2 rounded-2xl border-2 border-white transition-all hover:scale-105 delay-100 duration-500"
             >
               <div className="flex  items-center space-x-2">
-                <span className='py-3 px-7'>Available Scchedules</span> <ArrowRightCircleIcon className="h-6" />{' '}
+                <span className='py-3 px-7'>Available Schedules</span> <ArrowRightCircleIcon className="h-6" />{' '}
               </div>
             </button>
           </div>

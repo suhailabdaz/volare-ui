@@ -82,7 +82,11 @@ const LoginModal= () => {
                     className="w-4/5 px-4 py-3 text-white rounded-lg font-PlayfairDisplay font-semibold bg-black hover:text-black hover:bg-white hover:border-2 hover:border-black transition-all ease-in-out delay-50 duration-500  hover:scale-105 "
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? 'Submitting...' : 'Continue'}
+                    {isSubmitting ?<div className="flex-col gap-4 w-full flex items-center justify-center">
+                        <div className="w-7 h-7 border-4 border-transparent text-gray-300 text-4xl animate-spin flex items-center justify-center border-t-gray-300 rounded-full">
+                          <div className="w-5 h-5 border-4 border-transparent text-gray-300 text-2xl animate-spin flex items-center justify-center border-t-gray-300 rounded-full"></div>
+                        </div>
+                      </div> : 'Continue'}
                   </button>
                 </div>
               </Form>

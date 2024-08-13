@@ -15,6 +15,7 @@ interface Airport {
   airport_name: string;
   city: string;
   country: string;
+  status:boolean;
 }
 
 function AirportList()  {
@@ -111,9 +112,10 @@ function AirportList()  {
                     <div className='ml-4 flex-1'>
                       <div className='font-bold text-base'>{airport.airport_name}</div>
                     </div>
-                    <div className='absolute right-8 flex items-start space-x-2 transition-all duration-300 delay-200'>
+                    <div className='absolute right-8 flex justify-end items-center space-x-2 transition-all duration-300 delay-200'>
                       <div className='text-base pr-28 font-semibold'>{airport.city}</div>
                       <div className='text-base pr-12 font-semibold'>{airport.country}</div>
+                      <div className='text-base pr-28 font-semibold'>{airport.status?'Active':'Suspended'}</div>
                       <button onClick={() => openModal('viewAirport', airport._id)}>
                         <span className='p-1 border border-black invisible text-base font-bold text-black-500 group-hover:visible'>View details</span>
                       </button>

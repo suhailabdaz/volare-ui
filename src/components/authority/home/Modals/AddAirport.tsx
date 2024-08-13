@@ -65,7 +65,7 @@ const AddAirport: React.FC<ProfileModalProps> = ({ closeModal }) => {
         values
       );
       if (response.data.success) {
-        toast.success('Saved Successfully');
+        toast.message('Saved Successfully');
         dispatch(setAirportDetails(response.data.airport));
         closeModal();
       } else {

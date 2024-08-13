@@ -27,7 +27,6 @@ const SeeFlight: React.FC<ProfileModalProps> = ({
   });
 
   const { data, isLoading, error } = useGetFlightsQuery(airlineId, {
-    pollingInterval: 60000,
     refetchOnMountOrArgChange: true,
   });
 

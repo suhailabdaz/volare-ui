@@ -43,7 +43,6 @@ function FreeSchedulesList() {
   const { data, isLoading, error } = useGetFreeSchedulesQuery(
     {},
     {
-      pollingInterval: 60000,
       refetchOnMountOrArgChange: true,
     }
   );
@@ -136,8 +135,8 @@ function FreeSchedulesList() {
           <div className="mt-8 text-gray-600 text-xs">
             <ul className="space-y-6">
             {data.map((schedule: any, index: number) => {
-  const fromAirport = getAirportById(schedule.fromAirport_Id);
-  const toAirport = getAirportById(schedule.toAirport_Id);
+            const fromAirport = getAirportById(schedule.fromAirport_Id);
+            const toAirport = getAirportById(schedule.toAirport_Id);
 
   return (
     <li key={schedule._id} className="mb-4 group">

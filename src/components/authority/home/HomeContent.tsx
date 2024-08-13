@@ -17,6 +17,10 @@ function HomeContent() {
         </button>
         <button onClick={()=>navigate('/authority/schedules')} className='text-xl font-bold p-2 border-2 border-black transition-all hover:scale-105 delay-100 duration-500'><div className='flex items-center space-x-2'><span>Schedules</span> <ArrowRightCircleIcon className='h-6'/>        </div>
         </button>
+        <button onClick={()=>navigate('/authority/airlines')} className='text-xl font-bold p-2 border-2 border-black transition-all hover:scale-105 delay-100 duration-500'><div className='flex items-center space-x-2'><span>Airlines</span> <ArrowRightCircleIcon className='h-6'/>        </div>
+        </button>
+        <button onClick={()=>navigate('/authority/flight-chart')} className='text-xl font-bold p-2 border-2 border-black transition-all hover:scale-105 delay-100 duration-500'><div className='flex items-center space-x-2'><span>Flight Chart</span> <ArrowRightCircleIcon className='h-6'/>        </div>
+        </button>
       </div>
   </div>
   )

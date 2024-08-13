@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
@@ -6,9 +6,9 @@ import { toast } from 'sonner';
 import { createAxios } from '../../../../services/axios/AuthorityAxios';
 import { authorityEndpoints } from '../../../../services/endpoints/AuthorityEndpoints';
 import { RootState } from '../../../../redux/store/store';
+import ConfirmModal from './ConfirModal';
 
 import {
-  removeAirport,
   setAirportDetails,
 } from '../../../../redux/slices/authoritySlice';
 
@@ -29,10 +29,10 @@ const validationSchema = Yup.object({
 
 const ViewAirport: React.FC<ProfileModalProps> = ({
   closeModal,
-  openModal,
   airportId,
 }) => {
-  const userAuth = useSelector((state: RootState) => state.UserAuth.userData);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+
 
   const foundAirport = useSelector((state: RootState) => {
     const travellers = state.AuthorityAuth.airports; // Access travellers array
@@ -77,12 +77,12 @@ const ViewAirport: React.FC<ProfileModalProps> = ({
 
   const handleDelete = async () => {
     if (foundAirport?._id) {
-      const response = await createAxios(dispatch).delete(
-        `${authorityEndpoints.deleteAirport}/${foundAirport._id}`
+      const response = await createAxios(dispatch).patch(
+        authorityEndpoints.deleteAirport,{ id: foundAirport._id } 
       );
       if (response.data.success) {
-        dispatch(removeAirport(response.data.airport));
-        toast.success('Traveller Removed');
+        dispatch(setAirportDetails(response.data.airport));
+        toast.message('Airport status changed');
         closeModal();
       } else {
         toast.error('Task Failed');
@@ -99,10 +99,10 @@ const ViewAirport: React.FC<ProfileModalProps> = ({
               Edit Airport Info
             </h2>
             <button
-              onClick={() => handleDelete()}
+              onClick={() => setShowConfirmModal(true)}
               className="border-2 border-black font-lg text-black text-base p-1 font-bold hover:scale-105 transition-all ease-in-out duration-150 "
             >
-              Delete
+              {foundAirport?.status?'Suspend':'Activate'}
             </button>
           </div>
 
@@ -200,7 +200,18 @@ const ViewAirport: React.FC<ProfileModalProps> = ({
                     </div>
                   </div>
                 </div>
-
+                {showConfirmModal && (
+                        <ConfirmModal
+                          message={`Are you sure you want to continue?`}
+                          onConfirm={() => {
+                            handleDelete();
+                            setShowConfirmModal(false);
+                          }}
+                          onCancel={() => setShowConfirmModal(false)}
+                          cancelLabel="Cancel"
+                          confirmLabel="Continue"
+                        />
+                      )}
                 <div className="sticky bottom-0 left-0 w-full bg-white py-4 px-8 border-t border-gray-300 flex justify-end space-x-4 ">
                   <button
                     type="button"
