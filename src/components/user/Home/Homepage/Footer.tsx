@@ -1,13 +1,16 @@
+import { Link } from "react-router-dom";
+import X from '../../../../assets/images/x-social-media-white-icon.png'
+import facebook from '../../../../assets/images/facebook-app-round-white-icon.png'
 
 function Footer() {
   return (
-    <footer className=" mt-4 bg-black h-20 text-white py-4">
-      <div className="mx-[20%] flex justify-between items-center">
-        <div>
-          <a href="#" className="text-blue-500 hover:text-blue-300 mr-4">Facebook</a>
-          <a href="#" className="text-blue-500 hover:text-blue-300">Twitter</a>
+    <footer className=" mt-6 bg-black h-full font-PlusJakartaSans1000 text-white">
+      <div className="mx-[13%] flex justify-between py-16 items-center">
+        <div className="flex space-x-10">
+          <Link to={'/profile'}><img src={X} className="h-8"/></Link>
+          <Link to={'/profile'}><img src={facebook} className="h-8"/></Link>
         </div>
-        <div>&copy; Volare</div>
+        <div className="">&copy;<span>2024 VOLARE PVT. LTD.</span> <br /> <span className="font-PlusJakartaSans font-bold text-sm text-right"> <span className="text-xs font-light">Country</span> INDIA, UAE, SPAIN, USA</span></div>
       </div>
     </footer>
   );

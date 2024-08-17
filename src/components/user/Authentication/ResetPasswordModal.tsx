@@ -1,15 +1,12 @@
-import React, { useState } from 'react';
-import { useDispatch,useSelector } from 'react-redux';
+import React from 'react';
+import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
-import { XMarkIcon } from '@heroicons/react/24/solid'; 
 import { ErrorMessage, Field, Form, Formik } from 'formik';
-import { Toaster, toast } from 'sonner';
-import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
+import {  toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { createAxios } from "../../../services/axios/UserAxios";
 import { userEndpoints } from '../../../services/endpoints/UserEndpoints';
-import { login as userLogin } from '../../../redux/slices/userSlice';
-import password from '../../../assets/images/change-password-icon.png'
+import password from '../../../assets/images/change-password-icon.png';
 
 interface SignupModalProps {
   closeModal: () => any,

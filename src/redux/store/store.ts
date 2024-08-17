@@ -47,8 +47,6 @@ const store = configureStore({
     .concat(adminApi.middleware)
     .concat(authorityApi.middleware), 
 
-
-
 });
 
 export const persistor = persistStore(store);

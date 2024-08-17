@@ -57,7 +57,7 @@ const FromAirportSearch: React.FC<ModalProps> = ({ closeModal }) => {
     : [];
 
   return (
-    <div className="relative">
+    <div className="relative z-50">
       <div className="absolute -bottom-32 left-6 w-[300px]   bg-white rounded-lg p-4 shadow-custom_shadow" ref={modalRef}>
         <div className="modal-body">
           <input

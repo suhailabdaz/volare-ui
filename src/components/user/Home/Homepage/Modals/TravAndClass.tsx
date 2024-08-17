@@ -51,7 +51,7 @@ const TravAndClass: React.FC<ModalProps> = ({ closeModal }) => {
   };
 
   return (
-    <div className="relative font-PlusJakartaSans">
+    <div className="relative z-50 font-PlusJakartaSans">
       <div
         className="absolute -bottom-32 right-6 w-[600px]   bg-white rounded-lg p-4 shadow-custom_shadow"
         ref={modalRef}

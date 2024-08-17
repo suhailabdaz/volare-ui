@@ -1,11 +1,8 @@
-import { useEffect, useState } from 'react';
 import FilterSort from '../../../components/user/Home/SearchResults/FilterSort';
 import FlightResults from '../../../components/user/Home/SearchResults/FlightResults';
-import ProfileShimmer from '../../../components/user/Home/Shimmers/ProfileShimmer';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../redux/store/store';
-import { toast } from 'sonner';
-import { useDispatch } from 'react-redux';
+import SearchBar from '../../../components/user/Home/SearchResults/SearchBar';
+import Image from '../../../assets/images/Premium Vector _ Abstract gradient purple and blue background.jpeg'
+
 import PrNavbar from '../../../components/user/Home/Homepage/PrNavbar';
 
 function SearchResults() {
@@ -13,7 +10,10 @@ function SearchResults() {
   return (
     <div className="bg-[#F6F6F6] min-h-screen">
       <PrNavbar />
-      <div className="flex mx-[11%]">
+      <img src={Image} className='w-full h-[40vh] absolute z-0 opacity-95' />
+      <SearchBar/> 
+
+      <div className="z-10 relative flex mx-[11%]">
         <div className="w-1/4 ">
           <FilterSort />
         </div>

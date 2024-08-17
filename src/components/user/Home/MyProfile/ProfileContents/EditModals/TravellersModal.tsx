@@ -54,7 +54,7 @@ const TravellerModal: React.FC<ProfileModalProps> = ({ closeModal, openModal }) 
   const onSubmit = async (values: typeof initialValues, { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }) => {
     try {
       console.log(userId, "usreid");
-      const response = await createAxios().post(userEndpoints.addTraveller, values);
+      const response = await createAxios(dispatch).post(userEndpoints.addTraveller, values);
       if(response.data.success){
         toast.success("Saved Suceesfully")
         dispatch(setTravellerDetails(response.data.traveller))

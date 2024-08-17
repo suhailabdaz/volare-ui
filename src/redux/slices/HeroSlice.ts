@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { validateHeroState } from '../validation/HeroValidation'; // Adjust the import path
+import { validateHeroState } from '../validation/HeroValidation'; 
 
 interface Airport {
   _id: string;
@@ -10,8 +10,8 @@ interface Airport {
 }
 
 interface DepartureDateState {
-  date: Date | null;
-  weekday: string;
+  date: string | null;
+  weekday:string | null
 }
 
 interface TravellersState {
@@ -42,12 +42,12 @@ const initialState: HeroState = {
   fromAirport: null,
   toAirport: null,
   departureDate: {
-    date: today,
+    date:today.toISOString(),
     weekday: today.toLocaleDateString('en-US', { weekday: 'long' }),
   },
   returnDate: {
     date: null,
-    weekday: '',
+    weekday: ''
   },
   travellers: {
     total: 1,

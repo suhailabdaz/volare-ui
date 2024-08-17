@@ -66,12 +66,11 @@ function Hero() {
   const handleReturnDateChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    console.log(event.target.value);
 
     if (event.target.value == '') {
       const today = new Date();
       dispatch(setReturnDate({
-        date: today,
+        date: today.toISOString(),
         weekday: today.toLocaleDateString('en-US', { weekday: 'long' }),
       }));
     }
@@ -79,14 +78,13 @@ function Hero() {
     const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
 
     dispatch(setReturnDate({
-      date: date,
+      date: date.toISOString(),
       weekday: weekday,
     }));
   };
 
   const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let date = new Date(event.target.value);
-    
     if (isNaN(date.getTime())) {
       date = new Date(); 
     }
@@ -94,11 +92,10 @@ function Hero() {
     const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
   
     dispatch(setDepartureDate({
-      date: date,
+      date: date.toISOString(),
       weekday: weekday,
     }));
   };
-  
 
   const swap = () => {
     dispatch(setFromAirport(toAirport));
@@ -133,8 +130,10 @@ function Hero() {
     const submitFormIfValid = async () => {
       if (!hasErrors && shouldSubmit) {
         try {
-          navigate(`/search/${fromAirport?._id}/${toAirport?._id}/${departureDate?.weekday}`);
-        } catch (error) {
+          navigate(
+            `/search/${fromAirport?._id}/${toAirport?._id}/${departureDate?.date}/${classState}/${travellers.adults}/${travellers.children}/${travellers.infants}`
+          );
+                } catch (error) {
           toast.error('error occured');
         } finally {
           setShouldSubmit(false); 
@@ -151,23 +150,23 @@ function Hero() {
   const handleSubmit = async (e:React.FormEvent) => {
     e.preventDefault();
     dispatch(validateState());
-    setShouldSubmit(true); // Indicate that form submission should be attempted
+    setShouldSubmit(true); 
 
   };
 
  
 
-  const formatDate = (date: Date | null): string => {
-    if (!date) return '';
+  const formatDate = (dateString: string | null): string => {
+    if (!dateString) return '';
   
-    const validDate = new Date(date);
-    if (isNaN(validDate.getTime())) {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
       throw new Error('Invalid date');
     }
   
-    const day = validDate.toLocaleDateString('en-US', { day: 'numeric' });
-    const month = validDate.toLocaleDateString('en-US', { month: 'short' });
-    const year = validDate.toLocaleDateString('en-US', { year: '2-digit' });
+    const day = date.getDate();
+    const month = date.toLocaleString('en-US', { month: 'short' });
+    const year = date.getFullYear().toString().substr(-2);
   
     return `
       <span class="text-black text-3xl m-1 font-PlusJakartaSans1000">${day}</span>
@@ -175,7 +174,6 @@ function Hero() {
       <span class="text-black text-xl">${year}</span>
     `;
   };
-  
 
   return (
     <div className="mx-[13%] mt-8 p-6 pb-24 font-PlusJakartaSans ">

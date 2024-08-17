@@ -63,12 +63,13 @@ export const userApi = createApi({
       providesTags: ['searchAirports'],
     }),
     getSearchSchedules: builder.query({
-      query:(params: { from: string; to: string; weekday: string }) => ({
+      query:(params: { from: string; to: string; date: string;}) => ({
         url: '/api/v1/authority/search-schedules',
         method: 'GET',
         params,
       }),
       providesTags: ['searchSchedules'],
+      
     }),
     getsearchAirline: builder.query({
       query: (id:string) => ({
@@ -79,14 +80,14 @@ export const userApi = createApi({
       providesTags: ['searchAirline'],
     }),
     getsearchFlight: builder.query({
-      query: (id:string) => ({
-        url: '/api/v1/airline/get-flight',
+      query: () => ({
+        url: '/api/v1/airline/all-flights',
         method: 'GET',
-        params: { id },
       }),
       providesTags: ['searchAirline'],
     }),
   }),
+  
 })
 
 

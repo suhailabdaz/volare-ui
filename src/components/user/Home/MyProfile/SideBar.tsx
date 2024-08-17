@@ -16,6 +16,7 @@ import { createAxios } from '../../../../services/axios/UserAxios';
 import { userEndpoints } from '../../../../services/endpoints/UserEndpoints';
 import { RootState } from '../../../../redux/store/store';
 import { airlineEndpoints } from '../../../../services/endpoints/AirlineEndpoints';
+import userApi from '../../../../redux/apis/userApiSlice';
 
 function Sidebar() {
   const [currentOption, setCurrentOption] = useState<string>('profile');
