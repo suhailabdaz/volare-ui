@@ -1,34 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
-import {  toast } from 'sonner';
-import { createAxios } from "../../../../../../services/axios/UserAxios";
-import { userEndpoints } from '../../../../../../services/endpoints/UserEndpoints';
-import { RootState } from '../../../../../../redux/store/store';
-import {setTravellerDetails} from '../../../../../../redux/slices/travellersSlice'
-import { removeTraveller } from '../../../../../../redux/slices/travellersSlice';
-import DeleteButton from '../../../../../buttons/DeleteButton';
+import { Toaster, toast } from 'sonner';
+import { createAxios } from "../../../../../services/axios/UserAxios";
+import { userEndpoints } from '../../../../../services/endpoints/UserEndpoints';
+import { RootState } from '../../../../../redux/store/store';
+import { userProfileDetails } from '../../../../../redux/slices/profileSlice';
+import { userProfileDetails as authProfile } from '../../../../../redux/slices/userSlice';
+import {setTravellerDetails} from '../../../../../redux/slices/travellersSlice'
 
 interface ProfileModalProps {
   closeModal: () => any,
   openModal: (modalName: string) => any
-  travellerId : string
 }
-interface TravellerFormValues {
-  firstName: string;
-  lastName: string;
-  gender: string;
-  dateOfBirth: string; // Assuming date is stored as a string, adjust according to actual usage
-  nationality: string;
-  mealPreference: string;
-  passportNo: string;
-  passportNationality: string;
-  passportExpiry: Date; // Yup.date() corresponds to a Date object in TypeScript
-  phone: string;
-  email: string;
-}
-
 
 const validationSchema = Yup.object({
   firstName: Yup.string().required("First name required"),
@@ -44,44 +29,35 @@ const validationSchema = Yup.object({
   email: Yup.string().email("Invalid email").required("required")
 });
 
-const ViewTraveller: React.FC<ProfileModalProps> = ({ closeModal, openModal,travellerId }) => {
+const TravellerModal: React.FC<ProfileModalProps> = ({ closeModal, openModal }) => {
   const userData = useSelector((state: RootState) => state.ProfileAuth.userData);
   const userAuth = useSelector((state: RootState) => state.UserAuth.userData);
-  const [fetchedTraveller, setFetchedTraveller] = useState(null);
-  const [isLoading, setIsLoading] = useState(false); // Optional loading state
-
-  const foundTraveller = useSelector((state: RootState) => {
-    const travellers = state.TravellerAuth.travellers; // Access travellers array
-    if (!travellers) return null; // Handle empty array case
-  
-    return travellers.find((traveller:any) => traveller._id === travellerId);
-  }); 
-
+  const userId = userAuth?._id;
 
   var initialValues = {
-  userId : foundTraveller?.userId || "",
-  firstName: foundTraveller?.firstName || "",
-  lastName: foundTraveller?.lastName || "",
-  gender: foundTraveller?.gender || "",
-  dateOfBirth: foundTraveller?.dateOfBirth || "",
-  nationality: foundTraveller?.nationality || "",
-  mealPreference: foundTraveller?.mealPreference || "",
-  passportNo: foundTraveller?.passportNo || "",
-  passportNationality: foundTraveller?.passportNationality || "",
-  passportExpiry: foundTraveller?.passportExpiry || "",
-  phone: foundTraveller?.phone || "",
-  email:foundTraveller?.email || "",
-  _id:foundTraveller?._id
+    userId : userId,
+    firstName: "",
+    lastName: "",
+    gender: "",
+    dateOfBirth: "",
+    nationality: "",
+    mealPreference: "",
+    passportNo: "",
+    passportNationality: "",
+    passportExpiry: "",
+    phone: "",
+    email: ""
   }
 
   const dispatch = useDispatch();
 
   const onSubmit = async (values: typeof initialValues, { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }) => {
     try {
-      const response = await createAxios(dispatch).post(userEndpoints.saveTravellers, values);
+      console.log(userId, "usreid");
+      const response = await createAxios(dispatch).post(userEndpoints.addTraveller, values);
       if(response.data.success){
         toast.success("Saved Suceesfully")
-        dispatch(setTravellerDetails(response.data.travellers))
+        dispatch(setTravellerDetails(response.data.traveller))
         closeModal()
       }else{
         toast.error(response.data.message)
@@ -93,26 +69,13 @@ const ViewTraveller: React.FC<ProfileModalProps> = ({ closeModal, openModal,trav
       setSubmitting(false);
     }
   };
-  const handleDelete = async()=>{
-    if(foundTraveller?._id){
-      const response = await createAxios(dispatch).delete(`${userEndpoints.deleteTraveller}/${foundTraveller._id}`);
-      if(response.data.success){
-        dispatch(removeTraveller(response.data.traveller))
-        toast.success("Traveller Removed")
-        closeModal()
-      }else{
-        toast.error("Task Failed")
-      }
-    }
-  }
 
   return (
     <>
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50">
         <div className="bg-white px-8 py-6 shadow-lg w-[50%] rounded-lg max-h-[80%] overflow-hidden">
-          <div className='flex justify-between items-center mb-4 mt-2'>
-            <h2 className="text-3xl text-left font-PlusJakartaSans font-bold">Edit Traveller Info</h2>
-            <DeleteButton handleDelete={handleDelete} />
+          <div className='flex justify-between items-center mb-4'>
+            <h2 className="text-3xl text-left font-PlusJakartaSans font-bold">Add Traveller Info</h2>
           </div>
           
           <div className=" m-1 font-PlusJakartaSans font-bold text-lg flex justify-normal items-center mb-6 ">
@@ -311,4 +274,4 @@ const ViewTraveller: React.FC<ProfileModalProps> = ({ closeModal, openModal,trav
   );
 };
 
-export default ViewTraveller;
+export default TravellerModal;

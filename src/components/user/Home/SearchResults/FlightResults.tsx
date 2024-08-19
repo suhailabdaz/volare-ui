@@ -68,13 +68,17 @@ function Content() {
     }
   );
 
-  const { data: airlineDetails } = useGetAirlinesQuery('airline', {
+  const { data: airlineDetails, isLoading: airlineLoading, error: airlineError } = useGetAirlinesQuery('airline', {
     refetchOnMountOrArgChange: true,
+    pollingInterval: 6000
   });
-  const { data: flightDetails } = useGetsearchFlightQuery(
+  console.log('Airline Query:', { data: airlineDetails, isLoading: airlineLoading, error: airlineError });
+  
+  const { data: flightDetails, isLoading: flightLoading, error: flightError } = useGetsearchFlightQuery(
     {},
-    { refetchOnMountOrArgChange: true }
+    { refetchOnMountOrArgChange: true, pollingInterval: 6000 }
   );
+  console.log('Flight Query:', { data: flightDetails, isLoading: flightLoading, error: flightError });
 
   useEffect(() => {
     const fetchImages = async () => {

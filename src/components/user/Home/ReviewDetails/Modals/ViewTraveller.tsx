@@ -3,12 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import {  toast } from 'sonner';
-import { createAxios } from "../../../../../../services/axios/UserAxios";
-import { userEndpoints } from '../../../../../../services/endpoints/UserEndpoints';
-import { RootState } from '../../../../../../redux/store/store';
-import {setTravellerDetails} from '../../../../../../redux/slices/travellersSlice'
-import { removeTraveller } from '../../../../../../redux/slices/travellersSlice';
-import DeleteButton from '../../../../../buttons/DeleteButton';
+import { createAxios } from "../../../../../services/axios/UserAxios";
+import { userEndpoints } from '../../../../../services/endpoints/UserEndpoints';
+import { RootState } from '../../../../../redux/store/store';
+import {setTravellerDetails} from '../../../../../redux/slices/travellersSlice'
+import { removeTraveller } from '../../../../../redux/slices/travellersSlice';
+import DeleteButton from '../../../../buttons/DeleteButton';
 
 interface ProfileModalProps {
   closeModal: () => any,
@@ -108,7 +108,7 @@ const ViewTraveller: React.FC<ProfileModalProps> = ({ closeModal, openModal,trav
 
   return (
     <>
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50">
         <div className="bg-white px-8 py-6 shadow-lg w-[50%] rounded-lg max-h-[80%] overflow-hidden">
           <div className='flex justify-between items-center mb-4 mt-2'>
             <h2 className="text-3xl text-left font-PlusJakartaSans font-bold">Edit Traveller Info</h2>

@@ -131,7 +131,7 @@ function Hero() {
       if (!hasErrors && shouldSubmit) {
         try {
           navigate(
-            `/search/${fromAirport?._id}/${toAirport?._id}/${departureDate?.date}/${classState}/${travellers.adults}/${travellers.children}/${travellers.infants}`
+            `/search/${fromAirport?._id}/${toAirport?._id}/${departureDate?.date}/${classState}/${travellers.adults}/${travellers.children}/${travellers.infants}/${selectedValue}`
           );
                 } catch (error) {
           toast.error('error occured');

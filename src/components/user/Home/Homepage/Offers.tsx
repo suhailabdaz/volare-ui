@@ -20,7 +20,7 @@ function Offers() {
   const dispatch = useDispatch();
   const [offerType, setOfferType] = useState('All');
   const [coupons, setCoupons] = useState<Coupon[]>([]);
-  const [images, setImages] = useState<{ [key: string]: string }>({}); // Store images with coupon IDs
+  const [images, setImages] = useState<{ [key: string]: string }>({});
 
   const { data, isLoading, error } = useGetCouponsQuery({});
 
@@ -30,7 +30,7 @@ function Offers() {
         airlineEndpoints.getImageLink,
         { params: { key:imageLink } }
       );
-      return response.data; // Adjust according to your actual image path
+      return response.data; 
     } catch (error) {
       console.error("Error fetching image:", error);
       throw error;

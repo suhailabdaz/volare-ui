@@ -31,8 +31,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ closeModal,openModal}) => {
 
   const onSubmit = async (value: typeof initialEmail, { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }) => {
     try {
-      console.log("login submit");
-      const response = await createAxios().post(userEndpoints.checkAccount,value);
+      const response = await createAxios(dispatch).post(userEndpoints.checkAccount,value);
       if (response.data.success) {
         sessionStorage.setItem('userEmail', response.data.email);
         if(response.data.created){
@@ -58,7 +57,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ closeModal,openModal}) => {
     const { credential } = credentialResponse;
     console.log("credentials in handle login",credential);
     try {
-      const response = await createAxios().post(userEndpoints.google_login, { credential });
+      const response = await createAxios(dispatch).post(userEndpoints.google_login, { credential });
 
       if (response.data.success) {
         localStorage.setItem("accessToken",response.data.accessToken)

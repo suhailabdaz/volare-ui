@@ -30,7 +30,7 @@ function Navbar() {
 
 
   return (
-    <div className="  shadow-xl  pt-6 pb-3 bg-transparent ">
+    <div className="  shadow-xl  pt-6 pb-3 bg-white ">
       <div className=" mx-[11%] flex justify-between items-center  text-black ">
         
         <Link to='/'>

@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import handlug from '../../../../../assets/images/baggage.png';
 import perslug from '../../../../../assets/images/school-bag.png';
 import luggage from '../../../../../assets/images/luggage (1).png';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import Tooltip from './ToolTip';
+import { useInitiateBookingMutation } from '../../../../../redux/apis/userApiSlice';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../../../redux/store/store';
 
 interface ModalProps {
   closeModal: () => any;
@@ -29,11 +32,16 @@ const TicketTypes: React.FC<ModalProps> = ({
   const [error, setError] = useState<Record<string, boolean>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const params = useParams();
+  const [createBooking, { isLoading }] = useInitiateBookingMutation();
+  const navigate = useNavigate();
+  const userData = useSelector((state: RootState) => state.ProfileAuth.userData);
+
+
 
   const adults = params.adults ? parseInt(params.adults, 10) : 0;
   const children = params.children ? parseInt(params.children, 10) : 0;
-
-  // Calculate total passengers
+  const infants = params.infants ? parseInt(params.infants, 10) : 0;
+  
   const totalPassenger = adults + children;
 
   const formatDate = (dateString: string): string => {
@@ -43,7 +51,7 @@ const TicketTypes: React.FC<ModalProps> = ({
       day: 'numeric',
       month: 'short',
     };
-    return date.toLocaleDateString('en-GB', options); // 'en-GB' ensures the month abbreviation (Sep) format
+    return date.toLocaleDateString('en-GB', options); 
   };
 
   const basePrice =
@@ -74,14 +82,32 @@ const formattedPrice = totalPriceWithExtras
     })
   : 'N/A';
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setIsSubmitting(true);
+    const bookingData = {
+      userId: userData?._id, 
+      flightChartId: scheduleData._id,
+      totalPrice: totalPriceWithExtras,
+      travelClass: params.class,
+      travellerType:{
+        adults:adults,
+        children:children,
+        infants:infants
+      },
+      fareBreakdown:{
+        baseFare:totalPriceBeforeExtras,
+        taxAmount:taxprice,
+        chargesAmount:chargeprice
+      },
+      fareType:params.fareType || "Regular"
+    };
 
-    // Simulate submission logic
-    setTimeout(() => {
-      setIsSubmitting(false);
-      closeModal(); // Close modal after submission
-    }, 2000); // Example submission delay
+    const result = await createBooking(bookingData).unwrap();
+    if(result && result._id){
+      navigate(`/review-details/${result._id}`)
+    }
+    setIsSubmitting(false);
+    
   };
 
   const formatDuration = (duration: string): string => {

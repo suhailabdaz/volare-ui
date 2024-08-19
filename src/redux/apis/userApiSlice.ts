@@ -50,10 +50,16 @@ const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
   return result;
 };
 
+const invalidateTagAfterDelay = (tag: any, delay: number) => {
+  setTimeout(() => {
+    userApi.util.invalidateTags([tag]);
+  }, delay);
+};
+
 export const userApi = createApi({
   reducerPath: 'userApi',
   baseQuery: baseQueryWithReauth,
-  tagTypes: ['searchAirports','searchSchedules','searchAirline'],
+  tagTypes: ['searchAirports','searchSchedules','searchAirline','searchFlights','searchBooking'],
   endpoints: (builder) => ({
     getsearchAirports: builder.query({
       query: () => ({
@@ -69,7 +75,6 @@ export const userApi = createApi({
         params,
       }),
       providesTags: ['searchSchedules'],
-      
     }),
     getsearchAirline: builder.query({
       query: (id:string) => ({
@@ -78,13 +83,54 @@ export const userApi = createApi({
         params: { id },
       }),
       providesTags: ['searchAirline'],
+      async onQueryStarted(arg, { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          invalidateTagAfterDelay('searchAirline', 30000);
+        } catch {}
+      },
     }),
     getsearchFlight: builder.query({
       query: () => ({
         url: '/api/v1/airline/all-flights',
         method: 'GET',
       }),
-      providesTags: ['searchAirline'],
+      providesTags: ['searchFlights'],
+      async onQueryStarted(arg, { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          invalidateTagAfterDelay('searchAirline', 30000);
+        } catch {}
+      },
+    }),
+    initiateBooking: builder.mutation({
+      query: (booking) => ({
+        url: '/api/v1/booking/initiate-booking',
+        method: 'POST',
+        body: booking,
+      }),
+    }),
+    getBooking: builder.query({
+      query: (id:string) => ({
+        url: '/api/v1/booking/get-booking',
+        method: 'GET',
+        params:{id}
+      }),
+      providesTags: ['searchBooking'],
+    }),
+    updateBooking: builder.mutation({
+      query: ({ bookingId, travellers }) => ({
+        url: `/api/v1/booking/update-booking/${bookingId}`,
+        method: 'POST',
+        body: travellers,
+      }),
+    }),
+    getChartedFlight: builder.query({
+      query: (id:string) => ({
+        url: '/api/v1/authority/get-chartedFlight',
+        method: 'GET',
+        params:{id}
+      }),
     }),
   }),
   
@@ -96,6 +142,11 @@ export const {
   useGetsearchAirportsQuery,
   useGetSearchSchedulesQuery,
   useGetsearchAirlineQuery,
-  useGetsearchFlightQuery
+  useGetsearchFlightQuery,
+  useInitiateBookingMutation,
+  useGetBookingQuery,
+  useGetChartedFlightQuery,
+  useUpdateBookingMutation
+  
 } = userApi;
 export default userApi;

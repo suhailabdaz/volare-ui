@@ -25,7 +25,7 @@ function MyProfilePage() {
     const fetchTravellersData = async()=>{
       try{
           if(userState && (!travellersData || travellersData.length===0)){
-            const response = await createAxios().get(userEndpoints.getTravellers, {
+            const response = await createAxios(dispatch).get(userEndpoints.getTravellers, {
               params: { id: userState._id }
             });
             console.log(response.data.travellers);
@@ -41,7 +41,7 @@ function MyProfilePage() {
     const fetchUserData = async () => {
       try {
         if (userState && !userData) {
-          const response = await createAxios().get(userEndpoints.getUser, {
+          const response = await createAxios(dispatch).get(userEndpoints.getUser, {
             params: { id: userState._id }
           });
           dispatch(Profile(response.data));

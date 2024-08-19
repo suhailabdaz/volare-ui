@@ -44,7 +44,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ closeModal,openModal}) => {
   const onSubmit = async (values: typeof initialValues, { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }) => {
     try {
       console.log(userId,"usreid");
-      const response = await createAxios().post(userEndpoints.updateUser,{values:values , id:userId});
+      const response = await createAxios(dispatch).post(userEndpoints.updateUser,{values:values , id:userId});
       console.log("user",response);
       
       if (response.data.success) {
