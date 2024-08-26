@@ -142,7 +142,7 @@ const FlightDetails: React.FC<DataProps> = ({ flightChartId,fareType,bookingClas
       year: 'numeric',
       month: 'short',
       day: 'numeric',
-      weekday: 'short', // Adds the first three letters of the day (e.g., 'Mon', 'Tue')
+      weekday: 'short', 
     });
   };
 

@@ -47,34 +47,43 @@ function FareSummary({
       
       <div className="flex font-bold text-sm justify-between items-center w-full">
       <label className='flex justify-start items-center '><PlusCircleIcon className='mr-2 h-4'/>Base Fare</label>
+      <div className='flex justify-end'>
       <input
           type="number"
           value={fareBreakdown.baseFare.toFixed(2)}
           onChange={(e) => updateFare('baseFare', parseFloat(e.target.value))}
-          className="w-1/4" // Adjust width as needed
+          className="w-2/4" 
         />
+      </div>
+     
       </div>
       
       <div className="flex font-bold text-sm justify-between items-center w-full">
-        <label className='flex justify-start items-center '><PlusCircleIcon className='mr-2 h-4'/>Tax Amount</label>
+        <label className='flex justify-start items-center '><PlusCircleIcon className='mr-2 h-4'/>Tax</label>
+        <div className='flex justify-end'>
         <input
           type="number"
           value={fareBreakdown.taxAmount.toFixed(2)}
           onChange={(e) => updateFare('taxAmount', parseFloat(e.target.value))}
-          className="w-1/4"
+          className="w-2/4"
         />
+        </div>
+        
       </div>
       
       <div className="flex font-bold text-sm justify-between items-center w-full border-b border-gray-800 pb-3">
       <label className='flex justify-start items-center '><PlusCircleIcon className='mr-2 h-4'/>Charges</label>
+      <div className='flex justify-end'>
       <input
           type="number"
           value={fareBreakdown.chargesAmount.toFixed(2)}
           onChange={(e) =>
             updateFare('chargesAmount', parseFloat(e.target.value))
           }
-          className="w-1/4"
+          className="w-2/4"
         />
+      </div>
+      
       </div>
 
       <div className="mt-3 flex font-PlusJakartaSans1000 justify-between items-center w-full">

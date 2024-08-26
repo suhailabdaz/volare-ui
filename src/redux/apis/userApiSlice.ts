@@ -132,6 +132,14 @@ export const userApi = createApi({
         params:{id}
       }),
     }),
+
+    updateBookingSeats: builder.mutation({
+      query: ({ bookingId, seats }) => ({
+        url: `/api/v1/booking/update-seats/${bookingId}`,
+        method: 'POST',
+        body: seats,
+      }),
+    }),
   }),
   
 })
@@ -146,7 +154,8 @@ export const {
   useInitiateBookingMutation,
   useGetBookingQuery,
   useGetChartedFlightQuery,
-  useUpdateBookingMutation
+  useUpdateBookingMutation,
+  useUpdateBookingSeatsMutation
   
 } = userApi;
 export default userApi;

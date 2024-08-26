@@ -97,7 +97,11 @@ function ReviewDetails() {
     data: bookingData,
     isLoading,
     error,
-  } = useGetBookingQuery(params.bookingId || '');
+  } = useGetBookingQuery(params.bookingId || '',{
+    refetchOnMountOrArgChange:true
+  });
+
+  
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -119,7 +123,7 @@ function ReviewDetails() {
           />
         </div>
         <div className="relative z-10 ">
-          <div className="flex justify-between mx-[11%] pt-8 sticky top-0    text-white ">
+          <div className="flex justify-between mx-[11%] pt-8    text-white ">
             <h2 className="text-2xl font-PlusJakartaSans1000">
               Complete your Booking
             </h2>
@@ -153,7 +157,7 @@ function ReviewDetails() {
                 CONTINUE
               </button>{' '}    
             </div>
-            <div className="w-1/4 sticky top-20 h-full">
+            <div className="w-1/4 sticky top-12 h-full">
               <FareSummary
                 initialFareBreakdown={bookingData.fareBreakdown}
                 initialTotalPrice={bookingData.totalPrice}
