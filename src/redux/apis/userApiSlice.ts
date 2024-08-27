@@ -75,6 +75,12 @@ export const userApi = createApi({
         params,
       }),
       providesTags: ['searchSchedules'],
+      async onQueryStarted(arg, { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          invalidateTagAfterDelay('searchSchedules', 10000);
+        } catch {}
+      },
     }),
     getsearchAirline: builder.query({
       query: (id:string) => ({
@@ -99,7 +105,7 @@ export const userApi = createApi({
       async onQueryStarted(arg, { queryFulfilled }) {
         try {
           await queryFulfilled;
-          invalidateTagAfterDelay('searchAirline', 30000);
+          invalidateTagAfterDelay('searchFlights', 10000);
         } catch {}
       },
     }),

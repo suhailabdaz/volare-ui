@@ -62,10 +62,11 @@ function Banner() {
     <div className="mx-[20%] my-12  text-black text-center rounded">
       <Carousel
         autoPlay
-        interval={5000}
+        interval={10000}
         infiniteLoop
         showThumbs={false}
         showStatus={false}
+        showIndicators={false} 
         className="w-full"
       >
         {data.map((banner: BannerData, index: number) => (

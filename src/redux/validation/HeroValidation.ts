@@ -19,7 +19,7 @@ export const validateHeroState = (state: HeroState): boolean => {
   }
 
   // Check if return date is in the past
-  if (state.returnDate.date) {
+  if (state.returnDate?.date) {
     const returnDate = new Date(state.returnDate.date);
     if (returnDate < today) {
       errors.push('The return date cannot be in the past.');
@@ -27,7 +27,7 @@ export const validateHeroState = (state: HeroState): boolean => {
   }
 
   // Check if return date is required but not provided
-  if (state.tripType === 'roundTrip' && !state.returnDate.date) {
+  if (state.tripType === 'roundTrip' && !state.returnDate?.date) {
     errors.push('A return date is required for round trips.');
   }
 

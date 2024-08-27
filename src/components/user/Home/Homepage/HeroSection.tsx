@@ -104,7 +104,9 @@ function Hero() {
 
   const handleTripTypeChange = (e: ChangeEvent<HTMLInputElement>) => {
     dispatch(setTripType(e.target.value as 'oneWay' | 'roundTrip'));
-
+    if(e.target.value == 'oneWay'){
+      dispatch(setReturnDate(null))
+    }
   };
 
   const handleParentDivClick = () => {
@@ -321,7 +323,7 @@ function Hero() {
                   style={{ opacity: 0, position: 'absolute', zIndex: -1 }}
                 />
                 <div className="mt-2 text-gray-700">
-                  {returnDate.date ? (
+                  {returnDate?.date ? (
                     <div className="items-center">
                       <div
                         dangerouslySetInnerHTML={{

@@ -105,14 +105,7 @@ function Offers() {
           >
             Flights
           </button>
-          <button
-            onClick={() => setOfferType('Hotels')}
-            className={` rounded ${
-              offerType === 'Hotels' ? ' text-purple-600 font-PlusJakartaSans1000' : 'text-gray-600'
-            }`}
-          >
-            Hotels
-          </button>
+         
         </div>
         </div>
         <div className="flex items-center space-x-5 justify-center">

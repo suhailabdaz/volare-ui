@@ -27,8 +27,8 @@ export interface HeroState {
   classState: string;
   fromAirport: Airport | null;
   toAirport: Airport | null;
-  departureDate: DepartureDateState;
-  returnDate: DepartureDateState;
+  departureDate: DepartureDateState ;
+  returnDate: DepartureDateState | null;
   travellers: TravellersState;
   hasErrors:boolean
 }
@@ -80,7 +80,7 @@ const HeroSlice = createSlice({
     setDepartureDate(state, action: PayloadAction<DepartureDateState>) {
       state.departureDate = action.payload;
     },
-    setReturnDate(state, action: PayloadAction<DepartureDateState>) {
+    setReturnDate(state, action: PayloadAction<DepartureDateState | null>) {
       state.returnDate = action.payload;
     },
     updateTravellers(state, action: PayloadAction<Partial<TravellersState>>) {

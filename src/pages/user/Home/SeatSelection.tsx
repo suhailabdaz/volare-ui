@@ -9,6 +9,7 @@ import {
   useGetsearchFlightQuery,
   useUpdateBookingSeatsMutation,
 } from '../../../redux/apis/userApiSlice';
+import socket from '../../../utils/socket/socket'
 import { SetStateAction, useCallback, useState } from 'react';
 import SeatLayout from '../../../components/user/Home/SeatSelection/SeatLayout';
 import BacktoFlightTrav from '../../../components/user/Home/SeatSelection/BacktoFlightTrav';
@@ -16,6 +17,11 @@ import MealSelection from '../../../components/user/Home/SeatSelection/MealSelec
 import MealsImage from '../../../assets/images/rice-bowl.png';
 import seatsImage from '../../../assets/images/seat.png';
 import { toast } from 'sonner';
+import {loadStripe , Stripe} from '@stripe/stripe-js';
+import createAxios from '../../../services/axios/UserAxios';
+import { useDispatch } from 'react-redux';
+import { userEndpoints } from '../../../services/endpoints/UserEndpoints';
+
 
 interface TravellerData {}
 
@@ -83,6 +89,7 @@ function SeatSelection() {
   );
 
   const navigate  = useNavigate()
+  const dispatch = useDispatch()
 
   const params = useParams();
   const {
@@ -99,16 +106,56 @@ function SeatSelection() {
     return <div>Error loading booking data</div>;
   }
 
+
+  const handleStripeRedirect = async () => {
+    try {
+      const response = await createAxios(dispatch).post(
+        userEndpoints.createCheckoutSession,
+        {
+          bookingId: params.bookingId,
+          seats: selectedSeats,
+          totalPrice: bookingData.totalPrice,
+        }
+      );
+
+      if (!response.data) {
+        throw new Error('Failed to create checkout session');
+      }
+
+      const session = response.data;
+
+      // Load Stripe dynamically
+      const stripe = await loadStripe('pk_test_51Ps4S9RoPJymCley7FFWtFji7AVcD3i3r9PyqNvn74X8g0SKMogyxyqE2wM659IvwsDLoDivY1vNci8YSqNcYoMj00xOGa4oxz');
+      if (stripe === null) {
+        throw new Error('Failed to load Stripe');
+      }
+
+      const { error } = await stripe.redirectToCheckout({
+        sessionId: session.id,
+      });
+
+      if (error) {
+        throw error;
+      }
+
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error('An unknown error occurred');
+      }
+    }
+  };
+
   const updateSeatDetails = useCallback(async () => {
     try {
       await updateBookingSeat({
         bookingId: params.bookingId,
         seats: selectedSeats,
       }).unwrap();  
-      
-      toast.success('seat selected')
 
-      navigate(`/payment-ssection/${params.bookingId}`);
+      await handleStripeRedirect();
+
 
      } catch (error) {
       toast.error('error task');
