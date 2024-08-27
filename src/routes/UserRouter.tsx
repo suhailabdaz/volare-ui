@@ -19,7 +19,7 @@ const UserRoute = () => {
         </Route>
         <Route element={<PublicRouter />}>
           <Route path="/" element={<HomePage />} />
-          <Route path="/search/:from/:to/:date/:class/:adults/:children/:infants/:fareType" element={<SearchResults />} />
+          <Route path="/search/:from/:to/:date/:class/:adults/:children/:infants/:fareType/:triptype/:returnDate?" element={<SearchResults />} />
           </Route>
       </Routes>
     </>

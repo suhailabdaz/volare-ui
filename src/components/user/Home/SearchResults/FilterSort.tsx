@@ -4,7 +4,6 @@ import Sun from '../../../../assets/images/sun.png';
 import Moon from '../../../../assets/images/night.png';
 import Cloudy from '../../../../assets/images/cloudy-day.png';
 
-
 interface TimeOptionProps {
   label: string;
   value: string;
@@ -41,17 +40,16 @@ function Sidebar() {
         selectedValue === value ? 'bg-blue-500 text-white' : 'bg-gray-200'
       }`}
       onClick={() => onChange(value)}
-    >  <div className='flex justify-center'>
-<img 
-  className='h-6' 
-  src={value === 'early' ? Sun : value === 'noon' ? Cloudy : Moon} 
-  alt={value === 'early' ? "Sun" : value === 'noon' ? "Cloudy" : "Moon"} 
-/>
-    </div>
-    <div className='flex justify-center'>
-    {label}
-
-    </div>
+    >
+      {' '}
+      <div className="flex justify-center">
+        <img
+          className="h-6"
+          src={value === 'early' ? Sun : value === 'noon' ? Cloudy : Moon}
+          alt={value === 'early' ? 'Sun' : value === 'noon' ? 'Cloudy' : 'Moon'}
+        />
+      </div>
+      <div className="flex justify-center">{label}</div>
     </div>
   );
 
@@ -178,7 +176,7 @@ function Sidebar() {
             selectedValue={arrivalTime}
             onChange={setArrivalTime}
           />
-           <TimeOption
+          <TimeOption
             label="12 PM - 6 AM"
             value="noon"
             selectedValue={arrivalTime}

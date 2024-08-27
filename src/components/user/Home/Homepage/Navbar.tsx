@@ -22,8 +22,10 @@ function Navbar() {
   };
 
   useEffect(() => {
-    console.log("The current modal is", activeModal);
-  }, [activeModal]);
+    if (!isAuthenticated) {
+      openModal('login');
+    }
+  }, [isAuthenticated]);
 
   return (
     <div className="pt-6 pb-3 bg-transparent">

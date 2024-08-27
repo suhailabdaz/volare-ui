@@ -135,7 +135,7 @@ function SearchBar() {
       if (!hasErrors && shouldSubmit) {
         try {
           navigate(
-            `/search/${fromAirport?._id}/${toAirport?._id}/${departureDate?.date}/${classState}/${travellers.adults}/${travellers.children}/${travellers.infants}/${selectedValue}`
+`/search/${fromAirport?._id}/${toAirport?._id}/${departureDate?.date}/${classState}/${travellers.adults}/${travellers.children}/${travellers.infants}/${selectedValue}/${tripType}${tripType === 'roundTrip' ? `/${returnDate?.date}` : ''}`
           );
         } catch (error) {
           toast.error('error occured');
@@ -298,7 +298,7 @@ function SearchBar() {
                   style={{ opacity: 0, position: 'absolute', zIndex: -1 }}
                 />
                 <div className=" text-white">
-                  {returnDate.date ? (
+                  {returnDate?.date ? (
                     <div className="items-center flex">
                       <div className='text-sm'> {returnDate.weekday?.slice(0,3)},</div>
                       <div
