@@ -74,7 +74,7 @@ function Offers() {
   }, [data]);
 
   if (isLoading || error) {
-    return <div>Loading...</div>;
+    return null;
   }
 
   // Filter coupons based on selected offer type

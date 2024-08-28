@@ -67,6 +67,8 @@ function Banner() {
         showThumbs={false}
         showStatus={false}
         showIndicators={false} 
+        renderArrowPrev={(onClickHandler, hasPrev, label) => null}
+        renderArrowNext={(onClickHandler, hasNext, label) => null}
         className="w-full"
       >
         {data.map((banner: BannerData, index: number) => (
@@ -74,7 +76,7 @@ function Banner() {
             <img
               src={images[index]}
               alt={`Banner ${index}`}
-              className="w-full h-auto"
+              className="w-full rounded-md h-auto"
               onError={() => handleImageError(index, banner.banner_image_link)}
             />
           </div>

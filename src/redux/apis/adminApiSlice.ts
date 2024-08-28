@@ -50,6 +50,12 @@ const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
   return result;
 };
 
+const invalidateTagAfterDelay = (tag: any, delay: number) => {
+  setTimeout(() => {
+    adminApi.util.invalidateTags([tag]);
+  }, delay);
+};
+
 export const adminApi = createApi({
   reducerPath: 'adminApi',
   baseQuery: baseQueryWithReauth,
@@ -68,6 +74,12 @@ export const adminApi = createApi({
         method: 'GET',
       }),
       providesTags: ['Coupons'],
+      async onQueryStarted(arg, { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          invalidateTagAfterDelay('Coupons', 10000);
+        } catch {}
+      },
     }),
     createBanner: builder.mutation({
       query: (banner) => ({
@@ -82,6 +94,12 @@ export const adminApi = createApi({
         method: 'GET',
       }),
       providesTags: ['Banners'],
+      async onQueryStarted(arg, { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          invalidateTagAfterDelay('Banners', 10000);
+        } catch {}
+      },
     }),
     blockBanOrCoup: builder.mutation({
       query: ({ id, type }) => ({

@@ -17,7 +17,7 @@ interface AirlineOptionProps {
   onChange: (airline: string) => void;
 }
 
-function Sidebar() {
+function FilterSort() {
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
   const [departureTime, setDepartureTime] = useState<string>('');
   const [arrivalTime, setArrivalTime] = useState<string>('');
@@ -79,7 +79,7 @@ function Sidebar() {
   };
 
   return (
-    <div className="bg-[#FFFF] h-auto mb-7 rounded-2xl w-[100%] left-0 top-10 sticky shadow-custom font-PlusJakartaSans">
+    <div className="bg-[#FFFF] h-auto mb-7 rounded-xl w-[100%] left-0 top-10 sticky shadow-custom font-PlusJakartaSans">
       <div className="p-6">
         <h1 className="font-bold text-lg mb-4">Popular filters</h1>
 
@@ -206,4 +206,4 @@ function Sidebar() {
   );
 }
 
-export default Sidebar;
+export default FilterSort;
