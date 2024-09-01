@@ -147,6 +147,7 @@ function ReviewDetails() {
               <Info />
               {/* <Insurance onUpdateInsurance={updateInsuranceDetails} /> */}
               <TravellersDetails
+                bookingDetails={bookingData}
                 travellerType={bookingData.travellerType}
                 onUpdateTravellers={updateTravellersDetails}
               />

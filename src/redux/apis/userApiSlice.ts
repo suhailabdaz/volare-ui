@@ -67,6 +67,12 @@ export const userApi = createApi({
         method: 'GET',
       }),
       providesTags: ['searchAirports'],
+      async onQueryStarted(arg, { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          invalidateTagAfterDelay('searchAirports', 10000);
+        } catch {}
+      },
     }),
     getSearchSchedules: builder.query({
       query:(params: { from: string; to: string; date: string;}) => ({

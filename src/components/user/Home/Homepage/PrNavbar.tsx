@@ -44,7 +44,7 @@ function Navbar() {
             
             <img src={suitcase}  className='h-10'alt="" />
             <div className='flex-1 items-start'>
-            <Link to="/trips"className=' text-sm font-semibold'>
+            <Link to="/my-trips"className=' text-sm font-semibold'>
             My Trips
             <p className='text-xs font-light'>Manage bookings</p>
             </Link>

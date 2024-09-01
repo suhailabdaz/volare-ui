@@ -32,7 +32,7 @@ function Sidebar() {
 
   const fetchImageUrl = async () => {
     try {
-      const response = await createAxios().get(airlineEndpoints.getImageLink, {
+      const response = await createAxios(dispatch).get(airlineEndpoints.getImageLink, {
         params: {
           key: userData?.image_link,
         },
@@ -57,7 +57,7 @@ function Sidebar() {
 
   const handleImageError = async () => {
     try {
-      await fetchImageUrl(); // Retry fetching the image URL
+      await fetchImageUrl(); 
     } catch (error) {
       console.error('Error retrying signed URL fetch:', error);
     }
@@ -69,6 +69,7 @@ function Sidebar() {
       dispatch(logout());
       dispatch(profilelogout());
       dispatch(clearTravellers());
+      userApi.util.invalidateTags(['searchAirline', 'searchAirports','searchBooking','searchSchedules']);
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
     } catch (error) {
@@ -85,7 +86,7 @@ function Sidebar() {
       formData.append('user_id', user_id);
 
       try {
-        const response = await createAxios().post(
+        const response = await createAxios(dispatch).post(
           userEndpoints.imageUpload,  formData,
           {
             headers: {

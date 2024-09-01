@@ -87,6 +87,7 @@ const formattedPrice = totalPriceWithExtras
     const bookingData = {
       userId: userData?._id, 
       flightChartId: scheduleData._id,
+      departureTime: scheduleData.departureDate,
       totalPrice: totalPriceWithExtras,
       travelClass: params.class,
       travellerType:{

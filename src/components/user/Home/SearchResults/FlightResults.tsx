@@ -65,7 +65,6 @@ interface Row {
   seats: Seat[];
 }
 
-
 function Content() {
   const params = useParams() as unknown as Params;
   const dispatch = useDispatch();
@@ -80,6 +79,7 @@ function Content() {
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [sortedSchedules, setSortedSchedules] = useState<FlightInstance[]>([]);
   const [classState, setClassState] = useState(params.class);
+  const [filteredSchedules, setFilteredSchedules] = useState<FlightInstance[]>([]);
 
   const {
     data: schedules,
@@ -127,11 +127,13 @@ function Content() {
   }, [dispatch]);
 
   useEffect(() => {
+    setIsPageLoading(true)
     const timer = setTimeout(() => {
       setIsPageLoading(false);
-    }, 5000);
+    }, 3000);
+    
     return () => clearTimeout(timer);
-  }, []);
+  }, [params]);
 
   useEffect(() => {
     if (schedules && airlineDetails) {
@@ -163,6 +165,7 @@ function Content() {
   useEffect(() => {
     if (schedules) {
       setSortedSchedules(schedules);
+      setFilteredSchedules(schedules);
     }
   }, [schedules]);
 
@@ -185,6 +188,43 @@ function Content() {
 
   const handleSortChange = (sortedData: FlightInstance[]) => {
     setSortedSchedules(sortedData);
+  };
+
+  const handleFilterChange = (filters: any) => {
+    
+  const filtered = schedules.filter((schedule: FlightInstance) => {
+  const departureHour = parseInt(schedule.departureTime.split(':')[0], 10);
+  const arrivalHour = parseInt(schedule.arrivalTime.split(':')[0], 10);
+  const getPrice = (cls: string): number => {
+    switch (cls.toLowerCase()) {
+      case 'economy':
+        return schedule.currentPrices.economy;
+      case 'business':
+        return schedule.currentPrices.business;
+      case 'firstclass':
+        return schedule.currentPrices.firstClass;
+      default:
+        console.error(`Invalid class state: ${cls}`);
+        return 0; 
+    }
+  };
+
+  const price = getPrice(classState);
+  return (
+    (!filters.departureTime || 
+      (filters.departureTime === 'early' && departureHour >= 6 && departureHour < 12) ||
+      (filters.departureTime === 'noon' && departureHour >= 12 && departureHour < 18) ||
+      (filters.departureTime === 'late' && (departureHour >= 18 || departureHour < 6))) &&
+    (!filters.arrivalTime || 
+      (filters.arrivalTime === 'early' && arrivalHour >= 6 && arrivalHour < 12) ||
+      (filters.arrivalTime === 'noon' && arrivalHour >= 12 && arrivalHour < 18) ||
+      (filters.arrivalTime === 'late' && (arrivalHour >= 18 || arrivalHour < 6)))
+      &&
+      (price >= filters.priceRange[0] && price <= filters.priceRange[1])
+  );
+});
+
+    setFilteredSchedules(filtered);
   };
 
   const closeModal = () => {
@@ -239,20 +279,20 @@ function Content() {
   }
 
   return (
-    <div className="flex w-full justify-center">
+    <div className="flex w-full justify-evenly">
       <div className="w-1/4">
-        <FilterSort />
+        <FilterSort schedules={schedules} onFilterChange={handleFilterChange} />
       </div>
       <div className="font-PlusJakartaSans mb-7 w-3/4">
-        <SortComponent scheduleData={schedules} onSortChange={handleSortChange} />
+        <SortComponent scheduleData={filteredSchedules} onSortChange={handleSortChange} />
         <ul className="space-y-2">
         {airportData?.airports &&
             Array.isArray(flightDetails) &&
             Array.isArray(airportData.airports) &&
             airlineDetails?.airlines &&
             Array.isArray(airlineDetails.airlines) &&
-            Array.isArray(schedules) &&
-            schedules.length > 0 &&
+            Array.isArray(sortedSchedules) &&
+            sortedSchedules.length > 0 &&
             sortedSchedules.map(
               (
                 schedule: {
@@ -427,4 +467,4 @@ function Content() {
   );
 }
 
-export default Content;
+export default Content; 

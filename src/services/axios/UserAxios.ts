@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { API_GATEWAY_BASE_URL } from '../endpoints/UserEndpoints';
-import { useDispatch } from 'react-redux';
 import { newToken, logout as userLogout } from '../../redux/slices/userSlice';
 
 export const createAxios = (dispatch:any) => {
@@ -68,7 +67,6 @@ export const createAxios = (dispatch:any) => {
           console.log(refreshError);
           localStorage.removeItem('accessToken');
           localStorage.removeItem('refreshToken');
-          const dispatch = useDispatch();
           dispatch(userLogout());
           window.location.href = '/';
           return Promise.reject(refreshError);

@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'sonner';
 import { setTravellers } from '../../../../redux/slices/travellersSlice';
 import ModalManager from './Modals/ModalManager';
-import { PlusIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 interface TravellersDetailsProps {
   onUpdateTravellers: (updatedTravellers: any[]) => void;
@@ -15,16 +15,18 @@ interface TravellersDetailsProps {
     children: number;
     infants: number;
   };
+  bookingDetails: {
+    travellers: string[];
+  };
 }
 
 const TravellersDetails: React.FC<TravellersDetailsProps> = ({
   onUpdateTravellers,
   travellerType,
+  bookingDetails,
 }) => {
   const [activeModal, setActiveModal] = useState<string | null>(null);
-  const [selectedTravellerId, setSelectedTravellerId] = useState<string | null>(
-    null
-  );
+  const [selectedTravellerId, setSelectedTravellerId] = useState<string | null>(null);
   const [selectedTravellers, setSelectedTravellers] = useState<string[]>([]);
 
   const dispatch = useDispatch();
@@ -57,6 +59,13 @@ const TravellersDetails: React.FC<TravellersDetailsProps> = ({
       fetchTravellersData();
     }
   }, [userState, dispatch, travellersData]);
+
+  useEffect(() => {
+    // Populate selected travellers with booking details when component loads
+    if (bookingDetails && bookingDetails.travellers) {
+      setSelectedTravellers(bookingDetails.travellers);
+    }
+  }, [bookingDetails]);
 
   const openModal = (modalName: string, travellerId: string | null = null) => {
     setActiveModal(modalName);
@@ -108,11 +117,11 @@ const TravellersDetails: React.FC<TravellersDetailsProps> = ({
     return gradients[Math.floor(Math.random() * gradients.length)];
   };
 
-  const truncateEmail = (email: any, maxLength: number) => {
+  const truncateEmail = (email: string, maxLength: number) => {
     return email.length > maxLength ? email.slice(0, maxLength) + '...' : email;
   };
 
-  const formatDate = (dateString: any) => {
+  const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
@@ -120,6 +129,66 @@ const TravellersDetails: React.FC<TravellersDetailsProps> = ({
       day: 'numeric',
     });
   };
+
+  const renderTravellerItem = (traveller: any, isSelected: boolean = false) => (
+    <div className="relative flex items-center text-black mb-4">
+      {!isSelected && (
+        <input
+          type="checkbox"
+          id={`traveller-${traveller._id}`}
+          checked={selectedTravellers.includes(traveller._id)}
+          onChange={() => handleTravellerSelection(traveller._id)}
+          className="hidden peer"
+        />
+      )}
+      {!isSelected && (
+        <label
+          htmlFor={`traveller-${traveller._id}`}
+          className="cursor-pointer mx-4 block w-5 h-5 border-2 border-gray-300 peer-checked:bg-purple-500 peer-checked:after:text-white peer-checked:after:block peer-checked:after:text-center peer-checked:after:font-bold peer-checked:after:absolute peer-checked:after:w-full peer-checked:after:h-full peer-checked:after:leading-6"
+        ></label>
+      )}
+      <div
+        className={`rounded-full h-8 w-8 flex items-center text-xs justify-center text-white font-bold ${getRandomGradient()}`}
+      >
+        {traveller.firstName?.charAt(0).toUpperCase()}
+        {traveller.lastName?.charAt(0).toUpperCase()}
+      </div>
+      <div className="ml-4 flex-1">
+        <div className="font-bold text-base">
+          {traveller.firstName} {traveller.lastName}
+          <div className="flex font-light text-sm">
+            <div className="mr-1">{traveller.gender},</div>
+            <div>{formatDate(traveller.dateOfBirth)}</div>
+          </div>
+        </div>
+      </div>
+      <div className="absolute right-4 flex items-start space-x-2 transition-all duration-300 delay-200">
+        <div className="text-xs pr-16 font-semibold">
+          {truncateEmail(traveller.email, 15)}
+        </div>
+        <div className="text-xs pr-12 font-semibold">
+          +91-{traveller.phone}
+        </div>
+        {!isSelected && (
+          <button
+            onClick={() => openModal('editTraveller', traveller._id)}
+          >
+            <span className="invisible text-sm font-bold text-blue-500 group-hover:visible">
+              View details
+            </span>
+          </button>
+        )}
+        {isSelected && (
+          <button
+            onClick={() => handleTravellerSelection(traveller._id)}
+            className="text-red-500 hover:text-red-700"
+          >
+            <XMarkIcon className="h-5 w-5" />
+          </button>
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <div
@@ -134,54 +203,27 @@ const TravellersDetails: React.FC<TravellersDetailsProps> = ({
         </h1>
       </div>
 
+      {/* Selected Travellers Section */}
+      {selectedTravellers.length > 0 && (
+        <div className="mb-8 bg-gray-100 p-4 rounded-lg">
+          <h2 className="font-PlusJakartaSans1000 text-lg mb-4">Selected Travellers</h2>
+          {travellersData
+            .filter((traveller) => selectedTravellers.includes(traveller._id))
+            .map((traveller) => (
+              <div key={`selected-${traveller._id}`} className="mb-2 last:mb-0">
+                {renderTravellerItem(traveller, true)}
+              </div>
+            ))}
+        </div>
+      )}
+
+      {/* All Travellers Section */}
+      <h2 className="font-PlusJakartaSans1000 text-lg mb-4">All Travellers</h2>
       <ul className="space-y-6">
         {travellersData &&
           travellersData.map((traveller) => (
             <li key={traveller._id} className="mb-4 group">
-              <div className="relative flex items-center text-black">
-                <input
-                  type="checkbox"
-                  id={`traveller-${traveller._id}`}
-                  checked={selectedTravellers.includes(traveller._id)}
-                  onChange={() => handleTravellerSelection(traveller._id)}
-                  className="hidden peer"
-                />
-                <label
-                  htmlFor={`traveller-${traveller._id}`}
-                
-                  className="cursor-pointer mx-4 block w-5 h-5 border-2 border-gray-300  peer-checked:bg-purple-500  peer-checked:after:text-white peer-checked:after:block peer-checked:after:text-center peer-checked:after:font-bold peer-checked:after:absolute peer-checked:after:w-full peer-checked:after:h-full peer-checked:after:leading-6"
-                ></label>
-                <div
-                  className={`rounded-full h-8 w-8 flex items-center text-xs justify-center text-white font-bold ${getRandomGradient()}`}
-                >
-                  {traveller.firstName?.charAt(0).toUpperCase()}
-                  {traveller.lastName?.charAt(0).toUpperCase()}
-                </div>
-                <div className="ml-4 flex-1">
-                  <div className="font-bold text-base">
-                    {traveller.firstName} {traveller.lastName}
-                    <div className="flex font-light text-sm">
-                      <div className="mr-1">{traveller.gender},</div>
-                      <div>{formatDate(traveller.dateOfBirth)}</div>
-                    </div>
-                  </div>
-                </div>
-                <div className="absolute right-4 flex items-start space-x-2 transition-all duration-300 delay-200">
-                  <div className="text-xs pr-16 font-semibold">
-                    {truncateEmail(traveller.email, 15)}
-                  </div>
-                  <div className="text-xs pr-12 font-semibold">
-                    +91-{traveller.phone}
-                  </div>
-                  <button
-                    onClick={() => openModal('editTraveller', traveller._id)}
-                  >
-                    <span className="invisible text-sm font-bold text-blue-500 group-hover:visible">
-                      View details
-                    </span>
-                  </button>
-                </div>
-              </div>
+              {renderTravellerItem(traveller)}
               <hr className="border-gray-300 mt-2" />
             </li>
           ))}
@@ -190,9 +232,9 @@ const TravellersDetails: React.FC<TravellersDetailsProps> = ({
       <div className="flex justify-end space-x-8 mt-4 mx-4">
         <button
           onClick={handleAddTraveller}
-          className=" text-blue-600 font-bold py-2 px-4 flex "
+          className="text-blue-600 font-bold py-2 px-4 flex items-center"
         >
-          <PlusIcon className='h-4'/>
+          <PlusIcon className="h-4 w-4 mr-2" />
           Add Traveller
         </button>
         <button
@@ -202,7 +244,7 @@ const TravellersDetails: React.FC<TravellersDetailsProps> = ({
             selectedTravellers.length === totalTravellers
               ? 'bg-gradient-to-r from-blue-500 to-purple-500 transition-all ease-in-out delay-50 duration-500 hover:bg-gradient-to-r hover:from-purple-500 hover:to-blue-500 hover:scale-105'
               : 'bg-gray-400 cursor-not-allowed'
-          } px-6 py-1  text-white rounded-2xl  font-PlusJakartaSans1000 text-md `}
+          } px-6 py-1 text-white rounded-2xl font-PlusJakartaSans1000 text-md`}
         >
           Done
         </button>
