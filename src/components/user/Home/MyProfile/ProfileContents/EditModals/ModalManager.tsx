@@ -4,6 +4,7 @@ import PasswordModal from './PasswordEdit';
 import AddMobileModal from './AddMobileModal';
 import TravellerModal from './TravellersModal';
 import ViewTraveller from './ViewTraveller';
+import WalletInfo from './WalletInfoModal';
 
 interface LoginModalProps {
   activeModal: string;
@@ -22,6 +23,7 @@ const ModalManager :React.FC<LoginModalProps> =({ activeModal, closeModal, openM
       {activeModal === 'passwordEdit' && <PasswordModal closeModal={closeModal} openModal={openModal} />}
       {activeModal === 'addMobile' && <AddMobileModal closeModal={closeModal} openModal={openModal} />}
       {activeModal === 'traveller' && <TravellerModal closeModal={closeModal} openModal={openModal} />}
+      {activeModal === 'AddToWallet' && <WalletInfo closeModal={closeModal} openModal={openModal} />}
       {activeModal === 'viewTraveller' && <ViewTraveller closeModal={closeModal} openModal={openModal} travellerId={travellerId||""} />}
       <div id="recaptcha-container"></div>
     </>

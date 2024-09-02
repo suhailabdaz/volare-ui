@@ -1,4 +1,3 @@
-import React from 'react'
 import ProfileDetails from './ProfileContents/ProfileDetails'
 import LoginDetails from './ProfileContents/LoginDetails'
 import TravellersDetails from './ProfileContents/TravellersDetails'

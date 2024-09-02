@@ -5,6 +5,7 @@ interface UserData {
     name: string;
     email: string;
     status : boolean ;
+    wallet?:Number;
     gender?: string;
     password? : string;
     address?: string;

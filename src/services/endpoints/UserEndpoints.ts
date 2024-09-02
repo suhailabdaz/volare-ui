@@ -18,5 +18,7 @@ export const userEndpoints = {
     saveTravellers:`${API_GATEWAY_BASE_URL}/api/v1/user/save-travellers`,
     deleteTraveller:`${API_GATEWAY_BASE_URL}/api/v1/user/delete-traveller`,
     imageUpload: `${API_GATEWAY_BASE_URL}/api/v1/user/image-upload`,
-    createCheckoutSession:`${API_GATEWAY_BASE_URL}/api/v1/booking/create-checkout-session`
+    createCheckoutSession:`${API_GATEWAY_BASE_URL}/api/v1/booking/create-checkout-session`,
+    afterPayment:`${API_GATEWAY_BASE_URL}/api/v1/booking/update-booking-status`
+
 }

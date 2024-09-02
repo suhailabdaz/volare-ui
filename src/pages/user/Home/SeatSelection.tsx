@@ -154,8 +154,6 @@ function SeatSelection() {
       }).unwrap();  
 
       await handleStripeRedirect();
-
-
      } catch (error) {
       toast.error('error task');
     }

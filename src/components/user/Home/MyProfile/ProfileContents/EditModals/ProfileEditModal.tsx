@@ -24,7 +24,7 @@ const validationSchema = Yup.object({
     state: Yup.string()
 });
 
-const ProfileModal: React.FC<ProfileModalProps> = ({ closeModal,openModal}) => {
+const ProfileModal: React.FC<ProfileModalProps> = ({ closeModal}) => {
   const userData = useSelector((state: RootState) => state.ProfileAuth.userData);
   const userAuth = useSelector((state: RootState) => state.UserAuth.userData);
   const userId = userAuth?._id
@@ -43,10 +43,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ closeModal,openModal}) => {
 
   const onSubmit = async (values: typeof initialValues, { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }) => {
     try {
-      console.log(userId,"usreid");
-      const response = await createAxios(dispatch).post(userEndpoints.updateUser,{values:values , id:userId});
-      console.log("user",response);
-      
+      const response = await createAxios(dispatch).post(userEndpoints.updateUser,{values:values , id:userId});      
       if (response.data.success) {
         dispatch(userProfileDetails(response.data))
         dispatch(authProfile(response.data))

@@ -9,6 +9,7 @@ interface UserData {
     password? : string;
     address?: string;
     birthday?:Date;
+    wallet:Number;
     pincode?:Number;
     state?:string;
     mobile?:Number;

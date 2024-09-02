@@ -7,6 +7,7 @@ import ReviewDetails from "../pages/user/Home/ReviewDetails";
 import SearchResults from "../pages/user/Home/SearchResults";
 import SeatSelection from "../pages/user/Home/SeatSelection";
 import MytripsPage from "../pages/user/Home/MytripsPage";
+import SuccessPage from "../pages/user/Home/SuccessPage";
 
 
 const UserRoute = () => {
@@ -18,6 +19,7 @@ const UserRoute = () => {
           <Route path="/review-details/:bookingId" element={<ReviewDetails />} />
           <Route path="/seat-selection/:bookingId" element={<SeatSelection />} />
           <Route path="/my-trips/" element={<MytripsPage />} />
+          <Route path="/success" element={<SuccessPage/>}/>
         </Route>
         <Route element={<PublicRouter />}>
           <Route path="/" element={<HomePage />} />

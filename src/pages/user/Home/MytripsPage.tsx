@@ -7,10 +7,10 @@ function MytripsPage() {
     <div className='h-screen flex flex-col'>
       <Navbar />
       <div className='flex-grow'>
-        <div className='h-[30%]'>
+        <div className='h-[40%]'>
           <MytripsList />
         </div>
-        <div className='h-[70%] bg-purple-50'>
+        <div className='h-[60%] bg-purple-50'>
           {/* Content for the bottom section */}
         </div>
       </div>
