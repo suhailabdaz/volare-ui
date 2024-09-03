@@ -1,4 +1,4 @@
-import React, { SetStateAction, useCallback, useState } from 'react';
+import React, { SetStateAction, useCallback, useEffect, useState } from 'react';
 import Image from '../../../assets/images/Premium Vector _ Abstract gradient purple and blue background.jpeg';
 import FareSummary from '../../../components/user/Home/ReviewDetails/FareSummary';
 import FlightDetails from '../../../components/user/Home/ReviewDetails/FlightDetails';
@@ -11,6 +11,7 @@ import { useGetBookingQuery, useUpdateBookingMutation } from '../../../redux/api
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { replace } from 'formik';
+import ShimmerReview from './pageShimmers/ShimmerReview';
 
 interface TravellerData {
 }
@@ -41,6 +42,8 @@ interface BookingData {
 }
 
 function ReviewDetails() {
+  const [isValidToSubmit, setIsValidToSubmit] = useState(false);
+
   const [travellersDetails, setTravellersDetails] = useState<TravellerData[]>(
     []
   );
@@ -58,7 +61,10 @@ function ReviewDetails() {
 
   const updateTravellersDetails = useCallback(
     (details: SetStateAction<TravellerData[]>) => {
+      console.log(details,'details');
       setTravellersDetails(details);
+      console.log('render',travellersDetails);
+      
     },
     []
   );
@@ -79,14 +85,21 @@ function ReviewDetails() {
     []
   );
 
+ 
+
   const handleContinue = async () => {
     try {
+      if (!isValidToSubmit) {
+        toast.warning('Please fill in all required traveller details before continuing.');
+        return;
+      }else{
       await updateBooking({
         bookingId: params.bookingId,
         travellers: travellersDetails,
       }).unwrap();
 
-      navigate(`/seat-selection/${params.bookingId}`);
+      navigate(`/seat-selection/${params.bookingId}`, { replace: true });
+    }
     } catch (error) {
       console.error('Failed to update booking:', error);
       toast.error('Failed to update booking. Please try again.');
@@ -102,10 +115,19 @@ function ReviewDetails() {
     refetchOnMountOrArgChange:true
   });
 
-  
+  useEffect(() => {
+    if (bookingData && travellersDetails.length > 0) {
+      const { adults, children, infants } = bookingData.travellerType;
+      const totalRequired = adults + children + infants;
+      
+      const isValid = travellersDetails.length === totalRequired 
 
-  if (isLoading) {
-    return <div>Loading...</div>;
+      setIsValidToSubmit(isValid);
+    }
+  }, [travellersDetails, bookingData]);
+
+  if(isLoading) {
+    return <div><ShimmerReview/></div>;
   }
 
   if (error || !bookingData) {

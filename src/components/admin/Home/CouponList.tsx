@@ -33,7 +33,7 @@ function CouponsList() {
   const [imageUrls, setImageUrls] = useState<{ [key: string]: string }>({});
   const [loading, setLoading] = useState<{ [key: string]: boolean }>({});
   const [error, setError] = useState<{ [key: string]: boolean }>({});
-  const couponsPerPage = 5;
+  const couponsPerPage = 4;
   const dispatch = useDispatch();
   const [blockBanOrCoup] = useBlockBanOrCoupMutation();
 

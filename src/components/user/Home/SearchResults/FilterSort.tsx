@@ -11,8 +11,6 @@ interface TimeOptionProps {
   onChange: (value: string) => void;
 }
 
-
-
 interface FilterSortProps {
   schedules: any[]; 
   onFilterChange: (filters: any) => void; 
@@ -40,7 +38,7 @@ function FilterSort({ schedules, onFilterChange }: FilterSortProps) {
     }
   }, [schedules]);
 
-  const applyFilters = useCallback(() => {
+  const handleFilterChange = useCallback(() => {
     onFilterChange({
       priceRange,
       departureTime,
@@ -49,21 +47,19 @@ function FilterSort({ schedules, onFilterChange }: FilterSortProps) {
   }, [priceRange, departureTime, arrivalTime, onFilterChange]);
 
   useEffect(() => {
-    applyFilters();
-  }, [applyFilters]);
+    handleFilterChange();
+  }, [handleFilterChange]);
 
   const STEP = 100;
-  
- 
 
-  const TimeOption: React.FC<TimeOptionProps> = ({
+  const TimeOption: React.FC<TimeOptionProps> = React.memo(({
     label,
     value,
     selectedValue,
     onChange,
   }) => (
     <div
-      className={`p-2 mb-2 font-PlusJakartaSans w-[30%] text-[0.6rem] space-y-2  rounded-lg cursor-pointer ${
+      className={`p-2 mb-2 font-PlusJakartaSans w-[30%] text-[0.6rem] space-y-2 rounded-lg cursor-pointer ${
         selectedValue === value ? 'bg-blue-500 text-white' : 'bg-gray-200'
       }`}
       onClick={() => onChange(value)}
@@ -77,9 +73,8 @@ function FilterSort({ schedules, onFilterChange }: FilterSortProps) {
       </div>
       <div className="flex justify-center">{label}</div>
     </div>
-  );
+  ));
 
- 
   return (
     <div className="bg-[#FFFF] h-auto mb-7 rounded-xl w-full left-0 top-10 sticky shadow-custom font-PlusJakartaSans">
       <div className="p-6">
@@ -154,7 +149,7 @@ function FilterSort({ schedules, onFilterChange }: FilterSortProps) {
           </div>
         </div>
 
-        <h2 className="font-semibold text-sm mb-2 ">Departure Time</h2>
+        <h2 className="font-semibold text-sm mb-2">Departure Time</h2>
         <div className="mb-4 flex justify-start space-x-2">
           <TimeOption
             label="6 AM - 12 PM"
@@ -197,8 +192,6 @@ function FilterSort({ schedules, onFilterChange }: FilterSortProps) {
             onChange={setArrivalTime}
           />
         </div>
-
-       
       </div>
     </div>
   );

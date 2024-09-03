@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {  useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
@@ -7,8 +7,6 @@ import { createAxios } from "../../../../../services/axios/UserAxios";
 import { userEndpoints } from '../../../../../services/endpoints/UserEndpoints';
 import { RootState } from '../../../../../redux/store/store';
 import {setTravellerDetails} from '../../../../../redux/slices/travellersSlice'
-import { removeTraveller } from '../../../../../redux/slices/travellersSlice';
-import DeleteButton from '../../../../buttons/DeleteButton';
 
 interface ProfileModalProps {
   closeModal: () => any,
@@ -19,12 +17,12 @@ interface TravellerFormValues {
   firstName: string;
   lastName: string;
   gender: string;
-  dateOfBirth: string; // Assuming date is stored as a string, adjust according to actual usage
+  dateOfBirth: string; 
   nationality: string;
   mealPreference: string;
   passportNo: string;
   passportNationality: string;
-  passportExpiry: Date; // Yup.date() corresponds to a Date object in TypeScript
+  passportExpiry: Date;
   phone: string;
   email: string;
 }
@@ -93,18 +91,7 @@ const ViewTraveller: React.FC<ProfileModalProps> = ({ closeModal, openModal,trav
       setSubmitting(false);
     }
   };
-  const handleDelete = async()=>{
-    if(foundTraveller?._id){
-      const response = await createAxios(dispatch).delete(`${userEndpoints.deleteTraveller}/${foundTraveller._id}`);
-      if(response.data.success){
-        dispatch(removeTraveller(response.data.traveller))
-        toast.success("Traveller Removed")
-        closeModal()
-      }else{
-        toast.error("Task Failed")
-      }
-    }
-  }
+ 
 
   return (
     <>
@@ -112,7 +99,6 @@ const ViewTraveller: React.FC<ProfileModalProps> = ({ closeModal, openModal,trav
         <div className="bg-white px-8 py-6 shadow-lg w-[50%] rounded-lg max-h-[80%] overflow-hidden">
           <div className='flex justify-between items-center mb-4 mt-2'>
             <h2 className="text-3xl text-left font-PlusJakartaSans font-bold">Edit Traveller Info</h2>
-            <DeleteButton handleDelete={handleDelete} />
           </div>
           
           <div className=" m-1 font-PlusJakartaSans font-bold text-lg flex justify-normal items-center mb-6 ">

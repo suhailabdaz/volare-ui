@@ -61,8 +61,11 @@ const TravellersDetails: React.FC<TravellersDetailsProps> = ({
   }, [userState, dispatch, travellersData]);
 
   useEffect(() => {
+  
     // Populate selected travellers with booking details when component loads
-    if (bookingDetails && bookingDetails.travellers) {
+    console.log(bookingDetails.travellers,'in refetch the details of the travellers');
+    
+    if (bookingDetails && bookingDetails.travellers.length) {
       setSelectedTravellers(bookingDetails.travellers);
     }
   }, [bookingDetails]);
@@ -97,6 +100,7 @@ const TravellersDetails: React.FC<TravellersDetailsProps> = ({
   };
 
   const handleDone = () => {
+
     if (selectedTravellers.length === totalTravellers) {
       const selectedTravellersData = travellersData.filter((traveller) =>
         selectedTravellers.includes(traveller._id)
@@ -141,10 +145,11 @@ const TravellersDetails: React.FC<TravellersDetailsProps> = ({
           className="hidden peer"
         />
       )}
+
       {!isSelected && (
         <label
           htmlFor={`traveller-${traveller._id}`}
-          className="cursor-pointer mx-4 block w-5 h-5 border-2 border-gray-300 peer-checked:bg-purple-500 peer-checked:after:text-white peer-checked:after:block peer-checked:after:text-center peer-checked:after:font-bold peer-checked:after:absolute peer-checked:after:w-full peer-checked:after:h-full peer-checked:after:leading-6"
+          className="cursor-pointer mx-4 block rounded-full w-5 h-5 border-2 border-gray-300 peer-checked:border-[6px] peer-checked:border-blue-600 peer-checked:bg-white peer-checked:after:text-white peer-checked:after:block peer-checked:after:text-center peer-checked:after:font-bold peer-checked:after:absolute peer-checked:after:w-full peer-checked:after:h-full peer-checked:after:leading-6"
         ></label>
       )}
       <div
@@ -181,10 +186,10 @@ const TravellersDetails: React.FC<TravellersDetailsProps> = ({
         {isSelected && (
           <button
             onClick={() => handleTravellerSelection(traveller._id)}
-            className="text-red-500 hover:text-red-700"
+            className="text-black"
           >
-            <XMarkIcon className="h-5 w-5" />
-          </button>
+<XMarkIcon className="h-5 hover:transform hover:scale-[2] hover:text-red-500 transition-all duration-200 delay-10" />
+</button>
         )}
       </div>
     </div>

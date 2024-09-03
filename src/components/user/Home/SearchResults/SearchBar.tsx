@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, useRef, useEffect } from 'react';
+import React, { useState, ChangeEvent, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -15,29 +15,45 @@ import {
 import { RootState } from '../../../../redux/store/store';
 import ModalManager from '../Homepage/Modals/ModalManager';
 
-const isEqual = (obj1: any, obj2: any) => {
-  return JSON.stringify(obj1) === JSON.stringify(obj2);
-};
-
 const useStateChanged = () => {
-  const searchState = useSelector((state: RootState) => ({
-    tripType: state.HeroAuth.tripType,
-    selectedValue: state.HeroAuth.selectedValue,
-    classState: state.HeroAuth.classState,
-    fromAirport: state.HeroAuth.fromAirport,
-    toAirport: state.HeroAuth.toAirport,
-    departureDate: state.HeroAuth.departureDate,
-    returnDate: state.HeroAuth.returnDate,
-    travellers: state.HeroAuth.travellers,
-  }));
+  const tripType = useSelector((state: RootState) => state.HeroAuth.tripType);
+  const selectedValue = useSelector((state: RootState) => state.HeroAuth.selectedValue);
+  const classState = useSelector((state: RootState) => state.HeroAuth.classState);
+  const fromAirport = useSelector((state: RootState) => state.HeroAuth.fromAirport);
+  const toAirport = useSelector((state: RootState) => state.HeroAuth.toAirport);
+  const departureDate = useSelector((state: RootState) => state.HeroAuth.departureDate);
+  const returnDate = useSelector((state: RootState) => state.HeroAuth.returnDate);
+  const travellers = useSelector((state: RootState) => state.HeroAuth.travellers);
 
-  const [initialState] = useState(searchState);
-  const [hasChanges, setHasChanges] = useState(false);
+  const isEqual = useCallback((obj1: any, obj2: any) => {
+    return JSON.stringify(obj1) === JSON.stringify(obj2);
+  }, []);
 
-  useEffect(() => {
-    const stateHasChanged = !isEqual(initialState, searchState);
-    setHasChanges(stateHasChanged);
-  }, [searchState, initialState]);
+  const hasChanges = useMemo(() => {
+    const currentState = {
+      tripType,
+      selectedValue,
+      classState,
+      fromAirport,
+      toAirport,
+      departureDate,
+      returnDate,
+      travellers
+    };
+
+    const initialState = {
+      tripType: 'oneWay',
+      selectedValue: 'Regular',
+      classState: 'Economy',
+      fromAirport: null,
+      toAirport: null,
+      departureDate: null,
+      returnDate: null,
+      travellers: { adults: 1, children: 0, infants: 0 }
+    };
+
+    return !isEqual(currentState, initialState);
+  }, [tripType, selectedValue, classState, fromAirport, toAirport, departureDate, returnDate, travellers, isEqual]);
 
   return hasChanges;
 };
@@ -156,7 +172,7 @@ function SearchBar() {
     };
 
     submitFormIfValid();
-  }, [hasErrors, shouldSubmit]);
+  }, [hasErrors, shouldSubmit, navigate, fromAirport, toAirport, departureDate, classState, travellers, selectedValue, tripType, returnDate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -336,221 +352,220 @@ function SearchBar() {
               onClick={() => {
                 openModal('TravAndClass');
               }}
-            >
-              <div
-                onClick={() => openModal('TravAndClass')}
-                className="flex-1 min-w-[160px] max-w-[160px] h-16 bg-purple-900 border rounded-lg border-white"
-              >
-                <label className="flex text-white text-left pt-2 px-2 text-sm items-end ">
-                  Travellers & class
-                  <ChevronDownIcon className="text-white h-3 ml-2" />
-                </label>
-                {travellers ? (
-                  <div className='flex'>
-                    <div className="flex items-end justify-start mb-2">
-                      <div className="ml-2 mr-1 text-white font-PlusJakartaSans1000 text-xl">
-                        {travellers.total}
-                      </div>
-                      <p className="text-white text-sm mb-1">nos,</p>
-                    </div>
-                    <div className="flex justify-start text-white items-center mx-3 mb-2 mt-1 text-md font-normal">
-                      <p>{classState}</p>
-                    </div>
-                  </div>
-                ) : (
-                  <p className="p-2 text-gray-400 text-sm font-bold cursor-pointer">
-                  Tap to add Details.
-                </p>
-              )}
-            </div>
-          </button>
-          <div className="flex justify-center">
-          <button
-            type="submit"
-            disabled={!hasChanges}
-            className={`absolute top-[24px] right-[200px] text-xl py-2 font-PlusJakartaSans rounded-xl font-extrabold transition-all ease-in-out duration-300 h-16 ${
-              hasChanges
-                ? 'bg-gradient-to-r from-pink-400 to-purple-600 text-white'
-                : 'bg-gray-400 text-white cursor-not-allowed'
-            } px-8 transition-all duration-200 delay-100`}
+            ><div
+            onClick={() => openModal('TravAndClass')}
+            className="flex-1 min-w-[160px] max-w-[160px] h-16 bg-purple-900 border rounded-lg border-white"
           >
-            SEARCH
-          </button>
+            <label className="flex text-white text-left pt-2 px-2 text-sm items-end ">
+              Travellers & class
+              <ChevronDownIcon className="text-white h-3 ml-2" />
+            </label>
+            {travellers ? (
+              <div className='flex'>
+                <div className="flex items-end justify-start mb-2">
+                  <div className="ml-2 mr-1 text-white font-PlusJakartaSans1000 text-xl">
+                    {travellers.total}
+                  </div>
+                  <p className="text-white text-sm mb-1">nos,</p>
+                </div>
+                <div className="flex justify-start text-white items-center mx-3 mb-2 mt-1 text-md font-normal">
+                  <p>{classState}</p>
+                </div>
+              </div>
+            ) : (
+              <p className="p-2 text-gray-400 text-sm font-bold cursor-pointer">
+              Tap to add Details.
+            </p>
+          )}
         </div>
-        </div>
-        </div>
-        <div className="flex items-center">
-          <div>
-            <p className="font-extrabold text-white text-xs mr-5 ">Fare-Type</p>
-        
+      </button>
+      <div className="flex justify-center">
+      <button
+        type="submit"
+        disabled={!hasChanges}
+        className={`absolute top-[24px] right-[200px] text-xl py-2 font-PlusJakartaSans rounded-xl font-extrabold transition-all ease-in-out duration-300 h-16 ${
+          hasChanges
+            ? 'bg-gradient-to-r from-pink-400 to-purple-600 text-white'
+            : 'bg-gray-400 text-white cursor-not-allowed'
+        } px-8 transition-all duration-200 delay-100`}
+      >
+        SEARCH
+      </button>
+    </div>
+    </div>
+    </div>
+    <div className="flex items-center">
+      <div>
+        <p className="font-extrabold text-white text-xs mr-5 ">Fare-Type</p>
+    
+      </div>
+      <div className="flex text-sm justify-between text-white  w-auto  mt-3 mb-4 space-x-4  select-none">
+        <label
+          className={`border ${
+            selectedValue === 'Regular'
+              ? 'bg-purple-800'
+              : 'border-gray-300 '
+          } transition-all  ease-in-out duration-200 radio pr-3 py-1 flex items-center justify-center space-x-3 rounded-lg  cursor-pointer`}
+        >
+          <input
+            type="radio"
+            name="radio"
+            value="Regular"
+            className="peer hidden"
+            defaultChecked
+            onChange={handleChange}
+          />
+          <div
+            className={`${
+              selectedValue === 'Regular'
+                ? 'border-blue-500'
+                : 'border-gray-500'
+            } bg-white transition-all ease-in-out duration-200 border-2  h-3 w-3 rounded-full flex items-center justify-center `}
+          >
+            <div
+              className={`${
+                selectedValue === 'Regular' ? 'bg-blue-500' : 'bg-white'
+              } transition-all ease-in-out duration-200 rounded-full w-[80%] h-[80%]`}
+            ></div>
           </div>
-          <div className="flex text-sm justify-between text-white  w-auto  mt-3 mb-4 space-x-4  select-none">
-            <label
-              className={`border ${
-                selectedValue === 'Regular'
-                  ? 'bg-purple-800'
-                  : 'border-gray-300 '
-              } transition-all  ease-in-out duration-200 radio pr-3 py-1 flex items-center justify-center space-x-3 rounded-lg  cursor-pointer`}
+          <div className="text-left">
+            <h3 className="font-extrabold text-xs">Regular</h3>
+          </div>
+        </label>
+          <label
+            className={`border ${
+              selectedValue === 'Student'
+                ? 'bg-purple-800 '
+                : 'border-gray-300'
+            } radio py-2 pr-3 transition-all ease-in-out duration-200  flex items-center justify-center space-x-3 rounded-lg  cursor-pointer`}
+          >
+            <input
+              type="radio"
+              name="radio"
+              value="Student"
+              className="peer hidden"
+              onChange={handleChange}
+            />
+            <div
+              className={`${
+                selectedValue === 'Student'
+                  ? 'border-blue-500'
+                  : 'border-gray-500'
+              } bg-white transition-all ease-in-out duration-200  border-2  h-3 w-3 rounded-full flex items-center justify-center `}
             >
-              <input
-                type="radio"
-                name="radio"
-                value="Regular"
-                className="peer hidden"
-                defaultChecked
-                onChange={handleChange}
-              />
               <div
                 className={`${
-                  selectedValue === 'Regular'
-                    ? 'border-blue-500'
-                    : 'border-gray-500'
-                } bg-white transition-all ease-in-out duration-200 border-2  h-3 w-3 rounded-full flex items-center justify-center `}
-              >
-                <div
-                  className={`${
-                    selectedValue === 'Regular' ? 'bg-blue-500' : 'bg-white'
-                  } transition-all ease-in-out duration-200 rounded-full w-[80%] h-[80%]`}
-                ></div>
-              </div>
-              <div className="text-left">
-                <h3 className="font-extrabold text-xs">Regular</h3>
-              </div>
-            </label>
-              <label
-                className={`border ${
-                  selectedValue === 'Student'
-                    ? 'bg-purple-800 '
-                    : 'border-gray-300'
-                } radio py-2 pr-3 transition-all ease-in-out duration-200  flex items-center justify-center space-x-3 rounded-lg  cursor-pointer`}
-              >
-                <input
-                  type="radio"
-                  name="radio"
-                  value="Student"
-                  className="peer hidden"
-                  onChange={handleChange}
-                />
-                <div
-                  className={`${
-                    selectedValue === 'Student'
-                      ? 'border-blue-500'
-                      : 'border-gray-500'
-                  } bg-white transition-all ease-in-out duration-200  border-2  h-3 w-3 rounded-full flex items-center justify-center `}
-                >
-                  <div
-                    className={`${
-                      selectedValue === 'Student' ? 'bg-blue-500' : 'bg-white'
-                    } transition-all ease-in-out duration-200 rounded-full w-[80%] h-[80%]`}
-                  ></div>
-                </div>
-                <div className="text-left">
-                  <h3 className="font-extrabold text-xs">Student</h3>
-                </div>
-              </label>
-              <label
-                className={`border ${
+                  selectedValue === 'Student' ? 'bg-blue-500' : 'bg-white'
+                } transition-all ease-in-out duration-200 rounded-full w-[80%] h-[80%]`}
+              ></div>
+            </div>
+            <div className="text-left">
+              <h3 className="font-extrabold text-xs">Student</h3>
+            </div>
+          </label>
+          <label
+            className={`border ${
+              selectedValue === 'SeniorCitizen'
+                ? 'bg-purple-800 '
+                : 'border-gray-300'
+            } radio pr-3 py-2 transition-all ease-in-out duration-200  flex items-center justify-center space-x-3 rounded-lg  cursor-pointer`}
+          >
+            <input
+              type="radio"
+              name="radio"
+              value="SeniorCitizen"
+              className="peer hidden"
+              onChange={handleChange}
+            />
+            <div
+              className={`${
+                selectedValue === 'SeniorCitizen'
+                  ? 'border-blue-500'
+                  : 'border-gray-500'
+              } bg-white transition-all  ease-in-out duration-200 border-2  h-3 w-3 rounded-full flex items-center justify-center `}
+            >
+              <div
+                className={`${
                   selectedValue === 'SeniorCitizen'
-                    ? 'bg-purple-800 '
-                    : 'border-gray-300'
-                } radio pr-3 py-2 transition-all ease-in-out duration-200  flex items-center justify-center space-x-3 rounded-lg  cursor-pointer`}
-              >
-                <input
-                  type="radio"
-                  name="radio"
-                  value="SeniorCitizen"
-                  className="peer hidden"
-                  onChange={handleChange}
-                />
-                <div
-                  className={`${
-                    selectedValue === 'SeniorCitizen'
-                      ? 'border-blue-500'
-                      : 'border-gray-500'
-                  } bg-white transition-all  ease-in-out duration-200 border-2  h-3 w-3 rounded-full flex items-center justify-center `}
-                >
-                  <div
-                    className={`${
-                      selectedValue === 'SeniorCitizen'
-                        ? 'bg-blue-500'
-                        : 'bg-white'
-                    } transition-all ease-in-out duration-200 rounded-full w-[80%] h-[80%]`}
-                  ></div>
-                </div>
-                <div className="text-left">
-                  <h3 className="font-extrabold text-xs">Senior citizen</h3>
-                </div>
-              </label>
-              <label
-                className={`border ${
-                  selectedValue === 'Army'
-                    ? 'bg-purple-800'
-                    : 'border-gray-300'
-                } radio pr-3 py-2 transition-all ease-in-out duration-200  flex items-center justify-center space-x-3 rounded-lg  cursor-pointer`}
-              >
-                <input
-                  type="radio"
-                  name="radio"
-                  value="Army"
-                  className="peer hidden"
-                  onChange={handleChange}
-                />
-                <div
-                  className={`${
-                    selectedValue === 'Army'
-                    ? 'border-blue-500'
-                      : 'border-gray-500'
-                  } bg-white transition-all ease-in-out duration-200 border-2  h-3 w-3 rounded-full flex items-center justify-center `}
-                >
-                  <div
-                    className={`${
-                      selectedValue === 'Army' ? 'bg-blue-500' : 'bg-white'
-                    } transition-all ease-in-out duration-200 rounded-full w-[80%] h-[80%]`}
-                  ></div>
-                </div>
-                <div className="text-left">
-                  <h3 className="font-extrabold text-xs">Armed Forces</h3>
-                </div>
-              </label>
-              <label
-                className={`border ${
-                  selectedValue === 'Doctor'
-                    ? 'bg-purple-800 '
-                    : 'border-gray-300'
-                } radio pr-3 py-2 transition-all ease-in-out duration-200  flex items-center justify-center space-x-3 rounded-lg  cursor-pointer`}
-              >
-                <input
-                  type="radio"
-                  name="radio"
-                  value="Doctor"
-                  className="peer hidden"
-                  onChange={handleChange}
-                />
-                <div
-                  className={`${
-                    selectedValue === 'Doctor'
-                      ? 'border-blue-500'
-                      : 'border-gray-500'
-                  } bg-white transition-all ease-in-out duration-200 border-2  h-3 w-3 rounded-full flex items-center justify-center `}
-                >
-                  <div
-                    className={`${
-                      selectedValue === 'Doctor' ? 'bg-blue-500' : 'bg-white'
-                    } transition-all ease-in-out duration-200 rounded-full w-[80%] h-[80%]`}
-                  ></div>
-                </div>
-                <div className="text-left">
-                  <h3 className="font-extrabold text-xs">Doctor and Nurses</h3>
-                </div>
-              </label>
-          </div>
-        </div>
-
-       
-      </form>
-      <ModalManager activeModal={activeModal || ''} closeModal={closeModal} />
+                    ? 'bg-blue-500'
+                    : 'bg-white'
+                } transition-all ease-in-out duration-200 rounded-full w-[80%] h-[80%]`}
+              ></div>
+            </div>
+            <div className="text-left">
+              <h3 className="font-extrabold text-xs">Senior citizen</h3>
+            </div>
+          </label>
+          <label
+            className={`border ${
+              selectedValue === 'Army'
+                ? 'bg-purple-800'
+                : 'border-gray-300'
+            } radio pr-3 py-2 transition-all ease-in-out duration-200  flex items-center justify-center space-x-3 rounded-lg  cursor-pointer`}
+          >
+            <input
+              type="radio"
+              name="radio"
+              value="Army"
+              className="peer hidden"
+              onChange={handleChange}
+            />
+            <div
+              className={`${
+                selectedValue === 'Army'
+                ? 'border-blue-500'
+                  : 'border-gray-500'
+              } bg-white transition-all ease-in-out duration-200 border-2  h-3 w-3 rounded-full flex items-center justify-center `}
+            >
+              <div
+                className={`${
+                  selectedValue === 'Army' ? 'bg-blue-500' : 'bg-white'
+                } transition-all ease-in-out duration-200 rounded-full w-[80%] h-[80%]`}
+              ></div>
+            </div>
+            <div className="text-left">
+              <h3 className="font-extrabold text-xs">Armed Forces</h3>
+            </div>
+          </label>
+          <label
+            className={`border ${
+              selectedValue === 'Doctor'
+                ? 'bg-purple-800 '
+                : 'border-gray-300'
+            } radio pr-3 py-2 transition-all ease-in-out duration-200  flex items-center justify-center space-x-3 rounded-lg  cursor-pointer`}
+          >
+            <input
+              type="radio"
+              name="radio"
+              value="Doctor"
+              className="peer hidden"
+              onChange={handleChange}
+            />
+            <div
+              className={`${
+                selectedValue === 'Doctor'
+                  ? 'border-blue-500'
+                  : 'border-gray-500'
+              } bg-white transition-all ease-in-out duration-200 border-2  h-3 w-3 rounded-full flex items-center justify-center `}
+            >
+              <div
+                className={`${
+                  selectedValue === 'Doctor' ? 'bg-blue-500' : 'bg-white'
+                } transition-all ease-in-out duration-200 rounded-full w-[80%] h-[80%]`}
+              ></div>
+            </div>
+            <div className="text-left">
+              <h3 className="font-extrabold text-xs">Doctor and Nurses</h3>
+            </div>
+          </label>
+      </div>
     </div>
-  );
+
+   
+  </form>
+  <ModalManager activeModal={activeModal || ''} closeModal={closeModal} />
+</div>
+);
 }
 
 export default SearchBar;

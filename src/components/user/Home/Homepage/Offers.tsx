@@ -129,7 +129,7 @@ function Offers() {
             
             <div className='flex items-center justify-center space-x-4'>
             <img
-              src={images[coupon._id] || 'placeholder-image-url'} // Placeholder if image not yet fetched
+              src={images[coupon._id] || 'placeholder-image-url'} 
               alt={`Coupon ${coupon.coupon_code}`}
               className=" h-20 " 
               onError={() => handleImageError(coupon._id, coupon.coupon_image_link)}

@@ -133,7 +133,6 @@ const formattedPrice = totalPriceWithExtras
         </div>
         <div className="flex justify-between mb-8 border-b pb-8 border-gray-300">
           <div className=" items-center space-y-1">
-            {/* First Circle */}
             <div className="flex items-center">
               <div className="border-2 border-gray-600 rounded-full w-4 h-4"></div>
               <div>
@@ -148,12 +147,10 @@ const formattedPrice = totalPriceWithExtras
               </div>
             </div>
 
-            {/* Vertical Line */}
             <div className="flex justify-start">
               <div className="border-l-2 mx-2  w-1 border-gray-500 h-6 "></div>
             </div>
 
-            {/* Second Circle */}
             <div className="flex items-center">
               <div className="border-2 border-gray-600 rounded-full w-4 h-4"></div>
               <div>
@@ -168,7 +165,6 @@ const formattedPrice = totalPriceWithExtras
               </div>
             </div>
           </div>
-          {/* the flight details */}
           <div className="flex space-x-4 items-start mx-16 ">
             <div className=" h-10 w-10 flex  justify-center text-lg text-black font-bold bg-white">
               {loading[airlineData?.airline_image_link] ? (
@@ -247,8 +243,10 @@ const formattedPrice = totalPriceWithExtras
             <Tooltip content={
              <div className='p-2 space-y-1'>
             <h1 className='font-PlusJakartaSans1000 text-xl mb-2'>Price breakdown</h1>
-             <p className='flex justify-between text-sm'><span>Base Fare:</span> ₹{basePrice?.toLocaleString('en-IN')}</p>
-             <p className='flex justify-between text-sm'> <span>Tax:</span> ₹{taxprice?.toLocaleString('en-IN')}</p>
+            <p className="flex justify-between text-sm">
+  <span>Base Fare: {totalPassenger} x {basePrice.toLocaleString('en-IN')}:</span> 
+  ₹{(totalPassenger * basePrice).toLocaleString('en-IN')}
+</p>             <p className='flex justify-between text-sm'> <span>Tax:</span> ₹{taxprice?.toLocaleString('en-IN')}</p>
              <p className='flex justify-between text-sm'><span>Charges:</span> ₹{chargeprice?.toLocaleString('en-IN')}</p>
              <p className='font-PlusJakartaSans1000 flex justify-between text-base'><span>Total Price:</span> ₹{formattedPrice}</p>
              <p className='text-xs'>Total price fro all travellers</p>

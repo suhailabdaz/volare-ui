@@ -4,18 +4,22 @@ import {
   useGetsearchAirportsQuery,
 } from '../../../../redux/apis/userApiSlice';
 import { ArrowLongRightIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface props {
   flightChartId: string;
 }
 
 const BacktoFlightTrav: React.FC<props> = ({ flightChartId }) => {
+  const navigate = useNavigate()
   const { data: airportData } = useGetsearchAirportsQuery(
     {},
     { refetchOnMountOrArgChange: true }
   );
 
   const { data: scheduleData } = useGetChartedFlightQuery(flightChartId);
+
+  const params = useParams();
 
   const getAirportCity = (airportId: string) => {
     const airport = airportData?.airports.find(
@@ -42,6 +46,11 @@ const BacktoFlightTrav: React.FC<props> = ({ flightChartId }) => {
 
     return `Direct · ${formattedHours} ${formattedMinutes}`.trim();
   };
+
+  const handleGoback = () => {
+    navigate(`/review-details/${params.bookingId}`, { replace: true });
+  };
+
   return (
     <div
       className="bg-white rounded w-[99%]   items-center h-auto shadow-[0_0_10px_rgba(0,0,0,0.2)] font-PlusJakartaSans px-5 py-2"
@@ -69,7 +78,7 @@ const BacktoFlightTrav: React.FC<props> = ({ flightChartId }) => {
           </div>
         </div>
         <div>
-          <button>
+          <button onClick={()=>{handleGoback()}}>
             <ChevronDownIcon className='h-6'/>
           </button>
         </div>

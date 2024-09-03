@@ -80,6 +80,11 @@ function Content() {
   const [sortedSchedules, setSortedSchedules] = useState<FlightInstance[]>([]);
   const [classState, setClassState] = useState(params.class);
   const [filteredSchedules, setFilteredSchedules] = useState<FlightInstance[]>([]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
+  const [departureTime, setDepartureTime] = useState<string>('');
+  const [arrivalTime, setArrivalTime] = useState<string>('');
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(10000);
 
   const {
     data: schedules,
@@ -191,7 +196,6 @@ function Content() {
   };
 
   const handleFilterChange = (filters: any) => {
-    
   const filtered = schedules.filter((schedule: FlightInstance) => {
   const departureHour = parseInt(schedule.departureTime.split(':')[0], 10);
   const arrivalHour = parseInt(schedule.arrivalTime.split(':')[0], 10);

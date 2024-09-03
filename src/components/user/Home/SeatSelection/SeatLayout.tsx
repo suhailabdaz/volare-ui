@@ -39,7 +39,9 @@ const SeatLayout: React.FC<DataProps> = ({
     data: scheduleData,
     isLoading,
     error: chartError,
-  } = useGetChartedFlightQuery(flightChartId);
+  } = useGetChartedFlightQuery(flightChartId,{
+    refetchOnMountOrArgChange:true
+  });
   const [selectedSeats, setSelectedSeats] = useState<
     {
       seatNumber: string;
@@ -67,6 +69,11 @@ const SeatLayout: React.FC<DataProps> = ({
       <div className="flex justify-center items-center h-64">Loading...</div>
     );
   }
+  useEffect(() => {
+    if (scheduleData) {
+      console.log('Seat Layout Data:', scheduleData.seatLayout);
+    }
+  }, [scheduleData]);
 
   if (chartError) {
     return (
@@ -133,11 +140,11 @@ const SeatLayout: React.FC<DataProps> = ({
               ? 'bg-white text-green-500 border-2 border-green-500 cursor-pointer'
               : ''
           }
-          ${!seat.isAvailable ? 'bg-gray-400' : ''}
+          ${!seat.isAvailable ? 'bg-gray-400 text-white cursor-not-allowed' : ''}
         `}
-        title={`Seat ${seat.number}`}
+        title={`Seat ${seat.number}${!seat.isAvailable ? ' - Not Available' : ''}`}
         onClick={() => seat.isAvailable && handleSeatClick(seat.number)}
-      >
+        >
         {seat.number}
       </div>
     );

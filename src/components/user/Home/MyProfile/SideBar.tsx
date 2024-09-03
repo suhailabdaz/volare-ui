@@ -112,10 +112,11 @@ function Sidebar() {
   };
 
   const triggerFileInput = () => {
-    if (fileInputRef.current) {
+        if (fileInputRef.current) {
       fileInputRef.current.click();
     }
   };
+
   return (
     <div className=" bg-[#FFFF] rounded-2xl mt-14  w-[95%] left-0 top-10 sticky shadow-custom font-PlusJakartaSans ">
       <div className="p-6">

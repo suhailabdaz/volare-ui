@@ -96,7 +96,9 @@ function SeatSelection() {
     data: bookingData,
     isLoading,
     error,
-  } = useGetBookingQuery(params.bookingId || '');
+  } = useGetBookingQuery(params.bookingId || '',{
+    refetchOnMountOrArgChange:true
+  });
 
   if (isLoading) {
     return <div>Loading...</div>;
