@@ -260,6 +260,7 @@ const TravellersDetails: React.FC<TravellersDetailsProps> = ({
         travellerId={selectedTravellerId || ''}
       />
     </div>
+
   );
 };
 

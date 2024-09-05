@@ -72,6 +72,10 @@ function SeatSelection() {
     setCouponDetails(details);
   }, []);
 
+  const handleFareUpdate = useCallback((details: SetStateAction<{}>) => {
+    setCouponDetails(details);
+  }, []);
+
   const updateSelectedSeats = useCallback((newSelectedSeats: { 
     seatNumber: string; 
     travellerId: string; 
@@ -107,7 +111,6 @@ function SeatSelection() {
   if (error || !bookingData) {
     return <div>Error loading booking data</div>;
   }
-
 
   const handleStripeRedirect = async () => {
     try {
@@ -218,6 +221,7 @@ function SeatSelection() {
                     travellers={bookingData.travellers}
                     bookingData={bookingData}
                     onSeatSelected={updateSelectedSeats}
+                    onFareUpdate={handleFareUpdate}
                   />
                 ) : (
                   <MealSelection />

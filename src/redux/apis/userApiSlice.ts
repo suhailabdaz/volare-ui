@@ -151,10 +151,10 @@ export const userApi = createApi({
       },
     }),
     updateBooking: builder.mutation({
-      query: ({ bookingId, travellers }) => ({
+      query: ({ bookingId, travellers,contactDetails }) => ({
         url: `/api/v1/booking/update-booking/${bookingId}`,
         method: 'POST',
-        body: travellers,
+        body: travellers,contactDetails
       }),
       invalidatesTags: ['updateBooking'],
       async onQueryStarted(arg, { queryFulfilled }) {

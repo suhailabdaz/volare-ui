@@ -3,7 +3,7 @@ import Image from '../../../assets/images/Premium Vector _ Abstract gradient pur
 import FareSummary from '../../../components/user/Home/ReviewDetails/FareSummary';
 import FlightDetails from '../../../components/user/Home/ReviewDetails/FlightDetails';
 import Info from '../../../components/user/Home/ReviewDetails/Info';
-import Insurance from '../../../components/user/Home/ReviewDetails/Insurance';
+// import Insurance from '../../../components/user/Home/ReviewDetails/Insurance';
 import TravellersDetails from '../../../components/user/Home/ReviewDetails/TravellersDetails';
 import PrNavbar from '../../../components/user/Home/Homepage/PrNavbar';
 import CouponSection from '../../../components/user/Home/ReviewDetails/CouponSection';
@@ -20,6 +20,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store/store';
 import { setCoupon,setFareBreakdown, setTotalPrice } from '../../../redux/slices/bookingSlice';
 import { useDispatch } from 'react-redux';
+import ContactDetails from '../../../components/user/Home/ReviewDetails/ContactDetails';
 
 
 interface TravellerData {}
@@ -29,13 +30,21 @@ interface Coupon {
   coupon_description: string;
   discount: number;
 }
+
+
 interface FareBreakdown {
   baseFare: number;
   taxAmount: number;
   chargesAmount: number;
 }
 
-interface BookingData {
+interface Contactdetails {
+  phone: string;
+  email: string;
+}
+
+
+export interface BookingData {
   _id: string;
   userId: string;
   flightChartId: string;
@@ -53,6 +62,10 @@ interface BookingData {
   status: string;
   paymentStatus: string;
   couponCode: string;
+  contactDetails:{
+    phone:string,
+    email:string
+  }
 }
 
 function ReviewDetails() {
@@ -61,6 +74,7 @@ function ReviewDetails() {
   const [travellersDetails, setTravellersDetails] = useState<TravellerData[]>(
     []
   );
+
   const [insuranceDetails, setInsuranceDetails] = useState({});
   const [couponDetails, setCouponDetails] = useState<Coupon | null>(null);
   const [fareBreakdown, setFareBreakdown] = useState<FareBreakdown>({
@@ -68,6 +82,8 @@ function ReviewDetails() {
     taxAmount: 0,
     chargesAmount: 0,
   });
+
+  const [contactDetails,setContactDetails] = useState<ContactDetails|null>(null)
   const [totalPrice, setTotalPrice] = useState(0);
   const userState = useSelector((state: RootState) => state.UserAuth.userData);
   const statecouponDetails = useSelector((state: RootState) => state.BookingAuth.coupon);
@@ -81,6 +97,11 @@ function ReviewDetails() {
 
   const updateInsuranceDetails = useCallback((details: SetStateAction<{}>) => {
     setInsuranceDetails(details);
+    refetch();
+  }, []);
+
+  const updateContactDetails = useCallback((details: Contactdetails) => {
+    setContactDetails(details);
     refetch();
   }, []);
 
@@ -114,6 +135,7 @@ function ReviewDetails() {
         await updateBooking({
           bookingId: params.bookingId,
           travellers: travellersDetails,
+          contactDetails:contactDetails
         }).unwrap();
       
         navigate(`/seat-selection/${params.bookingId}`, { replace: true });
@@ -217,14 +239,14 @@ function ReviewDetails() {
                   Travellers
                 </ScrollLink>
               </li>
-              {/* <li className='cursor-pointer'><ScrollLink
+              <li className='cursor-pointer'><ScrollLink
                   to="contactDetails"
                   spy={true}
                   smooth={true}
                   duration={500}
                 >
                   Contact Details
-                </ScrollLink></li> */}
+                </ScrollLink></li>
             </ul>
           </div>
           <div className="flex justify-between pb-48 mx-[11%] mt-8">
@@ -241,6 +263,10 @@ function ReviewDetails() {
                 bookingDetails={bookingData}
                 travellerType={bookingData.travellerType}
                 onUpdateTravellers={updateTravellersDetails}
+              />
+              <ContactDetails
+              onUpdateContact={updateContactDetails}
+              bookingData={bookingData}
               />
               <button
                 onClick={handleContinue}
