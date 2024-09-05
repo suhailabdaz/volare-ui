@@ -7,6 +7,9 @@ import { toast } from 'sonner';
 import { setTravellers } from '../../../../redux/slices/travellersSlice';
 import ModalManager from './Modals/ModalManager';
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
+interface TravellerData {
+  _id: any;
+}
 
 interface TravellersDetailsProps {
   onUpdateTravellers: (updatedTravellers: any[]) => void;
@@ -16,7 +19,7 @@ interface TravellersDetailsProps {
     infants: number;
   };
   bookingDetails: {
-    travellers: string[];
+    travellers: TravellerData[];
   };
 }
 
@@ -61,14 +64,12 @@ const TravellersDetails: React.FC<TravellersDetailsProps> = ({
   }, [userState, dispatch, travellersData]);
 
   useEffect(() => {
-  
-    // Populate selected travellers with booking details when component loads
-    console.log(bookingDetails.travellers,'in refetch the details of the travellers');
-    
     if (bookingDetails && bookingDetails.travellers.length) {
-      setSelectedTravellers(bookingDetails.travellers);
+      const travellerIds = bookingDetails.travellers.map(traveller => traveller._id);
+      setSelectedTravellers(travellerIds);
     }
   }, [bookingDetails]);
+
 
   const openModal = (modalName: string, travellerId: string | null = null) => {
     setActiveModal(modalName);
@@ -88,28 +89,25 @@ const TravellersDetails: React.FC<TravellersDetailsProps> = ({
 
   const handleTravellerSelection = (travellerId: string) => {
     setSelectedTravellers((prev) => {
+      let newSelected;
       if (prev.includes(travellerId)) {
-        return prev.filter((id) => id !== travellerId);
+        newSelected = prev.filter((id) => id !== travellerId);
       } else if (prev.length < totalTravellers) {
-        return [...prev, travellerId];
+        newSelected = [...prev, travellerId];
       } else {
         toast.error(`You can only select up to ${totalTravellers} travellers.`);
         return prev;
       }
+      
+      const selectedTravellersData = travellersData.filter((traveller) =>
+        newSelected.includes(traveller._id)
+      );
+      onUpdateTravellers(selectedTravellersData);
+      return newSelected;
     });
   };
 
-  const handleDone = () => {
-
-    if (selectedTravellers.length === totalTravellers) {
-      const selectedTravellersData = travellersData.filter((traveller) =>
-        selectedTravellers.includes(traveller._id)
-      );
-      onUpdateTravellers(selectedTravellersData);
-    } else {
-      toast.error(`Please select exactly ${totalTravellers} travellers.`);
-    }
-  };
+  
 
   const getRandomGradient = () => {
     const gradients = [
@@ -188,8 +186,8 @@ const TravellersDetails: React.FC<TravellersDetailsProps> = ({
             onClick={() => handleTravellerSelection(traveller._id)}
             className="text-black"
           >
-<XMarkIcon className="h-5 hover:transform hover:scale-[2] hover:text-red-500 transition-all duration-200 delay-10" />
-</button>
+            <XMarkIcon className="h-5 hover:transform hover:scale-[2] hover:text-red-500 transition-all duration-200 delay-10" />
+          </button>
         )}
       </div>
     </div>
@@ -242,7 +240,7 @@ const TravellersDetails: React.FC<TravellersDetailsProps> = ({
           <PlusIcon className="h-4 w-4 mr-2" />
           Add Traveller
         </button>
-        <button
+        {/* <button
           onClick={handleDone}
           disabled={selectedTravellers.length !== totalTravellers}
           className={`${
@@ -252,7 +250,7 @@ const TravellersDetails: React.FC<TravellersDetailsProps> = ({
           } px-6 py-1 text-white rounded-2xl font-PlusJakartaSans1000 text-md`}
         >
           Done
-        </button>
+        </button> */}
       </div>
 
       <ModalManager

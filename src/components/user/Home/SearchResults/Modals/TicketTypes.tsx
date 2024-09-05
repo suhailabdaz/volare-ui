@@ -34,7 +34,7 @@ const TicketTypes: React.FC<ModalProps> = ({
   const params = useParams();
   const [createBooking, { isLoading }] = useInitiateBookingMutation();
   const navigate = useNavigate();
-  const userData = useSelector((state: RootState) => state.ProfileAuth.userData);
+  const userData = useSelector((state: RootState) => state.UserAuth.userData);
 
 
 

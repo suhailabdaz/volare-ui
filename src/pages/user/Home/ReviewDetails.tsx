@@ -1,4 +1,4 @@
-import React, { SetStateAction, useCallback, useEffect, useState } from 'react';
+import  { SetStateAction, useCallback, useEffect, useState } from 'react';
 import Image from '../../../assets/images/Premium Vector _ Abstract gradient purple and blue background.jpeg';
 import FareSummary from '../../../components/user/Home/ReviewDetails/FareSummary';
 import FlightDetails from '../../../components/user/Home/ReviewDetails/FlightDetails';
@@ -13,12 +13,22 @@ import {
 } from '../../../redux/apis/userApiSlice';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
-import { replace } from 'formik';
 import ShimmerReview from './pageShimmers/ShimmerReview';
 import { Link as ScrollLink } from 'react-scroll';
+import { useApplyCouponMutation } from '../../../redux/apis/userApiSlice';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store/store';
+import { setCoupon,setFareBreakdown, setTotalPrice } from '../../../redux/slices/bookingSlice';
+import { useDispatch } from 'react-redux';
+
 
 interface TravellerData {}
 
+interface Coupon {
+  coupon_code: string;
+  coupon_description: string;
+  discount: number;
+}
 interface FareBreakdown {
   baseFare: number;
   taxAmount: number;
@@ -42,6 +52,7 @@ interface BookingData {
   fareBreakdown: FareBreakdown;
   status: string;
   paymentStatus: string;
+  couponCode: string;
 }
 
 function ReviewDetails() {
@@ -51,32 +62,37 @@ function ReviewDetails() {
     []
   );
   const [insuranceDetails, setInsuranceDetails] = useState({});
-  const [couponDetails, setCouponDetails] = useState({});
+  const [couponDetails, setCouponDetails] = useState<Coupon | null>(null);
   const [fareBreakdown, setFareBreakdown] = useState<FareBreakdown>({
     baseFare: 0,
     taxAmount: 0,
     chargesAmount: 0,
   });
   const [totalPrice, setTotalPrice] = useState(0);
+  const userState = useSelector((state: RootState) => state.UserAuth.userData);
+  const statecouponDetails = useSelector((state: RootState) => state.BookingAuth.coupon);
+  const statefareBreakdown = useSelector((state: RootState) => state.BookingAuth.fareBreakdown);
+  const statetotalPrice = useSelector((state: RootState) => state.BookingAuth.totalPrice);
+  const dispatch = useDispatch()
 
   const navigate = useNavigate();
   const [updateBooking] = useUpdateBookingMutation();
-
-  const updateTravellersDetails = useCallback(
-    (details: SetStateAction<TravellerData[]>) => {
-      console.log(details, 'details');
-      setTravellersDetails(details);
-      console.log('render', travellersDetails);
-    },
-    []
-  );
+  const [applyCoupon] = useApplyCouponMutation();
 
   const updateInsuranceDetails = useCallback((details: SetStateAction<{}>) => {
     setInsuranceDetails(details);
+    refetch();
   }, []);
 
-  const updateCouponDetails = useCallback((details: SetStateAction<{}>) => {
-    setCouponDetails(details);
+  const updateCouponDetails = useCallback((coupon: Coupon | null) => {
+
+    if (coupon) {
+      setCouponDetails(coupon);
+      dispatch(setCoupon(coupon))
+    } else {
+      setCouponDetails(null);
+      dispatch(setCoupon(coupon))
+    }
   }, []);
 
   const updateFareAndTotal = useCallback(
@@ -99,7 +115,7 @@ function ReviewDetails() {
           bookingId: params.bookingId,
           travellers: travellersDetails,
         }).unwrap();
-
+      
         navigate(`/seat-selection/${params.bookingId}`, { replace: true });
       }
     } catch (error) {
@@ -112,21 +128,34 @@ function ReviewDetails() {
   const {
     data: bookingData,
     isLoading,
-    error,refetch
+    error,
+    refetch,
   } = useGetBookingQuery(params.bookingId || '', {
     refetchOnMountOrArgChange: true,
   });
 
   useEffect(() => {
-    if (bookingData && travellersDetails.length > 0) {
+    if (bookingData && bookingData.travellers) {
+      setTravellersDetails(bookingData.travellers);
       const { adults, children, infants } = bookingData.travellerType;
       const totalRequired = adults + children + infants;
-
-      const isValid = travellersDetails.length === totalRequired;
-
+      const isValid = bookingData.travellers.length === totalRequired;
       setIsValidToSubmit(isValid);
     }
-  }, [travellersDetails, bookingData]);
+  }, [bookingData]);
+
+  const updateTravellersDetails = useCallback(
+    (details: TravellerData[]) => {
+      setTravellersDetails(details);
+      if (bookingData) {
+        const { adults, children, infants } = bookingData.travellerType;
+        const totalRequired = adults + children + infants;
+        const isValid = details.length === totalRequired;
+        setIsValidToSubmit(isValid);
+      }
+    },
+    [bookingData]
+  );
 
   if (isLoading) {
     return (
@@ -226,15 +255,14 @@ function ReviewDetails() {
                 bookingData={bookingData}
                 inittotalPrice={bookingData.totalPrice}
                 fareBreakdown={bookingData.fareBreakdown}
+                selectedCoupon={couponDetails}
               />
               <CouponSection
+                bookingData={bookingData}
                 bookingId={bookingData._id}
                 totalPrice={bookingData.totalPrice}
                 addedCoupon={bookingData.coupon}
-                onCouponApplied={(newTotal, discount) => {
-                  refetch()
-                }}
-
+                onCouponApplied={updateCouponDetails}
               />
             </div>
           </div>
