@@ -3,7 +3,7 @@ import Warning from '../../../../assets/images/icons8-high-importance-48.png';
 
 function Info() {
   return (
-    <div className="bg-white rounded w-[99%] shadow-[0_0_10px_rgba(0,0,0,0.2)] font-PlusJakartaSans p-5" id='important_info'>
+    <div className="bg-white rounded w-[99%] shadow-[0_0_10px_rgba(0,0,0,0.2)] font-PlusJakartaSans p-5" id='importantInfo'>
       <h1 className="font-PlusJakartaSans1000 text-xl">
         Important Information
       </h1>

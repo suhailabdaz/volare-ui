@@ -158,7 +158,7 @@ const FlightDetails: React.FC<DataProps> = ({ flightChartId,fareType,bookingClas
   return (
     <div
       className="bg-white rounded w-[99%] flex flex-col items-center justify-center h-auto shadow-[0_0_10px_rgba(0,0,0,0.2)] font-PlusJakartaSans p-5"
-      id="flight_details"
+      id="flightDetails"
     >
       <div className="w-full flex flex-col items-center justify-center">
         <div className="shadow-[0_0_10px_rgba(0,0,0,0.15)] bg-white rounded w-full  mb-5">

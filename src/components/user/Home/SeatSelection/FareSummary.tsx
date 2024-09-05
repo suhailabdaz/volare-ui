@@ -66,6 +66,7 @@ function FareSummary({
           value={fareBreakdown.taxAmount.toFixed(2)}
           onChange={(e) => updateFare('taxAmount', parseFloat(e.target.value))}
           className="w-2/4"
+         
         />
         </div>
         

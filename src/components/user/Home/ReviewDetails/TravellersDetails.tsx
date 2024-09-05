@@ -198,7 +198,7 @@ const TravellersDetails: React.FC<TravellersDetailsProps> = ({
   return (
     <div
       className="bg-white z-0 rounded w-[99%] shadow-[0_0_10px_rgba(0,0,0,0.2)] font-PlusJakartaSans p-5"
-      id="travellers_details"
+      id="travellers"
     >
       <div className="flex justify-between mb-5">
         <h1 className="font-PlusJakartaSans1000 text-xl">Travellers Details</h1>

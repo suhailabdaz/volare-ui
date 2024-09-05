@@ -59,7 +59,7 @@ const invalidateTagAfterDelay = (tag: any, delay: number) => {
 export const userApi = createApi({
   reducerPath: 'userApi',
   baseQuery: baseQueryWithReauth,
-  tagTypes: ['searchAirports','searchSchedules','searchAirline','searchFlights','searchBooking'],
+  tagTypes: ['searchAirports','updateBooking','applyCoupon','searchSchedules','searchAirline','searchFlights','searchBooking','usedCoupons','applyCoupon'],
   endpoints: (builder) => ({
     getsearchAirports: builder.query({
       query: () => ({
@@ -102,6 +102,20 @@ export const userApi = createApi({
         } catch {}
       },
     }),
+    getUsedCoupons: builder.query({
+      query: (id:string) => ({
+        url: '/api/v1/user/get-used-coupons',
+        method: 'GET',
+        params: { id },
+      }),
+      providesTags: ['usedCoupons'],
+      async onQueryStarted(arg, { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          invalidateTagAfterDelay('searchAirline', 10000);
+        } catch {}
+      },
+    }),
     getsearchFlight: builder.query({
       query: () => ({
         url: '/api/v1/airline/all-flights',
@@ -129,6 +143,12 @@ export const userApi = createApi({
         params:{id}
       }),
       providesTags: ['searchBooking'],
+      async onQueryStarted(arg, { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          invalidateTagAfterDelay('searchBooking', 10000);
+        } catch {}
+      },
     }),
     updateBooking: builder.mutation({
       query: ({ bookingId, travellers }) => ({
@@ -136,6 +156,27 @@ export const userApi = createApi({
         method: 'POST',
         body: travellers,
       }),
+      invalidatesTags: ['updateBooking'],
+      async onQueryStarted(arg, { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          invalidateTagAfterDelay('updateBooking', 10000);
+        } catch {}
+      },  
+    }),
+    applyCoupon: builder.mutation({
+      query: ({ bookingId, userId, coupon }) => ({
+        url: '/api/v1/booking/apply-coupon',
+        method: 'POST',
+        body: { bookingId, userId, coupon },
+      }), 
+      invalidatesTags: ['applyCoupon'],
+      async onQueryStarted(arg, { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          invalidateTagAfterDelay('applyCoupon', 10000);
+        } catch {}
+      },      
     }),
     getChartedFlight: builder.query({
       query: (id:string) => ({
@@ -162,12 +203,14 @@ export const {
   useGetsearchAirportsQuery,
   useGetSearchSchedulesQuery,
   useGetsearchAirlineQuery,
+  useGetUsedCouponsQuery,
   useGetsearchFlightQuery,
   useInitiateBookingMutation,
   useGetBookingQuery,
   useGetChartedFlightQuery,
   useUpdateBookingMutation,
-  useUpdateBookingSeatsMutation
+  useUpdateBookingSeatsMutation,
+  useApplyCouponMutation
   
 } = userApi;
 export default userApi;

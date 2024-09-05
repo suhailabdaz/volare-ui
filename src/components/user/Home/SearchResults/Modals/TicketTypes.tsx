@@ -274,10 +274,11 @@ const formattedPrice = totalPriceWithExtras
           <button
             type="button"
             onClick={handleSubmit}
-            className="px-8 py-2 text-white rounded-lg font-semibold bg-gradient-to-r from-blue-500 to-purple-500 transition-all ease-in-out delay-50 duration-500 hover:bg-gradient-to-r hover:from-purple-500 hover:to-blue-500 hover:scale-105"
+            className="px-8 py-2 text-white rounded-lg min-w-36  font-semibold bg-gradient-to-r from-blue-500 to-purple-500 transition-all ease-in-out delay-50 duration-500 hover:bg-gradient-to-r hover:from-purple-500 hover:to-blue-500 hover:scale-105"
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Submitting...' : 'SELECT'}
+            {isSubmitting ? <div className="loader border-t-2 rounded-full border-white bg-transparent animate-spin
+aspect-square w-6 ml-8 items-center text-white"></div> : 'SELECT'}
           </button>
           </div>
         </div>

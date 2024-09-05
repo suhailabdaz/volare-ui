@@ -358,7 +358,7 @@ function Content() {
                     <div className="flex justify-center font-PlusJakartaSans ">
                       <div className="bg-white w-[90%] shadow-custom rounded-lg">
                         <div className="px-10 py-6">
-                          <div className="mb-4 flex space-x-10 items-center">
+                          <div className="mb-4 flex justify-between space-x-10 items-center">
                             <div className="flex space-x-5 w-[20vh]">
                               <div className=" h-10 w-10 flex items-center justify-center text-lg text-black font-bold bg-white">
                                 {loading[airlineData?.airline_image_link] ? (
@@ -416,7 +416,7 @@ function Content() {
                             </div>
                             <div className="items-center mx-3">
                               <p className="font-extrabold text-xs text-black flex-1">
-                                Per Adult
+                                Fare per Adult
                               </p>
                               <p className="font-extrabold text-lg text-black items-center justify-center flex">
                                 <img

@@ -7,14 +7,17 @@ import Insurance from '../../../components/user/Home/ReviewDetails/Insurance';
 import TravellersDetails from '../../../components/user/Home/ReviewDetails/TravellersDetails';
 import PrNavbar from '../../../components/user/Home/Homepage/PrNavbar';
 import CouponSection from '../../../components/user/Home/ReviewDetails/CouponSection';
-import { useGetBookingQuery, useUpdateBookingMutation } from '../../../redux/apis/userApiSlice';
+import {
+  useGetBookingQuery,
+  useUpdateBookingMutation,
+} from '../../../redux/apis/userApiSlice';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { replace } from 'formik';
 import ShimmerReview from './pageShimmers/ShimmerReview';
+import { Link as ScrollLink } from 'react-scroll';
 
-interface TravellerData {
-}
+interface TravellerData {}
 
 interface FareBreakdown {
   baseFare: number;
@@ -61,10 +64,9 @@ function ReviewDetails() {
 
   const updateTravellersDetails = useCallback(
     (details: SetStateAction<TravellerData[]>) => {
-      console.log(details,'details');
+      console.log(details, 'details');
       setTravellersDetails(details);
-      console.log('render',travellersDetails);
-      
+      console.log('render', travellersDetails);
     },
     []
   );
@@ -85,21 +87,21 @@ function ReviewDetails() {
     []
   );
 
- 
-
   const handleContinue = async () => {
     try {
       if (!isValidToSubmit) {
-        toast.warning('Please fill in all required traveller details before continuing.');
+        toast.warning(
+          'Please fill in all required traveller details before continuing.'
+        );
         return;
-      }else{
-      await updateBooking({
-        bookingId: params.bookingId,
-        travellers: travellersDetails,
-      }).unwrap();
+      } else {
+        await updateBooking({
+          bookingId: params.bookingId,
+          travellers: travellersDetails,
+        }).unwrap();
 
-      navigate(`/seat-selection/${params.bookingId}`, { replace: true });
-    }
+        navigate(`/seat-selection/${params.bookingId}`, { replace: true });
+      }
     } catch (error) {
       console.error('Failed to update booking:', error);
       toast.error('Failed to update booking. Please try again.');
@@ -110,24 +112,28 @@ function ReviewDetails() {
   const {
     data: bookingData,
     isLoading,
-    error,
-  } = useGetBookingQuery(params.bookingId || '',{
-    refetchOnMountOrArgChange:true
+    error,refetch
+  } = useGetBookingQuery(params.bookingId || '', {
+    refetchOnMountOrArgChange: true,
   });
 
   useEffect(() => {
     if (bookingData && travellersDetails.length > 0) {
       const { adults, children, infants } = bookingData.travellerType;
       const totalRequired = adults + children + infants;
-      
-      const isValid = travellersDetails.length === totalRequired 
+
+      const isValid = travellersDetails.length === totalRequired;
 
       setIsValidToSubmit(isValid);
     }
   }, [travellersDetails, bookingData]);
 
-  if(isLoading) {
-    return <div><ShimmerReview/></div>;
+  if (isLoading) {
+    return (
+      <div>
+        <ShimmerReview />
+      </div>
+    );
   }
 
   if (error || !bookingData) {
@@ -151,11 +157,45 @@ function ReviewDetails() {
               Complete your Booking
             </h2>
             <ul className="text-gray-300 text-sm flex space-x-4">
-              <li>Flight Details</li>
-              <li>Important Info</li>
+              <li className="cursor-pointer">
+                <ScrollLink
+                  to="flightDetails"
+                  spy={true}
+                  smooth={true}
+                  duration={500}
+                >
+                  Flight Details
+                </ScrollLink>
+              </li>
+              <li className="cursor-pointer">
+                <ScrollLink
+                  to="importantInfo"
+                  spy={true}
+                  smooth={true}
+                  duration={500}
+                >
+                  Important info
+                </ScrollLink>
+              </li>
               {/* <li>Trip secure</li> */}
-              <li>Travellers</li>
-              <li>Contact Info</li>
+              <li className="cursor-pointer">
+                <ScrollLink
+                  to="travellers"
+                  spy={true}
+                  smooth={true}
+                  duration={500}
+                >
+                  Travellers
+                </ScrollLink>
+              </li>
+              {/* <li className='cursor-pointer'><ScrollLink
+                  to="contactDetails"
+                  spy={true}
+                  smooth={true}
+                  duration={500}
+                >
+                  Contact Details
+                </ScrollLink></li> */}
             </ul>
           </div>
           <div className="flex justify-between pb-48 mx-[11%] mt-8">
@@ -174,20 +214,28 @@ function ReviewDetails() {
                 onUpdateTravellers={updateTravellersDetails}
               />
               <button
-          onClick={handleContinue}
-          type="button"
+                onClick={handleContinue}
+                type="button"
                 className="px-10 py-3 my-2 text-white rounded-3xl  font-PlusJakartaSans1000 text-xl bg-gradient-to-r from-blue-500 to-purple-500 transition-all ease-in-out delay-50 duration-500 hover:bg-gradient-to-r hover:from-purple-500 hover:to-blue-500 hover:scale-105"
               >
                 CONTINUE
-              </button>{' '}    
+              </button>{' '}
             </div>
             <div className="w-1/4 sticky top-12 h-full">
               <FareSummary
-                initialFareBreakdown={bookingData.fareBreakdown}
-                initialTotalPrice={bookingData.totalPrice}
-                onUpdateFareAndTotal={updateFareAndTotal}
+                bookingData={bookingData}
+                inittotalPrice={bookingData.totalPrice}
+                fareBreakdown={bookingData.fareBreakdown}
               />
-              <CouponSection onApplyCoupon={updateCouponDetails} />
+              <CouponSection
+                bookingId={bookingData._id}
+                totalPrice={bookingData.totalPrice}
+                addedCoupon={bookingData.coupon}
+                onCouponApplied={(newTotal, discount) => {
+                  refetch()
+                }}
+
+              />
             </div>
           </div>
         </div>
