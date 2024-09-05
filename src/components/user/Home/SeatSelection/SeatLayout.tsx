@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useGetChartedFlightQuery } from '../../../../redux/apis/userApiSlice';
 import Cockpit from '../../../../assets/images/ic_flightSmallFront.1e0e0ad4.png';
-import socket from '../../../../utils/socket/socket';
+// import socket from '../../../../utils/socket/socket';
 
 interface DataProps {
   flightChartId: string;
@@ -32,7 +32,6 @@ const SeatLayout: React.FC<DataProps> = ({
   flightChartId,
   classType,
   travellers,
-  bookingData,
   onSeatSelected,
 }) => {
   const {
