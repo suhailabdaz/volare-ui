@@ -30,8 +30,8 @@ const ContactDetails: React.FC<ContactDetailsProps> = ({
   const userData = useSelector((state: RootState) => state.UserAuth.userData);
 
   const initialValues = {
-    phoneNumber:bookingData.contactDetails.phone || userData?.mobile?.toString() || '', 
-    email: bookingData.contactDetails.email || userData?.email || ''
+    phoneNumber:bookingData.contactDetails?.phone || userData?.mobile?.toString() || '', 
+    email: bookingData.contactDetails?.email || userData?.email || ''
   };
   const onSubmit = async (
     values: typeof initialValues,

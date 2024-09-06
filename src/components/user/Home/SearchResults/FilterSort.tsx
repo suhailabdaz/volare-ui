@@ -48,7 +48,7 @@ function FilterSort({ schedules, onFilterChange }: FilterSortProps) {
 
   useEffect(() => {
     handleFilterChange();
-  }, [handleFilterChange]);
+  }, []);
 
   const STEP = 100;
 

@@ -134,7 +134,7 @@ function Hero() {
       if (!hasErrors && shouldSubmit) {
         try {
           navigate(
-`/search/${fromAirport?._id}/${toAirport?._id}/${departureDate?.date}/${classState}/${travellers.adults}/${travellers.children}/${travellers.infants}/${selectedValue}/${tripType}${tripType === 'roundTrip' ? `/${returnDate?.date}` : ''}`
+            `/search/${fromAirport?._id}/${toAirport?._id}/${departureDate?.date}/${classState}/${travellers.adults}/${travellers.children}/${travellers.infants}/${travellers.total}/${selectedValue}/${tripType}${tripType === 'roundTrip' ? `/${returnDate?.date}` : ''}`
           );
                 } catch (error) {
           toast.error('error occured');

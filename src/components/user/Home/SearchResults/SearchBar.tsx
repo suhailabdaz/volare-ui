@@ -14,49 +14,11 @@ import {
 } from '../../../../redux/slices/HeroSlice';
 import { RootState } from '../../../../redux/store/store';
 import ModalManager from '../Homepage/Modals/ModalManager';
+import { useParams } from 'react-router-dom';
 
-const useStateChanged = () => {
-  const tripType = useSelector((state: RootState) => state.HeroAuth.tripType);
-  const selectedValue = useSelector((state: RootState) => state.HeroAuth.selectedValue);
-  const classState = useSelector((state: RootState) => state.HeroAuth.classState);
-  const fromAirport = useSelector((state: RootState) => state.HeroAuth.fromAirport);
-  const toAirport = useSelector((state: RootState) => state.HeroAuth.toAirport);
-  const departureDate = useSelector((state: RootState) => state.HeroAuth.departureDate);
-  const returnDate = useSelector((state: RootState) => state.HeroAuth.returnDate);
-  const travellers = useSelector((state: RootState) => state.HeroAuth.travellers);
 
-  const isEqual = useCallback((obj1: any, obj2: any) => {
-    return JSON.stringify(obj1) === JSON.stringify(obj2);
-  }, []);
 
-  const hasChanges = useMemo(() => {
-    const currentState = {
-      tripType,
-      selectedValue,
-      classState,
-      fromAirport,
-      toAirport,
-      departureDate,
-      returnDate,
-      travellers
-    };
 
-    const initialState = {
-      tripType: 'oneWay',
-      selectedValue: 'Regular',
-      classState: 'Economy',
-      fromAirport: null,
-      toAirport: null,
-      departureDate: null,
-      returnDate: null,
-      travellers: { adults: 1, children: 0, infants: 0 }
-    };
-
-    return !isEqual(currentState, initialState);
-  }, [tripType, selectedValue, classState, fromAirport, toAirport, departureDate, returnDate, travellers, isEqual]);
-
-  return hasChanges;
-};
 
 function SearchBar() {
   const [activeModal, setActiveModal] = useState<string | null>(null);
@@ -75,9 +37,53 @@ function SearchBar() {
   const returnDate = useSelector((state: RootState) => state.HeroAuth.returnDate);
   const travellers = useSelector((state: RootState) => state.HeroAuth.travellers);
   const hasErrors = useSelector((state: RootState) => state.HeroAuth.hasErrors);
-
   const [shouldSubmit, setShouldSubmit] = useState(false);
-  const hasChanges = useStateChanged();
+  const params = useParams()
+
+  const normalizedParams = {
+    tripType: params.triptype,
+    selectedValue: params.fareType,
+    classState: params.class,
+    fromAirportId: params.from,
+    toAirportId: params.to,
+    departureDate: {
+      date: params.date ?? null,  
+      weekday: params.date ? new Date(params.date).toLocaleDateString('en-US', { weekday: 'long' }) : null
+    },
+    travellers: { 
+      adults: Number(params.adults), 
+      children: Number(params.children), 
+      infants: Number(params.infants),
+      total:Number(params.total)
+    }
+  };
+
+  const hero=useSelector((state:RootState)=>state.HeroAuth)
+  
+  const isEqual = useCallback((obj1: any, obj2: any) => {
+    return JSON.stringify(obj1) === JSON.stringify(obj2);
+  }, []);
+
+  const hasChanges = useMemo(() => {
+
+   
+    
+    
+    const currentState = {
+      tripType,
+      selectedValue,
+      classState,
+      fromAirportId: fromAirport?._id,
+      toAirportId: toAirport?._id,
+      departureDate,
+      travellers
+    };
+    console.log('currentState:', currentState);
+    console.log('normalizedParams:', normalizedParams);
+    console.log('Comparison result:', isEqual(currentState, normalizedParams));
+    return !isEqual(currentState, normalizedParams);
+  }, [tripType, selectedValue, classState, fromAirport, toAirport, departureDate, returnDate, travellers, params, isEqual]);
+
 
   const closeModal = () => {
     setActiveModal(null);
@@ -161,7 +167,7 @@ function SearchBar() {
       if (!hasErrors && shouldSubmit) {
         try {
           navigate(
-            `/search/${fromAirport?._id}/${toAirport?._id}/${departureDate?.date}/${classState}/${travellers.adults}/${travellers.children}/${travellers.infants}/${selectedValue}/${tripType}${tripType === 'roundTrip' ? `/${returnDate?.date}` : ''}`
+            `/search/${fromAirport?._id}/${toAirport?._id}/${departureDate?.date}/${classState}/${travellers.adults}/${travellers.children}/${travellers.infants}/${travellers.total}/${selectedValue}/${tripType}${tripType === 'roundTrip' ? `/${returnDate?.date}` : ''}`
           );
         } catch (error) {
           toast.error('error occurred');
@@ -173,7 +179,6 @@ function SearchBar() {
 
     submitFormIfValid();
   }, [hasErrors, shouldSubmit, navigate, fromAirport, toAirport, departureDate, classState, travellers, selectedValue, tripType, returnDate]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (hasChanges) {

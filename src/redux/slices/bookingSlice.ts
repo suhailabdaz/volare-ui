@@ -11,6 +11,7 @@ baseFare:number,
 taxAmount:number,
 chargesAmount:number,
 couponDiscount:number,
+extraCharges:number,
 }
 
 

@@ -154,7 +154,7 @@ export const userApi = createApi({
       query: ({ bookingId, travellers,contactDetails }) => ({
         url: `/api/v1/booking/update-booking/${bookingId}`,
         method: 'POST',
-        body: travellers,contactDetails
+        body: {travellers,contactDetails}
       }),
       invalidatesTags: ['updateBooking'],
       async onQueryStarted(arg, { queryFulfilled }) {

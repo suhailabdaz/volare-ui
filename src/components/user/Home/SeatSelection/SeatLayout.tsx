@@ -1,6 +1,13 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useGetChartedFlightQuery } from '../../../../redux/apis/userApiSlice';
 import Cockpit from '../../../../assets/images/ic_flightSmallFront.1e0e0ad4.png';
+import {
+  XMarkIcon,
+  CheckIcon,
+} from '@heroicons/react/24/outline';
+import { useDispatch, useSelector } from 'react-redux';
+import { setFareBreakdown } from '../../../../redux/slices/bookingSlice';
+import { RootState } from '../../../../redux/store/store';
 
 type ClassType = 'Economy' | 'Business' | 'FirstClass';
 type SeatClass = 'economyClass' | 'businessClass' | 'firstClass';
@@ -28,6 +35,12 @@ interface Seat {
   isPaid: boolean;
 }
 
+type IconType = 'available' | 'paid' | 'selected' | 'unavailable' | 'free';
+
+interface SeatIconProps {
+  iconType: IconType;
+}
+
 interface Row {
   row: string;
   seats: Seat[];
@@ -45,7 +58,7 @@ const SeatLayout: React.FC<DataProps> = ({
     isLoading,
     error: chartError,
   } = useGetChartedFlightQuery(flightChartId, {
-    refetchOnMountOrArgChange: true
+    refetchOnMountOrArgChange: true,
   });
 
   const [seatLayout, setSeatLayout] = useState<any>(null);
@@ -58,32 +71,54 @@ const SeatLayout: React.FC<DataProps> = ({
     }[]
   >([]);
   const [additionalFare, setAdditionalFare] = useState(0);
+  const dispatch = useDispatch();
+  const fareBreakdown = useSelector((state: RootState) => state.BookingAuth.fareBreakdown);
 
-  const addPaidSeatFeature = useCallback((originalSeatLayout: any) => {
-    const updatedSeatLayout = JSON.parse(JSON.stringify(originalSeatLayout));
-    const seatClass = mapClassType(classType);
-    let freeSeatsCount = 0;
-
-    updatedSeatLayout[seatClass] = updatedSeatLayout[seatClass].map((row: Row) => {
-      const updatedRow = {
-        ...row,
-        seats: row.seats.map((seat: Seat) => {
-          if (seat.isAvailable) {
-            if (freeSeatsCount < 10) {
-              freeSeatsCount++;
-              return { ...seat, isPaid: false };
-            } else {
-              return { ...seat, isPaid: true };
-            }
-          }
-          return seat;
-        }),
+  const updateFareBreakdown = useCallback((newExtraCharges: number) => {
+    console.log("newxtra", newExtraCharges);
+    
+    if (fareBreakdown) {
+      const updatedFareBreakdown = {
+        ...fareBreakdown,
+        extraCharges: newExtraCharges,
       };
-      return updatedRow;
-    });
+      console.log("newfares", updatedFareBreakdown);
 
-    return updatedSeatLayout;
-  }, [classType]);
+      dispatch(setFareBreakdown({ FareBreakdown: updatedFareBreakdown }));
+    }
+  }, [fareBreakdown, dispatch]);
+
+
+  const addPaidSeatFeature = useCallback(
+    (originalSeatLayout: any) => {
+      const updatedSeatLayout = JSON.parse(JSON.stringify(originalSeatLayout));
+      const seatClass = mapClassType(classType);
+      let freeSeatsCount = 0;
+
+      updatedSeatLayout[seatClass] = updatedSeatLayout[seatClass].map(
+        (row: Row) => {
+          const updatedRow = {
+            ...row,
+            seats: row.seats.map((seat: Seat) => {
+              if (seat.isAvailable) {
+                if (freeSeatsCount < 10) {
+                  freeSeatsCount++;
+                  return { ...seat, isPaid: false };
+                } else {
+                  return { ...seat, isPaid: true };
+                }
+              }
+              return seat;
+            }),
+          };
+          return updatedRow;
+        }
+      );
+
+      return updatedSeatLayout;
+    },
+    [classType]
+  );
 
   useEffect(() => {
     if (scheduleData) {
@@ -98,12 +133,14 @@ const SeatLayout: React.FC<DataProps> = ({
     if (selectedSeats.length === 0 && seatLayout) {
       const seatClass = mapClassType(classType);
       const freeSeats = getFreeSeats(seatLayout[seatClass]);
-      const autoSelectedSeats = freeSeats.slice(0, travellers.length).map((seat, index) => ({
-        seatNumber: seat.number,
-        travellerId: travellers[index]._id,
-        class: seatClass,
-        isPaid: false,
-      }));
+      const autoSelectedSeats = freeSeats
+        .slice(0, travellers.length)
+        .map((seat, index) => ({
+          seatNumber: seat.number,
+          travellerId: travellers[index]._id,
+          class: seatClass,
+          isPaid: false,
+        }));
       setSelectedSeats(autoSelectedSeats);
       onSeatSelected(autoSelectedSeats);
     }
@@ -124,7 +161,9 @@ const SeatLayout: React.FC<DataProps> = ({
   }
 
   const getFreeSeats = (rows: Row[]) => {
-    return rows.flatMap(row => row.seats.filter(seat => seat.isAvailable && !seat.isPaid));
+    return rows.flatMap((row) =>
+      row.seats.filter((seat) => seat.isAvailable && !seat.isPaid)
+    );
   };
 
   const mapClassType = (type: ClassType): SeatClass => {
@@ -133,44 +172,70 @@ const SeatLayout: React.FC<DataProps> = ({
     return 'firstClass';
   };
 
-  const handleSeatClick = (seatNumber: string, isPaid: boolean) => {
-    const existingSeatIndex = selectedSeats.findIndex(
-      (seat) => seat.seatNumber === seatNumber
-    );
-
-    if (existingSeatIndex !== -1) {
-      const newSelectedSeats = selectedSeats.filter(
-        (seat) => seat.seatNumber !== seatNumber
+    const handleSeatClick = useCallback((seatNumber: string, isPaid: boolean) => {
+    setSelectedSeats((prevSelectedSeats) => {
+      const existingSeatIndex = prevSelectedSeats.findIndex(
+        (seat) => seat.seatNumber === seatNumber
       );
-      setSelectedSeats(newSelectedSeats);
-      onSeatSelected(newSelectedSeats);
-      if (isPaid) {
-        const newAdditionalFare = additionalFare - 500;
-        setAdditionalFare(newAdditionalFare);
-        onFareUpdate(newAdditionalFare);
-      }
-    } else if (selectedSeats.length < travellers.length) {
-      const availableTravellerId = travellers.find(
-        (traveller) =>
-          !selectedSeats.some((seat) => seat.travellerId === traveller._id)
-      )?._id;
 
-      if (availableTravellerId) {
-        const newSeat = {
-          seatNumber,
-          travellerId: availableTravellerId,
-          class: mapClassType(classType),
-          isPaid,
-        };
-        const newSelectedSeats = [...selectedSeats, newSeat];
-        setSelectedSeats(newSelectedSeats);
-        onSeatSelected(newSelectedSeats);
-        if (isPaid) {
-          const newAdditionalFare = additionalFare + 500;
-          setAdditionalFare(newAdditionalFare);
-          onFareUpdate(newAdditionalFare);
+      let newSelectedSeats;
+      let newAdditionalFare;
+
+      if (existingSeatIndex !== -1) {
+        // Deselecting a seat
+        newSelectedSeats = prevSelectedSeats.filter(
+          (seat) => seat.seatNumber !== seatNumber
+        );
+        newAdditionalFare = isPaid ? additionalFare - 500 : additionalFare;
+      } else if (prevSelectedSeats.length < travellers.length) {
+        // Selecting a new seat
+        const availableTravellerId = travellers.find(
+          (traveller) =>
+            !prevSelectedSeats.some((seat) => seat.travellerId === traveller._id)
+        )?._id;
+
+        if (availableTravellerId) {
+          const newSeat = {
+            seatNumber,
+            travellerId: availableTravellerId,
+            class: mapClassType(classType),
+            isPaid,
+          };
+          newSelectedSeats = [...prevSelectedSeats, newSeat];
+          newAdditionalFare = isPaid ? additionalFare + 500 : additionalFare;
+        } else {
+          return prevSelectedSeats; // No change if no available traveller
         }
+      } else {
+        return prevSelectedSeats; // No change if all travellers have seats
       }
+
+      // Update state and trigger callbacks
+      setAdditionalFare(newAdditionalFare);
+      onSeatSelected(newSelectedSeats);
+      onFareUpdate(newAdditionalFare);
+      updateFareBreakdown(newAdditionalFare);
+
+      return newSelectedSeats;
+    });
+  }, [travellers, classType, additionalFare, onSeatSelected, onFareUpdate, updateFareBreakdown, mapClassType]);
+
+  
+
+  const SeatIcon: React.FC<SeatIconProps> = ({ iconType }) => {
+    switch (iconType) {
+      case 'available':
+        return null;
+      case 'paid':
+        return null;
+      case 'free':
+        return null;
+      case 'selected':
+        return <CheckIcon className="text-white w-6 h-6 text-sm" />;
+      case 'unavailable':
+        return <XMarkIcon className="text-gray-300 w-8 h-10 text-sm" />;
+      default:
+        return null;
     }
   };
 
@@ -178,31 +243,47 @@ const SeatLayout: React.FC<DataProps> = ({
     const isSelected = selectedSeats.some(
       (selectedSeat) => selectedSeat.seatNumber === seat.number
     );
-
+    const getSeatIcon = () => {
+      if (!seat.isAvailable) return 'unavailable';
+      if (isSelected) return 'selected';
+      if (seat.isPaid) return 'paid';
+      if (seat.isAvailable && !seat.isPaid) return 'free';
+      return 'available';
+    };
     return (
       <div
-        className={`w-8 h-12 flex items-center justify-center text-xs font-bold rounded
+        className={`w-8 h-10 flex items-center justify-center text-xs font-bold rounded
           ${
             seat.isAvailable && !isSelected && !seat.isPaid
-              ? 'bg-green-500 border-green-500 border-2 text-white cursor-pointer hover:bg-green-300'
+              ? 'bg-green-300 border-b-gray-800 border-b-4 text-gray-800 cursor-pointer hover:bg-green-500'
               : ''
           }
           ${
             seat.isAvailable && !isSelected && seat.isPaid
-              ? 'bg-blue-500 border-blue-500 border-2 text-white cursor-pointer hover:bg-blue-300'
+              ? 'bg-purple-300 border-b-gray-800 border-b-4 text-gray-800 cursor-pointer hover:bg-purple-500'
               : ''
           }
           ${
             seat.isAvailable && isSelected
-              ? 'bg-white text-green-500 border-2 border-green-500 cursor-pointer'
+              ? 'bg-blue-500  border-2 border-blue-500 cursor-pointer'
               : ''
           }
-          ${!seat.isAvailable ? 'bg-gray-400 text-white cursor-not-allowed' : ''}
+          ${
+            !seat.isAvailable
+              ? 'bg-white border border-black cursor-not-allowed'
+              : ''
+          }
         `}
-        title={`Seat ${seat.number}${!seat.isAvailable ? ' - Not Available' : ''}${seat.isPaid ? ' - Paid Seat' : ''}`}
-        onClick={() => seat.isAvailable && handleSeatClick(seat.number, seat.isPaid)}
+        title={`Seat ${seat.number}${
+          !seat.isAvailable ? ' - Not Available' : ''
+        }${seat.isPaid ? ' - ₹ 500' : ' - Free'}`}
+        onClick={() =>
+          seat.isAvailable && handleSeatClick(seat.number, seat.isPaid)
+        }
       >
-        {seat.number}
+        <span className=" flex items-center justify-center">
+          <SeatIcon iconType={getSeatIcon()} />
+        </span>
       </div>
     );
   };
@@ -276,11 +357,9 @@ const SeatLayout: React.FC<DataProps> = ({
             {seatClass.replace('Class', ' Class')}
           </h3>
           <div className="flex flex-col items-center">
-            {seatLayout[seatClass].map(
-              (row: Row, rowIndex: number) => (
-                <React.Fragment key={rowIndex}>{renderRow(row)}</React.Fragment>
-              )
-            )}
+            {seatLayout[seatClass].map((row: Row, rowIndex: number) => (
+              <React.Fragment key={rowIndex}>{renderRow(row)}</React.Fragment>
+            ))}
           </div>
         </div>
         <div className="bg-white h-20 w-full"></div>
@@ -290,56 +369,100 @@ const SeatLayout: React.FC<DataProps> = ({
 
   return (
     <div className="w-[99%] bg-purple-100 mr-3 flex justify-between items-start rounded p-6 shadow-[0_0_10px_rgba(0,0,0,0.2)] font-PlusJakartaSans max-h-[600px] overflow-y-auto">
-      <div className="mt-4 sticky w-2/5 mr-5 top-12 bg-gray-100 rounded-xl p-2 shadow-[0_0_10px_rgba(0,0,0,0.2)]">
-        {travellers.map(
-          (
-            traveller: {
-              _id: string;
-              firstName: string;
-              lastName: string;
-            },
-            index
-          ) => (
-            <div key={index} className="m-5 items-center ">
-              <div className="flex justify-between items-center">
-                <div className="flex justify-start space-x-1">
-                  <h4 className="text-base font-bold ">
-                    {traveller.firstName || ''}{' '}
-                  </h4>
-                  <h4 className="text-base font-bold ">
-                    {traveller.lastName || ''}{' '}
-                  </h4>
+      <div className="w-2/5 sticky top-12 space-y-20 justify-start">
+        <div className="mt-4  w-full  mr-5  bg-gray-100 rounded-xl p-2 shadow-[0_0_10px_rgba(0,0,0,0.2)]">
+          {travellers.map(
+            (
+              traveller: {
+                _id: string;
+                firstName: string;
+                lastName: string;
+              },
+              index
+            ) => (
+              <div key={index} className="m-5 items-center ">
+                <div className="flex justify-between items-center">
+                  <div className="flex justify-start space-x-1">
+                    <h4 className="text-base font-bold ">
+                      {traveller.firstName || ''}{' '}
+                    </h4>
+                    <h4 className="text-base font-bold ">
+                      {traveller.lastName || ''}{' '}
+                    </h4>
+                  </div>
+                  {selectedSeats.find(
+                    (seat) => seat.travellerId === traveller._id
+                  ) ? (
+                    <p className="px-4 bg-white border text-sm border-black rounded">
+                      {
+                        selectedSeats.find(
+                          (seat) => seat.travellerId === traveller._id
+                        )?.seatNumber
+                      }
+                    </p>
+                  ) : (
+                    <p className="">none</p>
+                  )}
                 </div>
                 {selectedSeats.find(
                   (seat) => seat.travellerId === traveller._id
                 ) ? (
-                  <p className="px-4 bg-white border text-sm border-black rounded">
-                    {
-                      selectedSeats.find(
-                        (seat) => seat.travellerId === traveller._id
-                      )?.seatNumber
-                    }
+                  <p className="text-xs font-bold">
+                    {selectedSeats.find(
+                      (seat) => seat.travellerId === traveller._id
+                    )?.isPaid
+                      ? 'Paid (₹ 500)'
+                      : 'Free'}
                   </p>
                 ) : (
-                  <p className="">none</p>
+                  <p className="text-xs">No Seat Selected</p>
                 )}
               </div>
-              {selectedSeats.find(
-                (seat) => seat.travellerId === traveller._id
-              ) ? (
-                <p className="text-xs font-bold">
-                  {selectedSeats.find(
-                    (seat) => seat.travellerId === traveller._id
-                  )?.isPaid ? 'Paid (₹500)' : 'Free'}
-                </p>
-              ) : (
-                <p className="text-xs">No Seat Selected</p>
-              )}
+            )
+          )}
+        </div>
+        <div className=" w-[60%] px-5 py-4 bg-white space-y-4">
+        <div className="flex  justify-start space-x-10 items-center  h-full w-full">
+        <div
+              className={`w-6 h-6 flex items-center justify-center text-xs font-bold rounded bg-white border border-black cursor-not-allowed `}
+            >
+              <span className=" flex items-center justify-center">
+                <XMarkIcon className="text-gray-300 w-6 h-8 text-sm" />
+              </span>
             </div>
-          )
-        )}
-        <div className="mt-4 text-center">
-          <p className="font-bold">Additional Fare: ₹{additionalFare}</p>
+            <p className='font-PlusJakartaSans text-sm'>Unavailable</p>
+
+          </div>
+          <div className="flex  justify-start space-x-10 items-center  h-full w-full">
+        <div
+              className={`w-6 h-6 flex items-center justify-center text-xs font-bold rounded bg-blue-500 border border-blue-500  `}
+            >
+              <span className=" flex items-center justify-center">
+              <CheckIcon className="text-white w-5 h-5 text-sm" />
+              </span>
+            </div>
+            <p className='font-PlusJakartaSans text-sm'>Selected</p>
+
+          </div>
+          <div className="flex  justify-start space-x-10 items-center  h-full w-full">
+            <div
+              className={`w-6 h-6 bg-green-300 border-b-gray-800 border-b-4 text-gray-800  `}
+            >
+            
+            </div>
+            <p className='font-PlusJakartaSans text-sm'>Free</p>
+
+          </div>
+          <div className="flex  justify-start space-x-10 items-center  h-full w-full">
+            <div
+              className={`w-6 h-6 bg-purple-300 border-b-gray-800 border-b-4 text-gray-800  `}
+            >
+            
+            </div>
+            <p className='font-PlusJakartaSans text-sm'> ₹ 500</p>
+
+          </div>
+          <div className="flex justify-between items-center  h-full w-full"></div>
         </div>
       </div>
       {renderSeatClass(mapClassType(classType))}

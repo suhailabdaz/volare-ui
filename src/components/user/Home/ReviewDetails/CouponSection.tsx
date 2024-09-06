@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Gift from '../../../../assets/images/gift.png';
 import { useGetCouponsQuery } from '../../../../redux/apis/adminApiSlice';
 import { useGetUsedCouponsQuery } from '../../../../redux/apis/userApiSlice';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../../../redux/store/store';
+import { setCoupon } from '../../../../redux/slices/bookingSlice'; 
 
 interface CouponSectionProps {
   bookingId: string;
@@ -44,10 +45,16 @@ const CouponSection: React.FC<CouponSectionProps> = ({
   addedCoupon, 
   bookingData 
 }) => {
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(addedCoupon);
+  const dispatch = useDispatch();
+  const userState = useSelector((state: RootState) => state.UserAuth.userData);
+  const selectedCoupon = useSelector((state: RootState) => state.BookingAuth.coupon);
   const [isLoading, setIsLoading] = useState(false);
 
-  const userState = useSelector((state: RootState) => state.UserAuth.userData);
+  useEffect(() => {
+    if (addedCoupon && !selectedCoupon) {
+      dispatch(setCoupon(addedCoupon));
+    }
+  }, [addedCoupon, selectedCoupon, dispatch]);
 
   useEffect(() => {
     onCouponApplied(selectedCoupon);
@@ -73,15 +80,15 @@ const CouponSection: React.FC<CouponSectionProps> = ({
     !usedCoupons.includes(coupon.coupon_code)
   );
 
-
   const handleCouponSelect = (coupon: Coupon) => {
     setIsLoading(true);
-    setSelectedCoupon(prevCoupon => 
-      prevCoupon?.coupon_code === coupon.coupon_code ? null : coupon
-    );
+    if (selectedCoupon?.coupon_code === coupon.coupon_code) {
+      dispatch(setCoupon(null));
+    } else {
+      dispatch(setCoupon(coupon));
+    }
     setIsLoading(false);
   };
-
 
   if (couponsLoading || usedCouponsLoading) {
     return <div>Loading coupons...</div>;

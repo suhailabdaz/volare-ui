@@ -36,6 +36,7 @@ interface FareBreakdown {
   baseFare: number;
   taxAmount: number;
   chargesAmount: number;
+  couponDiscount:number;
 }
 
 interface Contactdetails {
@@ -81,14 +82,17 @@ function ReviewDetails() {
     baseFare: 0,
     taxAmount: 0,
     chargesAmount: 0,
+    couponDiscount:0,
   });
 
   const [contactDetails,setContactDetails] = useState<ContactDetails|null>(null)
   const [totalPrice, setTotalPrice] = useState(0);
+
   const userState = useSelector((state: RootState) => state.UserAuth.userData);
   const statecouponDetails = useSelector((state: RootState) => state.BookingAuth.coupon);
   const statefareBreakdown = useSelector((state: RootState) => state.BookingAuth.fareBreakdown);
   const statetotalPrice = useSelector((state: RootState) => state.BookingAuth.totalPrice);
+
   const dispatch = useDispatch()
 
   const navigate = useNavigate();
@@ -101,8 +105,8 @@ function ReviewDetails() {
   }, []);
 
   const updateContactDetails = useCallback((details: Contactdetails) => {
+
     setContactDetails(details);
-    refetch();
   }, []);
 
   const updateCouponDetails = useCallback((coupon: Coupon | null) => {

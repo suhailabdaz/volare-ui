@@ -21,14 +21,20 @@ import {loadStripe , Stripe} from '@stripe/stripe-js';
 import createAxios from '../../../services/axios/UserAxios';
 import { useDispatch } from 'react-redux';
 import { userEndpoints } from '../../../services/endpoints/UserEndpoints';
+import { setCoupon } from '../../../redux/slices/bookingSlice';
 
 
 interface TravellerData {}
-
+interface Coupon {
+  coupon_code: string;
+  coupon_description: string;
+  discount: number;
+}
 interface FareBreakdown {
   baseFare: number;
   taxAmount: number;
   chargesAmount: number;
+  couponDiscount:number;
 }
 
 interface BookingData {
@@ -59,21 +65,27 @@ function SeatSelection() {
     }[]
   >([]);
   const [mealsseats, seatmealsseats] = useState('seats');
-  const [couponDetails, setCouponDetails] = useState({});
+  const [couponDetails, setCouponDetails] = useState<Coupon | null>(null);
   const [fareBreakdown, setFareBreakdown] = useState<FareBreakdown>({
     baseFare: 0,
     taxAmount: 0,
     chargesAmount: 0,
+    couponDiscount:0
   });
   const [totalPrice, setTotalPrice] = useState(0);
   const [updateBookingSeat] = useUpdateBookingSeatsMutation();
 
-  const updateCouponDetails = useCallback((details: SetStateAction<{}>) => {
-    setCouponDetails(details);
+  const updateCouponDetails = useCallback((coupon: Coupon | null) => {
+    if (coupon) {
+      setCouponDetails(coupon);
+      dispatch(setCoupon(coupon))
+    } else {
+      setCouponDetails(null);
+      dispatch(setCoupon(coupon))
+    }
   }, []);
 
   const handleFareUpdate = useCallback((details: SetStateAction<{}>) => {
-    setCouponDetails(details);
   }, []);
 
   const updateSelectedSeats = useCallback((newSelectedSeats: { 
@@ -236,12 +248,19 @@ function SeatSelection() {
               </button>
             </div>
             <div className="w-1/4 sticky top-12 h-full">
-              <FareSummary
-                initialFareBreakdown={bookingData.fareBreakdown}
-                initialTotalPrice={bookingData.totalPrice}
-                onUpdateFareAndTotal={updateFareAndTotal}
+            <FareSummary
+                bookingData={bookingData}
+                inittotalPrice={bookingData.totalPrice}
+                fareBreakdown={bookingData.fareBreakdown}
+                selectedCoupon={couponDetails}
               />
-              <CouponSection onApplyCoupon={updateCouponDetails} />
+              <CouponSection
+                bookingData={bookingData}
+                bookingId={bookingData._id}
+                totalPrice={bookingData.totalPrice}
+                addedCoupon={bookingData.coupon}
+                onCouponApplied={updateCouponDetails}
+              />
             </div>
           </div>
         </div>

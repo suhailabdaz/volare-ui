@@ -50,10 +50,10 @@ const initialState: HeroState = {
     weekday: ''
   },
   travellers: {
-    total: 1,
     adults: 1,
     children: 0,
     infants: 0,
+    total: 1,
   },
   hasErrors:false
 };
