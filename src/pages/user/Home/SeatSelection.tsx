@@ -8,9 +8,10 @@ import {
   useGetsearchAirportsQuery,
   useGetsearchFlightQuery,
   useUpdateBookingSeatsMutation,
+  useApplyCouponMutation
 } from '../../../redux/apis/userApiSlice';
 import socket from '../../../utils/socket/socket'
-import { SetStateAction, useCallback, useState } from 'react';
+import { SetStateAction, useCallback, useEffect, useState } from 'react';
 import SeatLayout from '../../../components/user/Home/SeatSelection/SeatLayout';
 import BacktoFlightTrav from '../../../components/user/Home/SeatSelection/BacktoFlightTrav';
 import MealSelection from '../../../components/user/Home/SeatSelection/MealSelection';
@@ -19,9 +20,10 @@ import seatsImage from '../../../assets/images/seat.png';
 import { toast } from 'sonner';
 import {loadStripe , Stripe} from '@stripe/stripe-js';
 import createAxios from '../../../services/axios/UserAxios';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { userEndpoints } from '../../../services/endpoints/UserEndpoints';
-import { setCoupon } from '../../../redux/slices/bookingSlice';
+import { setCoupon,removeBooking } from '../../../redux/slices/bookingSlice';
+import { RootState } from '../../../redux/store/store';
 
 
 interface TravellerData {}
@@ -64,8 +66,14 @@ function SeatSelection() {
       class: 'economyClass' | 'businessClass' | 'firstClass';
     }[]
   >([]);
+  const dispatch = useDispatch();
+
+
+  const [localCoupon, setLocalCoupon] = useState<Coupon | null>(null);
+
+  const stateCoupon = useSelector((state:RootState)=>state.BookingAuth.coupon)
+
   const [mealsseats, seatmealsseats] = useState('seats');
-  const [couponDetails, setCouponDetails] = useState<Coupon | null>(null);
   const [fareBreakdown, setFareBreakdown] = useState<FareBreakdown>({
     baseFare: 0,
     taxAmount: 0,
@@ -74,16 +82,20 @@ function SeatSelection() {
   });
   const [totalPrice, setTotalPrice] = useState(0);
   const [updateBookingSeat] = useUpdateBookingSeatsMutation();
-
-  const updateCouponDetails = useCallback((coupon: Coupon | null) => {
-    if (coupon) {
-      setCouponDetails(coupon);
-      dispatch(setCoupon(coupon))
-    } else {
-      setCouponDetails(null);
-      dispatch(setCoupon(coupon))
+  useEffect(() => {
+    if (stateCoupon) {
+      setLocalCoupon(stateCoupon);
     }
-  }, []);
+  }, [stateCoupon]);
+  const updateCouponDetails = useCallback(async (coupon: Coupon | null) => {
+    console.log('Updating coupon:', coupon);
+    setLocalCoupon(coupon);
+    if (coupon) {
+      dispatch(setCoupon(coupon));
+    } else {
+      dispatch(setCoupon(null));
+    }
+  }, [dispatch]);
 
   const handleFareUpdate = useCallback((details: SetStateAction<{}>) => {
   }, []);
@@ -103,15 +115,18 @@ function SeatSelection() {
     },
     []
   );
+  const userState = useSelector((state: RootState) => state.UserAuth.userData);
+
 
   const navigate  = useNavigate()
-  const dispatch = useDispatch()
+  const [applyCoupon] = useApplyCouponMutation()
 
   const params = useParams();
   const {
     data: bookingData,
     isLoading,
     error,
+    refetch
   } = useGetBookingQuery(params.bookingId || '',{
     refetchOnMountOrArgChange:true
   });
@@ -124,14 +139,14 @@ function SeatSelection() {
     return <div>Error loading booking data</div>;
   }
 
-  const handleStripeRedirect = async () => {
+  const handleStripeRedirect = async (updatedBookingData:BookingData) => {
     try {
       const response = await createAxios(dispatch).post(
         userEndpoints.createCheckoutSession,
         {
           bookingId: params.bookingId,
           seats: selectedSeats,
-          totalPrice: bookingData.totalPrice,
+          totalPrice: updatedBookingData.totalPrice,
         }
       );
 
@@ -165,12 +180,24 @@ function SeatSelection() {
 
   const updateSeatDetails = useCallback(async () => {
     try {
-      await updateBookingSeat({
+      const couponToApply = localCoupon || stateCoupon;
+      if (couponToApply) {
+        console.log('Applying coupon:', couponToApply);
+        await applyCoupon({
+          bookingId: params.bookingId,
+          userId: userState?._id,
+          coupon: couponToApply,
+        }).unwrap();
+      }
+
+
+      const updatedBookingData = await updateBookingSeat({
         bookingId: params.bookingId,
         seats: selectedSeats,
-      }).unwrap();  
+      }).unwrap(); 
 
-      await handleStripeRedirect();
+      await handleStripeRedirect(updatedBookingData);
+      dispatch(removeBooking())
      } catch (error) {
       toast.error('error task');
     }
@@ -252,7 +279,7 @@ function SeatSelection() {
                 bookingData={bookingData}
                 inittotalPrice={bookingData.totalPrice}
                 fareBreakdown={bookingData.fareBreakdown}
-                selectedCoupon={couponDetails}
+                selectedCoupon={stateCoupon}
               />
               <CouponSection
                 bookingData={bookingData}

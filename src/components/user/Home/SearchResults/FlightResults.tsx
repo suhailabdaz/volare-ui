@@ -1,4 +1,4 @@
-import  { JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal, useEffect, useState } from 'react';
+import  { JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal, useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import userApi, {
@@ -191,45 +191,36 @@ function Content() {
     }
   };
 
-  const handleSortChange = (sortedData: FlightInstance[]) => {
+  const handleSortChange = useCallback((sortedData: FlightInstance[]) => {
     setSortedSchedules(sortedData);
-  };
+  }, []);
 
-  const handleFilterChange = (filters: any) => {
-  const filtered = schedules.filter((schedule: FlightInstance) => {
-  const departureHour = parseInt(schedule.departureTime.split(':')[0], 10);
-  const arrivalHour = parseInt(schedule.arrivalTime.split(':')[0], 10);
-  const getPrice = (cls: string): number => {
-    switch (cls.toLowerCase()) {
-      case 'economy':
-        return schedule.currentPrices.economy;
-      case 'business':
-        return schedule.currentPrices.business;
-      case 'firstclass':
-        return schedule.currentPrices.firstClass;
-      default:
-        console.error(`Invalid class state: ${cls}`);
-        return 0; 
-    }
-  };
 
-  const price = getPrice(classState);
-  return (
-    (!filters.departureTime || 
-      (filters.departureTime === 'early' && departureHour >= 6 && departureHour < 12) ||
-      (filters.departureTime === 'noon' && departureHour >= 12 && departureHour < 18) ||
-      (filters.departureTime === 'late' && (departureHour >= 18 || departureHour < 6))) &&
-    (!filters.arrivalTime || 
-      (filters.arrivalTime === 'early' && arrivalHour >= 6 && arrivalHour < 12) ||
-      (filters.arrivalTime === 'noon' && arrivalHour >= 12 && arrivalHour < 18) ||
-      (filters.arrivalTime === 'late' && (arrivalHour >= 18 || arrivalHour < 6)))
-      &&
-      (price >= filters.priceRange[0] && price <= filters.priceRange[1])
-  );
-});
+  const handleFilterChange = useCallback((filters: any) => {
+    if (!schedules) return;
+
+    const filtered = schedules.filter((schedule: FlightInstance) => {
+      const departureHour = parseInt(schedule.departureTime.split(':')[0], 10);
+      const arrivalHour = parseInt(schedule.arrivalTime.split(':')[0], 10);
+      const price = schedule.currentPrices[classState.toLowerCase() as 'economy' | 'business' | 'firstClass'];
+
+      const matchesDepartureTime = !filters.departureTime ||
+        (filters.departureTime === 'early' && departureHour >= 6 && departureHour < 12) ||
+        (filters.departureTime === 'noon' && departureHour >= 12 && departureHour < 18) ||
+        (filters.departureTime === 'late' && (departureHour >= 18 || departureHour < 6));
+
+      const matchesArrivalTime = !filters.arrivalTime ||
+        (filters.arrivalTime === 'early' && arrivalHour >= 6 && arrivalHour < 12) ||
+        (filters.arrivalTime === 'noon' && arrivalHour >= 12 && arrivalHour < 18) ||
+        (filters.arrivalTime === 'late' && (arrivalHour >= 18 || arrivalHour < 6));
+
+      const matchesPriceRange = price >= filters.priceRange[0] && price <= filters.priceRange[1];
+
+      return matchesDepartureTime && matchesArrivalTime && matchesPriceRange;
+    });
 
     setFilteredSchedules(filtered);
-  };
+  }, [schedules, classState]);
 
   const closeModal = () => {
     setActiveModal(null);
@@ -285,7 +276,7 @@ function Content() {
   return (
     <div className="flex w-full justify-evenly">
       <div className="w-1/4">
-        <FilterSort schedules={schedules} onFilterChange={handleFilterChange} />
+        <FilterSort schedules={schedules || []} onFilterChange={handleFilterChange} />
       </div>
       <div className="font-PlusJakartaSans mb-7 w-3/4">
         <SortComponent scheduleData={filteredSchedules} onSortChange={handleSortChange} />

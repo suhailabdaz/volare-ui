@@ -7,8 +7,8 @@ import Cloudy from '../../../../assets/images/cloudy-day.png';
 interface TimeOptionProps {
   label: string;
   value: string;
-  selectedValue: string;
-  onChange: (value: string) => void;
+  selectedValue: string | null;
+  onChange: (value: string | null) => void;
 }
 
 interface FilterSortProps {
@@ -18,8 +18,8 @@ interface FilterSortProps {
 
 function FilterSort({ schedules, onFilterChange }: FilterSortProps) {
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
-  const [departureTime, setDepartureTime] = useState<string>('');
-  const [arrivalTime, setArrivalTime] = useState<string>('');
+  const [departureTime, setDepartureTime] = useState<string | null>(null);
+  const [arrivalTime, setArrivalTime] = useState<string | null>(null);
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(10000);
 
@@ -48,7 +48,7 @@ function FilterSort({ schedules, onFilterChange }: FilterSortProps) {
 
   useEffect(() => {
     handleFilterChange();
-  }, []);
+  }, [priceRange, departureTime, arrivalTime, handleFilterChange]);
 
   const STEP = 100;
 
@@ -62,7 +62,7 @@ function FilterSort({ schedules, onFilterChange }: FilterSortProps) {
       className={`p-2 mb-2 font-PlusJakartaSans w-[30%] text-[0.6rem] space-y-2 rounded-lg cursor-pointer ${
         selectedValue === value ? 'bg-blue-500 text-white' : 'bg-gray-200'
       }`}
-      onClick={() => onChange(value)}
+      onClick={() => onChange(selectedValue === value ? null : value)}
     >
       <div className="flex justify-center">
         <img
@@ -94,15 +94,16 @@ function FilterSort({ schedules, onFilterChange }: FilterSortProps) {
                 onTouchStart={props.onTouchStart}
                 style={{
                   ...props.style,
-                  height: '36px',
+                  height: '40px',
                   display: 'flex',
+                  justifyContent: 'center', 
                   width: '100%',
                 }}
               >
                 <div
                   ref={props.ref}
                   style={{
-                    height: '5px',
+                    height: '4px',
                     width: '100%',
                     borderRadius: '4px',
                     background: getTrackBackground({
@@ -125,8 +126,8 @@ function FilterSort({ schedules, onFilterChange }: FilterSortProps) {
                   ...props.style,
                   height: '20px',
                   width: '20px',
-                  borderRadius: '4px',
-                  backgroundColor: '#FFF',
+                  borderRadius: '19px',
+                  backgroundColor: 'white',
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
@@ -137,7 +138,7 @@ function FilterSort({ schedules, onFilterChange }: FilterSortProps) {
                   style={{
                     height: '16px',
                     width: '5px',
-                    backgroundColor: isDragged ? '#548BF4' : '#CCC',
+                    backgroundColor: isDragged ? 'white' : 'white',
                   }}
                 />
               </div>
@@ -197,4 +198,4 @@ function FilterSort({ schedules, onFilterChange }: FilterSortProps) {
   );
 }
 
-export default FilterSort;
+export default React.memo(FilterSort);

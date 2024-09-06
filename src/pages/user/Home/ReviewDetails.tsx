@@ -87,7 +87,7 @@ function ReviewDetails() {
 
   const [contactDetails,setContactDetails] = useState<ContactDetails|null>(null)
   const [totalPrice, setTotalPrice] = useState(0);
-
+ 
   const userState = useSelector((state: RootState) => state.UserAuth.userData);
   const statecouponDetails = useSelector((state: RootState) => state.BookingAuth.coupon);
   const statefareBreakdown = useSelector((state: RootState) => state.BookingAuth.fareBreakdown);

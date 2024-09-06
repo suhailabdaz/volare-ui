@@ -89,8 +89,8 @@ const HeroSlice = createSlice({
         ...state.travellers,
         ...updatedValues,
         total: (updatedValues.adults ?? state.travellers.adults) +
-               (updatedValues.children ?? state.travellers.children) +
-               (updatedValues.infants ?? state.travellers.infants),
+              (updatedValues.children ?? state.travellers.children) +
+              (updatedValues.infants ?? state.travellers.infants),
       };
     },
     validateState(state) {
