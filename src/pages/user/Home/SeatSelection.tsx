@@ -1,16 +1,15 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import {  useParams } from 'react-router-dom';
 import Image from '../../../assets/images/Premium Vector _ Abstract gradient purple and blue background.jpeg';
 import PrNavbar from '../../../components/user/Home/Homepage/PrNavbar';
 import CouponSection from '../../../components/user/Home/SeatSelection/CouponSection';
 import FareSummary from '../../../components/user/Home/SeatSelection/FareSummary';
 import {
   useGetBookingQuery,
-  useGetsearchAirportsQuery,
-  useGetsearchFlightQuery,
+
   useUpdateBookingSeatsMutation,
   useApplyCouponMutation
 } from '../../../redux/apis/userApiSlice';
-import socket from '../../../utils/socket/socket'
+// import socket from '../../../utils/socket/socket'
 import { SetStateAction, useCallback, useEffect, useState } from 'react';
 import SeatLayout from '../../../components/user/Home/SeatSelection/SeatLayout';
 import BacktoFlightTrav from '../../../components/user/Home/SeatSelection/BacktoFlightTrav';
@@ -18,7 +17,7 @@ import MealSelection from '../../../components/user/Home/SeatSelection/MealSelec
 import MealsImage from '../../../assets/images/rice-bowl.png';
 import seatsImage from '../../../assets/images/seat.png';
 import { toast } from 'sonner';
-import {loadStripe , Stripe} from '@stripe/stripe-js';
+import {loadStripe } from '@stripe/stripe-js';
 import createAxios from '../../../services/axios/UserAxios';
 import { useDispatch, useSelector } from 'react-redux';
 import { userEndpoints } from '../../../services/endpoints/UserEndpoints';
@@ -74,13 +73,13 @@ function SeatSelection() {
   const stateCoupon = useSelector((state:RootState)=>state.BookingAuth.coupon)
 
   const [mealsseats, seatmealsseats] = useState('seats');
-  const [fareBreakdown, setFareBreakdown] = useState<FareBreakdown>({
-    baseFare: 0,
-    taxAmount: 0,
-    chargesAmount: 0,
-    couponDiscount:0
-  });
-  const [totalPrice, setTotalPrice] = useState(0);
+  // const [fareBreakdown, setFareBreakdown] = useState<FareBreakdown>({
+  //   baseFare: 0,
+  //   taxAmount: 0,
+  //   chargesAmount: 0,
+  //   couponDiscount:0
+  // });
+  // const [totalPrice, setTotalPrice] = useState(0);
   const [updateBookingSeat] = useUpdateBookingSeatsMutation();
   useEffect(() => {
     if (stateCoupon) {
@@ -98,6 +97,8 @@ function SeatSelection() {
   }, [dispatch]);
 
   const handleFareUpdate = useCallback((details: SetStateAction<{}>) => {
+    console.log(details);
+    
   }, []);
 
   const updateSelectedSeats = useCallback((newSelectedSeats: { 
@@ -108,17 +109,17 @@ function SeatSelection() {
     setSelectedSeats(newSelectedSeats);
   }, [setSelectedSeats]);
 
-  const updateFareAndTotal = useCallback(
-    (newFareBreakdown: FareBreakdown, newTotal: number) => {
-      setFareBreakdown(newFareBreakdown);
-      setTotalPrice(newTotal);
-    },
-    []
-  );
+  // const updateFareAndTotal = useCallback(
+  //   (newFareBreakdown: FareBreakdown, newTotal: number) => {
+  //     setFareBreakdown(newFareBreakdown);
+  //     setTotalPrice(newTotal);
+  //   },
+  //   []
+  // );
   const userState = useSelector((state: RootState) => state.UserAuth.userData);
 
 
-  const navigate  = useNavigate()
+  // const navigate  = useNavigate()
   const [applyCoupon] = useApplyCouponMutation()
 
   const params = useParams();
@@ -126,7 +127,6 @@ function SeatSelection() {
     data: bookingData,
     isLoading,
     error,
-    refetch
   } = useGetBookingQuery(params.bookingId || '',{
     refetchOnMountOrArgChange:true
   });
@@ -190,7 +190,6 @@ function SeatSelection() {
         }).unwrap();
       }
 
-
       const updatedBookingData = await updateBookingSeat({
         bookingId: params.bookingId,
         seats: selectedSeats,
@@ -198,7 +197,7 @@ function SeatSelection() {
 
       await handleStripeRedirect(updatedBookingData);
       dispatch(removeBooking())
-     } catch (error) {
+    } catch (error) {
       toast.error('error task');
     }
   }, [bookingData._id, selectedSeats, updateBookingSeat]);

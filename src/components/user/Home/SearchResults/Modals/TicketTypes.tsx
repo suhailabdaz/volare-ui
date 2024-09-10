@@ -11,10 +11,19 @@ import { RootState } from '../../../../../redux/store/store';
 
 interface ModalProps {
   closeModal: () => any;
-  airlineData: any;
-  scheduleData: any;
-  flightData: any;
-  fromAirport: any;
+  airlineData: {
+    airline_name: string;
+    airline_image_link: string;
+    baggagePolicies: Array<{
+      _id: string;
+      policyName: string;
+      cabinLimit: number;
+      luggageLimit: number;
+    }>;
+  };
+    scheduleData: any;
+    flightData: any;
+      fromAirport: any;
   toAirport: any;
   imageURLs: any;
 }
@@ -28,11 +37,11 @@ const TicketTypes: React.FC<ModalProps> = ({
   toAirport,
   imageURLs,
 }) => {
-  const [loading, setLoading] = useState<Record<string, boolean>>({});
-  const [error, setError] = useState<Record<string, boolean>>({});
+  const [loading] = useState<Record<string, boolean>>({});
+  const [error] = useState<Record<string, boolean>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const params = useParams();
-  const [createBooking, { isLoading }] = useInitiateBookingMutation();
+  const [createBooking] = useInitiateBookingMutation();
   const navigate = useNavigate();
   const userData = useSelector((state: RootState) => state.UserAuth.userData);
 
@@ -43,6 +52,16 @@ const TicketTypes: React.FC<ModalProps> = ({
   const infants = params.infants ? parseInt(params.infants, 10) : 0;
   
   const totalPassenger = adults + children;
+
+  const getBaggagePolicy = () => {
+    console.log('baggage ppolicy', flightData.baggagePolicyId);
+    
+    return airlineData.baggagePolicies.find(policy => policy._id === scheduleData.baggagePolicyId);
+  };
+
+  const baggagePolicy = getBaggagePolicy();
+
+
 
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
@@ -215,7 +234,7 @@ const formattedPrice = totalPriceWithExtras
               <img className="h-6" src={handlug} alt="" />
               <div className='mx-4'>
                 <p className='space-x-1'><span className='font-bold text-sm' >{totalPassenger}</span><span className='font-light'>cabin bags</span></p>
-                <p className='text-xs'>max weight 7 kgs</p>
+                <p className='text-xs'>max weight {baggagePolicy?.cabinLimit }kgs</p>
               </div>
               </div>
               
@@ -226,7 +245,7 @@ const formattedPrice = totalPriceWithExtras
               <img className="h-6" src={luggage} alt="" />
               <div className='mx-4'>
                 <p className='space-x-1'><span className='font-bold text-sm' >{totalPassenger}</span><span className='font-light'>checked bags</span></p>
-                <p className='text-xs'>max weight 23 kgs</p>
+                <p className='text-xs'>max weight {baggagePolicy?.luggageLimit} kgs</p>
               </div>
               </div>
               

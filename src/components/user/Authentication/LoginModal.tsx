@@ -3,9 +3,8 @@ import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
 import { XMarkIcon } from '@heroicons/react/24/solid'; 
 import { ErrorMessage, Field, Form, Formik } from 'formik';
-import { Toaster, toast } from 'sonner';
+import { toast } from 'sonner';
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
-import { useNavigate } from 'react-router-dom';
 import { createAxios } from "../../../services/axios/UserAxios";
 import { userEndpoints } from '../../../services/endpoints/UserEndpoints';
 import { login as userLogin } from '../../../redux/slices/userSlice';
@@ -26,7 +25,7 @@ const initialEmail = {
 const LoginModal: React.FC<LoginModalProps> = ({ closeModal,openModal}) => {
   console.log("login in the login component");
   
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const onSubmit = async (value: typeof initialEmail, { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }) => {

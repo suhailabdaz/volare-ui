@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {  useSelector } from 'react-redux';
 import { Formik, FormikHelpers, Field, ErrorMessage } from 'formik';
 import { toast } from 'sonner';
-import { useGetFlightsQuery,useSubmitScheduleMutation } from '../../../../redux/apis/airlineApiSlice';
+import { useGetFlightsQuery,useSubmitScheduleMutation,useGetBaggagePoliciesQuery,useGetRefundPoliciesQuery } from '../../../../redux/apis/airlineApiSlice';
 import { RootState } from '../../../../redux/store/store';
 import SeeFlight from './SeeFlight';
 import * as Yup from 'yup';
@@ -28,6 +28,8 @@ interface InitialValues {
   to_airport: string;
   to_code: string;
   flightId: string;
+  refundPolicyId:string;
+  baggagePolicyId:string;
   economyPrice: string;
   bussinessPrice: string;
   firstclassPrice: string;
@@ -42,8 +44,14 @@ const ScheduleBooking: React.FC<ProfileModalProps> = ({
   toAirport,
 }) => {
   const [availableFlights, setAvailableFlights] = useState<any[]>([]);
+  const [availableBaggagePolicies, setAvailableBaggagePolicies] = useState<any[]>([]);
+  const [availableRefundPolicies, setAvailableRefundPolicies] = useState<any[]>([]);
   const [selectedFlight, setSelectedFlight] = useState<string>('');
-  const [flightDetails, setFlightDetails] = useState<any>(null);
+  const [selectedBaggagePolicy, setBaggagePolicy] = useState<string>('');
+  const [selectedRefundPolicy, setRefundPolicy] = useState<string>('');
+  const [, setFlightDetails] = useState<any>(null);
+  const [, setBaggagePolicyDetails] = useState<any>(null);
+  const [, setRefundPolicyDetails] = useState<any>(null);
   const [infomodal, setinfomodal] = useState<boolean>(false);
 
   const airlineId = useSelector(
@@ -52,6 +60,8 @@ const ScheduleBooking: React.FC<ProfileModalProps> = ({
 
   const validationSchema = Yup.object({
     flightId: Yup.string().required('Flight is required'),
+    baggagePolicyId: Yup.string().required('Policy is required'),
+    refundPolicyId: Yup.string().required('policy is required'),
     economyPrice: Yup.number()
       .required('Economy price is required')
       .positive('Economy price must be a positive number'),
@@ -73,6 +83,8 @@ const ScheduleBooking: React.FC<ProfileModalProps> = ({
     to_airport: toAirport?.airport_name || '',
     to_code: toAirport?.airport_code || '',
     flightId: selectedFlight || '',
+    refundPolicyId: selectedRefundPolicy || '',
+    baggagePolicyId: selectedBaggagePolicy || '',
     airlineId:airlineId || '',
     economyPrice: '',
     bussinessPrice: '',
@@ -81,15 +93,29 @@ const ScheduleBooking: React.FC<ProfileModalProps> = ({
   };
 
 
-  const { data, isLoading, error } = useGetFlightsQuery(airlineId, {
-    pollingInterval: 60000,
+  const { data } = useGetFlightsQuery(airlineId, {
     refetchOnMountOrArgChange: true,
   });
+
+  const { data:baggagePolicyData} = useGetBaggagePoliciesQuery(airlineId, {
+    refetchOnMountOrArgChange: true,
+  });
+
+  const { data:refundPolicyData } = useGetRefundPoliciesQuery(airlineId, {
+    refetchOnMountOrArgChange: true,
+  });
+
   const [submitSchedule] = useSubmitScheduleMutation();
 
   useEffect(() => {
     if (data) {
       setAvailableFlights(data.flights);
+    }
+    if (baggagePolicyData) {
+      setAvailableBaggagePolicies(baggagePolicyData);
+    }
+    if (refundPolicyData) {
+      setAvailableRefundPolicies(refundPolicyData);
     }
   }, [data]);
 
@@ -118,6 +144,30 @@ const ScheduleBooking: React.FC<ProfileModalProps> = ({
       (flight) => flight._id === flightId
     );
     setFlightDetails(selectedFlightDetails || null);
+  };
+
+  const handleBaggagePolicySelect = (
+    baggagePolicyId: string,
+    setFieldValue: (field: string, value: any) => void
+  ) => {
+    setBaggagePolicy(baggagePolicyId);
+    setFieldValue('baggagePolicyId', baggagePolicyId);
+    const selectedBaggagePolicyDetails = availableBaggagePolicies.find(
+      (policy) => policy._id === baggagePolicyId
+    );
+    setBaggagePolicyDetails(selectedBaggagePolicyDetails || null);
+  };
+
+  const handleRefundPolicySelect = (
+    refundPolicyId: string,
+    setFieldValue: (field: string, value: any) => void
+  ) => {
+    setRefundPolicy(refundPolicyId);
+    setFieldValue('refundPolicyId', refundPolicyId);
+    const selectedRefundPolicyDetails = availableRefundPolicies.find(
+      (policy) => policy._id === refundPolicyId
+    );
+    setRefundPolicyDetails(selectedRefundPolicyDetails || null);
   };
 
   const closeModaltwo = () => {
@@ -213,6 +263,78 @@ const ScheduleBooking: React.FC<ProfileModalProps> = ({
                       >
                         <InformationCircleIcon className="h-8 font-PlusJakartaSans" />
                       </button>
+                    </div>
+                  ))}
+                </div>
+                <h2 className="text-xl font-bold mb-4">Available Baggage Policies</h2>
+
+                <div className="grid grid-cols-3 gap-4 max-h-80 mr-16">
+                  {availableBaggagePolicies.map((policy) => (
+                    <div
+                      key={policy._id}
+                      className="flex items-center space-x-2 border rounded-lg p-2 cursor-pointer hover:border-white"
+                    >
+                      <Field
+                        type="radio"
+                        id={policy._id}
+                        name="baggagePolicyId"
+                        value={policy._id}
+                        onChange={() =>
+                          handleBaggagePolicySelect(policy._id, setFieldValue)
+                        }
+                        hidden
+                        
+                        className="form-radio text-white focus:outline-none peer"
+                      />
+                      <div className='p-1 h-3 w-3 rounded-full bg-white peer-checked:bg-blue-500 border-2 border-white '>
+                            
+                      </div>
+                      <label htmlFor={policy._id} className="text-lg">
+                        {policy.policyName}
+                      </label>
+                      {/* <button
+                        type="button"
+                        onClick={() => handleInfo(policy._id)}
+                        className="text-white"
+                      >
+                        <InformationCircleIcon className="h-8 font-PlusJakartaSans" />
+                      </button> */}
+                    </div>
+                  ))}
+                </div>
+                <h2 className="text-xl font-bold mb-4">Available refund Policies</h2>
+
+                <div className="grid grid-cols-3 gap-4 max-h-80 mr-16">
+                  {availableRefundPolicies.map((policy) => (
+                    <div
+                      key={policy._id}
+                      className="flex items-center space-x-2 border rounded-lg p-2 cursor-pointer hover:border-white"
+                    >
+                      <Field
+                        type="radio"
+                        id={policy._id}
+                        name="refundPolicyId"
+                        value={policy._id}
+                        onChange={() =>
+                          handleRefundPolicySelect(policy._id, setFieldValue)
+                        }
+                        hidden
+                        
+                        className="form-radio text-white focus:outline-none peer"
+                      />
+                      <div className='p-1 h-3 w-3 rounded-full bg-white peer-checked:bg-blue-500 border-2 border-white '>
+                            
+                      </div>
+                      <label htmlFor={policy._id} className="text-lg">
+                        {policy.policyName}
+                      </label>
+                      {/* <button
+                        type="button"
+                        onClick={() => handleInfo(policy._id)}
+                        className="text-white"
+                      >
+                        <InformationCircleIcon className="h-8 font-PlusJakartaSans" />
+                      </button> */}
                     </div>
                   ))}
                 </div>

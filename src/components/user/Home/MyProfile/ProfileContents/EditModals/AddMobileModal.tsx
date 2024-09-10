@@ -1,13 +1,10 @@
-import React, { useState,useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState } from 'react';
 import * as Yup from 'yup';
-import { ErrorMessage, Field, Form, Formik } from 'formik';
-import { Toaster, toast } from 'sonner';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../../../../redux/store/store';
+import { ErrorMessage, Form, Formik } from 'formik';
+import {  toast } from 'sonner';
+
 import {
   ConfirmationResult,
-  RecaptchaVerifier,
 } from "firebase/auth";
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
@@ -26,18 +23,17 @@ const validationSchema = Yup.object({
 });
 
 const AddMobileModal: React.FC<PasswordModalProps> = ({ closeModal, openModal }) => {
-  const userAuth = useSelector((state: RootState) => state.UserAuth.userData);
   const [otpInput, setotpInput] = useState(false);
   const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
   const [mobile,setMobile] = useState("")
-  const userId = userAuth?._id;
+  // const userId = userAuth?._id;
 
 
   const initialValues = {
     phoneNumber: ""
   };
 
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   const onSubmit = async (values: typeof initialValues, { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }) => {
     try {

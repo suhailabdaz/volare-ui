@@ -4,8 +4,8 @@ import { XMarkIcon } from '@heroicons/react/24/solid';
 import { Toaster, toast } from 'sonner';
 import { createAxios } from "../../../services/axios/UserAxios";
 import { userEndpoints } from '../../../services/endpoints/UserEndpoints';
-import { login as userLogin } from '../../../redux/slices/userSlice';
-import * as Yup from 'yup';
+// import { login as userLogin } from '../../../redux/slices/userSlice';
+// import * as Yup from 'yup';
 import { FormikErrors, useFormik } from "formik";
 
 interface OtpModalProps {
@@ -31,7 +31,7 @@ const ResetOtpModal: React.FC<OtpModalProps> = ({ closeModal ,openModal }) => {
 
   const inputRef = useRef<(HTMLInputElement | null)[]>([]);
   const [countdown, setCountdown] = useState(30);
-  const [showResendButton, setShowResendButton] = useState(false);
+  const [, setShowResendButton] = useState(false);
 
   const formik = useFormik<FormValues>({
     initialValues: {
@@ -41,7 +41,7 @@ const ResetOtpModal: React.FC<OtpModalProps> = ({ closeModal ,openModal }) => {
     onSubmit: async (values) => {
       try {
         const otp = values.otp.join("");
-        const response = await createAxios().post(userEndpoints.verifyotp, { otp });
+        const response = await createAxios(dispatch).post(userEndpoints.verifyotp, { otp });
         if (response.data.success) {
           console.log(response.data.success);
           toast.success('OTP verified successfully');
@@ -129,7 +129,7 @@ const ResetOtpModal: React.FC<OtpModalProps> = ({ closeModal ,openModal }) => {
 
   const handleResendOtp = async () => {
     try {
-      const re_response = await createAxios().post(userEndpoints.resendOtp,{email:userEmail});
+      const re_response = await createAxios(dispatch).post(userEndpoints.resendOtp,{email:userEmail});
       formik.resetForm();
       setCountdown(30);
       setShowResendButton(false);

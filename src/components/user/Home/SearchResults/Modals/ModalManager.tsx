@@ -18,7 +18,7 @@ interface LoginModalProps {
 
 
 
-const ModalManager :React.FC<LoginModalProps> =({ activeModal, closeModal,imageURLs, openModal,airlineData,flightData,scheduleData,fromAirport,toAirport }) => {
+const ModalManager :React.FC<LoginModalProps> =({ activeModal, closeModal,imageURLs,airlineData,flightData,scheduleData,fromAirport,toAirport }) => {
   if(activeModal==null){
     return null
   }

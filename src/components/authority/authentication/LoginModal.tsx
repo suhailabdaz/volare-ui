@@ -24,7 +24,7 @@ const LoginModal= () => {
 
   const onSubmit = async (values: typeof initialEmail, { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }) => {
     try {
-      const response = await createAxios().post(authorityEndpoints.login,values);
+      const response = await createAxios(dispatch).post(authorityEndpoints.login,values);
       if(!response.data.success){
         toast.error("Incorrect Password")
       }else{

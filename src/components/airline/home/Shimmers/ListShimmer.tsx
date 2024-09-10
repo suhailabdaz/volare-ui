@@ -16,7 +16,7 @@ function AirlineSimmer() {
           </div>
           <div className=" mt-8  text-gray-600 text-xs">
             <ul className="space-y-6">
-              {Array(5).map((a: any, index: any) => (
+              {Array(5).map(( index: any) => (
                 <li key={index} className="mb-4 group">
                   <div className="relative flex items-center  text-white">
                     <div className="font-bold  mx-4 text-xl">{index + 1}. </div>

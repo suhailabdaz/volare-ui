@@ -51,10 +51,16 @@ const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
   return result;
 };
 
+const invalidateTagAfterDelay = (tag: any, delay: number) => {
+  setTimeout(() => {
+    airlineApi.util.invalidateTags([tag]);
+  }, delay);
+};
+
 export const airlineApi = createApi({
   reducerPath: 'airlineApi',
   baseQuery: baseQueryWithReauth,
-  tagTypes: ['Schedule', 'Airport', 'flight'],
+  tagTypes: ['FreeSchedule','mySchedule','submitSchedule','Schedule', 'Airport', 'flight','baggage','refund'],
   endpoints: (builder) => ({
     getFreeSchedules: builder.query({
       query: () => ({
@@ -62,6 +68,12 @@ export const airlineApi = createApi({
         method: 'GET',
       }),
       providesTags: ['Schedule'],
+      async onQueryStarted( { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          invalidateTagAfterDelay('FreeSchedule', 10000);
+        } catch {}
+      },
     }),
     getAirportDetails: builder.query({
       query: () => ({
@@ -69,6 +81,12 @@ export const airlineApi = createApi({
         method: 'GET',
       }),
       providesTags: ['Airport'],
+      async onQueryStarted( { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          invalidateTagAfterDelay('Airport', 10000);
+        } catch {}
+      },
     }),
     getSchedule: builder.query({
       query: (id) => ({
@@ -77,7 +95,43 @@ export const airlineApi = createApi({
         params: { id },
       }),
       providesTags: ['Schedule'],
+      async onQueryStarted( { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          invalidateTagAfterDelay('Schedule', 10000);
+        } catch {}
+      },
     }),
+    getBaggagePolicies: builder.query({
+      query: (airlineId) => ({
+        url: `/api/v1/airline/get-baggages-policies`,
+        method: 'GET',
+        params: { key:airlineId },
+      }),
+      providesTags: ['baggage'],
+      async onQueryStarted( { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          invalidateTagAfterDelay('baggage', 10000);
+        } catch {}
+      },
+    }),
+
+    getRefundPolicies: builder.query({
+      query: (airlineId) => ({
+        url: `/api/v1/airline/get-cancelations-policies`,
+        method: 'GET',
+        params: { key:airlineId },
+      }),
+      providesTags: ['refund'],
+      async onQueryStarted( { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          invalidateTagAfterDelay('refund', 10000);
+        } catch {}
+      },
+    }),
+    
     getFlights: builder.query({
       query: (airlineId) => ({
         url: `/api/v1/airline/get-flights`,
@@ -85,6 +139,12 @@ export const airlineApi = createApi({
         params: { key: airlineId },
       }),
       providesTags: ['flight'],
+      async onQueryStarted( { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          invalidateTagAfterDelay('flight', 10000);
+        } catch {}
+      },
     }),
     submitSchedule: builder.mutation({
       query: (schedule) => ({
@@ -92,6 +152,13 @@ export const airlineApi = createApi({
         method: 'POST',
         body: schedule,
       }),
+      invalidatesTags: ['submitSchedule'],
+      async onQueryStarted( { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          invalidateTagAfterDelay('submitSchedule', 10000);
+        } catch {}
+      },
     }),
     getMySchedules: builder.query({
       query: (id) => ({
@@ -99,7 +166,13 @@ export const airlineApi = createApi({
         method: 'GET',
         params: { id },
       }),
-      providesTags: ['Schedule'],
+      providesTags: ['mySchedule'],
+      async onQueryStarted( { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          invalidateTagAfterDelay('flight', 10000);
+        } catch {}
+      },
     }),
   }),
 });
@@ -111,5 +184,7 @@ export const {
   useGetFlightsQuery,
   useSubmitScheduleMutation,
   useGetMySchedulesQuery,
+  useGetBaggagePoliciesQuery,
+  useGetRefundPoliciesQuery
 } = airlineApi;
 export default airlineApi;

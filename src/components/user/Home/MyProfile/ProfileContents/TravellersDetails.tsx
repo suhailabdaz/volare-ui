@@ -13,7 +13,6 @@ function ProfileDetails()  {
   
 
 
-  const userData = useSelector((state: RootState) => state.ProfileAuth.userData);
   const travellersData = useSelector((state: RootState)=>state.TravellerAuth.travellers)
 
 

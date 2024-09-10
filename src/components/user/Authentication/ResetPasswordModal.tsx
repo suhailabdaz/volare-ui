@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import {  toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import { createAxios } from "../../../services/axios/UserAxios";
 import { userEndpoints } from '../../../services/endpoints/UserEndpoints';
 import password from '../../../assets/images/change-password-icon.png';
@@ -35,13 +35,13 @@ const ResetPasswordModal: React.FC<SignupModalProps> = ({ closeModal,openModal})
     confirmPassword:''
   };
   
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const onSubmit = async (values: typeof initialValues, { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }) => {
     try {
       console.log("signup submit");
-      const response = await createAxios().post(userEndpoints.update_password,values);
+      const response = await createAxios(dispatch).post(userEndpoints.update_password,values);
       console.log(response.data)
       if (response.data.success) {
         toast.success(response.data.message)

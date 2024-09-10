@@ -1,4 +1,3 @@
-import React from 'react';
 import medal from '../../../../assets/images/medal.png';
 import plane from '../../../../assets/images/plane (2).png';
 import coupons from '../../../../assets/images/coupons.png';

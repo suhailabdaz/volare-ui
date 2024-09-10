@@ -67,8 +67,8 @@ function Banner() {
         showThumbs={false}
         showStatus={false}
         showIndicators={false} 
-        renderArrowPrev={(onClickHandler, hasPrev, label) => null}
-        renderArrowNext={(onClickHandler, hasNext, label) => null}
+        // renderArrowPrev={(onClickHandler, hasPrev, label) => null}
+        // renderArrowNext={(onClickHandler, hasNext) => null}
         className="w-full"
       >
         {data.map((banner: BannerData, index: number) => (

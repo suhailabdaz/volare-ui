@@ -20,11 +20,7 @@ function ProfileDetails()  {
     setActiveModal(modalName);
   };
 
-  const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
-  const formatDate = (dateString:any) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-GB', options).replace(/\//g, '-');
-  };
+ 
 
   return (
     <div className='flex justify-center  font-PlusJakartaSans  mb-7 ' id='loginDetails'>

@@ -6,6 +6,9 @@ import DashboardPage from '../pages/airline/Home/DashboardPage';
 import Flights from '../pages/airline/Home/Flights';
 import Freeschedules from '../pages/airline/Home/Freeschedules';
 import MySchedules from '../pages/airline/Home/Myschedules'
+import CancellationPolicies from '../pages/airline/Home/CancellationPolicies';
+import BaggagePolicies from '../pages/airline/Home/BaggagePolicies';
+import MealsMenu from '../pages/airline/Home/MealsMenu';
 
 const AirlineRoute = () => {
   return (
@@ -16,6 +19,9 @@ const AirlineRoute = () => {
           <Route path="/flights" element={<Flights />} />
           <Route path="/available-schedules" element={<Freeschedules/>} />
           <Route path="/schedules" element={<MySchedules/>} />
+          <Route path="/baggage-policies" element={<BaggagePolicies/>} />
+          <Route path="/cancellation-policies" element={<CancellationPolicies/>} />
+          <Route path="/meals-menu" element={<MealsMenu/>} />
         </Route>
         <Route element={<PublicRouter />}>
           <Route path="/" element={<LoginPage />} />

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
 import { XMarkIcon } from '@heroicons/react/24/solid'; 
 import { ErrorMessage, Field, Form, Formik } from 'formik';
-import { Toaster, toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
+import {  toast } from 'sonner';
+// import { useNavigate } from 'react-router-dom';
 import { createAxios } from "../../../services/axios/UserAxios";
 import { userEndpoints } from '../../../services/endpoints/UserEndpoints';
 import {  login as userLogin } from '../../../redux/slices/userSlice';
@@ -16,7 +16,7 @@ interface PasswordModalProps {
 
 const PasswordModal: React.FC<PasswordModalProps> = ({ closeModal,openModal}) => {
   const [storedEmail, setStoredEmail] = useState<string | null>(null); 
-  const [isLoggedin , setLoggedin] = useState<boolean>(false)
+  // const [isLoggedin , setLoggedin] = useState<boolean>(false)
 
   useEffect(() => {
     const emailFromStorage = sessionStorage.getItem('userEmail');
@@ -38,7 +38,7 @@ const PasswordModal: React.FC<PasswordModalProps> = ({ closeModal,openModal}) =>
 
   console.log("login in the login component");
   
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const onSubmit = async (values: { password: string }, { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }) => {
@@ -50,7 +50,7 @@ const PasswordModal: React.FC<PasswordModalProps> = ({ closeModal,openModal}) =>
         password: values.password  
       };
       console.log("login submit");
-      const response = await createAxios().post(userEndpoints.login, requestData);
+      const response = await createAxios(dispatch).post(userEndpoints.login, requestData);
       if(!response.data.success){
         toast.error("Incorrect Password")
       }else{
@@ -70,7 +70,10 @@ const PasswordModal: React.FC<PasswordModalProps> = ({ closeModal,openModal}) =>
   };
 
   const handlePasswordReset = () => {
-  const response = createAxios().post(userEndpoints.resendOtp,{email:storedEmail})
+  const response = createAxios(dispatch).post(userEndpoints.resendOtp,{email:storedEmail})
+  console.log(response);
+  
+  
   closeModal()
   openModal('resetotp')
   };

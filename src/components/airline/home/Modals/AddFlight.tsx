@@ -64,6 +64,7 @@ const AddFlight: React.FC<ProfileModalProps> = ({ closeModal }) => {
     const sections = layout.split('-').map(Number);
     const seatsPerRow = sections.reduce((a, b) => a + b, 0);
     const rows = Math.ceil(totalSeats / seatsPerRow);
+    console.log(className);
     
     const seatLayout = [];
     for (let row = 1; row <= rows; row++) {

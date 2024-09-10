@@ -67,7 +67,7 @@ export const userApi = createApi({
         method: 'GET',
       }),
       providesTags: ['searchAirports'],
-      async onQueryStarted(arg, { queryFulfilled }) {
+      async onQueryStarted( { queryFulfilled }) {
         try {
           await queryFulfilled;
           invalidateTagAfterDelay('searchAirports', 10000);
@@ -81,7 +81,7 @@ export const userApi = createApi({
         params,
       }),
       providesTags: ['searchSchedules'],
-      async onQueryStarted(arg, { queryFulfilled }) {
+      async onQueryStarted(_, { queryFulfilled }) {
         try {
           await queryFulfilled;
           invalidateTagAfterDelay('searchSchedules', 10000);
@@ -95,7 +95,7 @@ export const userApi = createApi({
         params: { id },
       }),
       providesTags: ['searchAirline'],
-      async onQueryStarted(arg, { queryFulfilled }) {
+      async onQueryStarted(_, { queryFulfilled }) {
         try {
           await queryFulfilled;
           invalidateTagAfterDelay('searchAirline', 30000);
@@ -109,7 +109,7 @@ export const userApi = createApi({
         params: { id },
       }),
       providesTags: ['usedCoupons'],
-      async onQueryStarted(arg, { queryFulfilled }) {
+      async onQueryStarted(_,{ queryFulfilled }) {
         try {
           await queryFulfilled;
           invalidateTagAfterDelay('searchAirline', 10000);
@@ -122,7 +122,7 @@ export const userApi = createApi({
         method: 'GET',
       }),
       providesTags: ['searchFlights'],
-      async onQueryStarted(arg, { queryFulfilled }) {
+      async onQueryStarted( { queryFulfilled }) {
         try {
           await queryFulfilled;
           invalidateTagAfterDelay('searchFlights', 10000);
@@ -143,7 +143,7 @@ export const userApi = createApi({
         params:{id}
       }),
       providesTags: ['searchBooking'],
-      async onQueryStarted(arg, { queryFulfilled }) {
+      async onQueryStarted(_, { queryFulfilled }) {
         try {
           await queryFulfilled;
           invalidateTagAfterDelay('searchBooking', 10000);
@@ -157,7 +157,7 @@ export const userApi = createApi({
         body: {travellers,contactDetails}
       }),
       invalidatesTags: ['updateBooking'],
-      async onQueryStarted(arg, { queryFulfilled }) {
+      async onQueryStarted( { queryFulfilled }) {
         try {
           await queryFulfilled;
           invalidateTagAfterDelay('updateBooking', 10000);
@@ -171,7 +171,7 @@ export const userApi = createApi({
         body: { bookingId, userId, coupon },
       }), 
       invalidatesTags: ['applyCoupon'],
-      async onQueryStarted(arg, { queryFulfilled }) {
+      async onQueryStarted( { queryFulfilled }) {
         try {
           await queryFulfilled;
           invalidateTagAfterDelay('applyCoupon', 10000);

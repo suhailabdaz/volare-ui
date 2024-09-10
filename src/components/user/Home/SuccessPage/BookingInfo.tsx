@@ -1,53 +1,74 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import {
-  useGetChartedFlightQuery,
-  useGetsearchAirportsQuery,
-  useGetsearchFlightQuery,
-} from '../../../../redux/apis/userApiSlice';
+import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { useGetChartedFlightQuery, useGetsearchAirportsQuery, useGetsearchFlightQuery } from '../../../../redux/apis/userApiSlice';
 import { useGetAirlinesQuery } from '../../../../redux/apis/authorityApiSlice';
 import createAxios from '../../../../services/axios/UserAxios';
 import { airlineEndpoints } from '../../../../services/endpoints/AirlineEndpoints';
 import { ArrowLongRightIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import handlug from '../../../../assets/images/baggage.png';
 import luggage from '../../../../assets/images/luggage (1).png';
-import CancellationPolicy from './PolicyRow';
+import InfoBooking from './InfoBooking';
+import { toast } from 'sonner';
 
-interface DataProps {
+interface TravellerType {
+  adults: number;
+  children: number;
+  infants: number;
+}
+
+interface FareBreakdown {
+  baseFare: number;
+  taxAmount: number;
+  chargesAmount: number;
+}
+
+interface Seat {
+  seatNumber: string;
+  travellerId: string;
+  class: string;
+  _id: string;
+}
+
+interface Booking {
+  travellerType: TravellerType;
+  fareBreakdown: FareBreakdown;
+  _id: string;
+  userId: string;
   flightChartId: string;
-  bookingClass:string;
-  fareType:string
-  totalPrice:number
+  fareType: string;
+  travellers: any[];
+  travelClass: string;
+  departureTime: string;
+  seats: Seat[];
+  totalPrice: number;
+  status: string;
+  paymentStatus: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  paymentId: string;
 }
 
 
-
-interface baggagePolicy{
-  _id:string;
-  cabinLimit:number;
-  luggageLimit:number;
+interface props {
+  bookingData: Booking;
 }
 
-interface refundPolicy{
-  _id:string;
-  firstPeriodPenalty:number;
-  secondPeriodPenalty:number;
-  thirdPeriodPenalty:number;
-}
+const BookingInfo: React.FC<props> = ({ bookingData }) => {
 
-const FlightDetails: React.FC<DataProps> = ({ flightChartId,fareType,bookingClass,totalPrice }) => {
+  // const params = useParams() as unknown as Params;
   const [imageUrl, setImageUrl] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
-  const [baggagePolicy, setBaggagePolicy] = useState<baggagePolicy | null>(null);
-  const [refundPolicy, setRefundPolicy] = useState<refundPolicy | null>(null);
   const dispatch = useDispatch();
+  const navigate = useNavigate()
 
   const {
     data: scheduleData,
     isLoading,
     error: chartError,
-  } = useGetChartedFlightQuery(flightChartId);
+  } = useGetChartedFlightQuery(bookingData.flightChartId);
   const { data: airportData } = useGetsearchAirportsQuery(
     {},
     { refetchOnMountOrArgChange: true }
@@ -80,27 +101,13 @@ const FlightDetails: React.FC<DataProps> = ({ flightChartId,fareType,bookingClas
     [dispatch]
   );
 
-
   useEffect(() => {
     const fetchImage = async () => {
       if (scheduleData && airlineDetails) {
         const airlineData = airlineDetails.airlines.find(
           (airline: { _id: string | number }) =>
             airline._id === scheduleData.airlineId
-          
         );
-        const getBaggagePolicy = () => {
-          return airlineData.baggagePolicies.find((policy: { _id: any; }) => policy._id === scheduleData.baggagePolicyId);
-        };
-      
-        setBaggagePolicy(getBaggagePolicy());
-
-        const getRefundPolicy = () => {
-          return airlineData.cancellationPolicies.find((policy: { _id: any; }) => policy._id === scheduleData.refundPolicyId);
-        };
-      
-        setRefundPolicy(getRefundPolicy());
-
         if (airlineData?.airline_image_link) {
           fetchImageUrl(airlineData.airline_image_link);
         }
@@ -180,13 +187,41 @@ const FlightDetails: React.FC<DataProps> = ({ flightChartId,fareType,bookingClas
     return `Direct · ${formattedHours} ${formattedMinutes}`.trim();
   };
 
-  
+  const handleClick = async () => {
+    try {
+        navigate(`/my-trips`, { replace: true });
+      }
+      catch (error) {
+      console.error('Failed to update booking:', error);
+      toast.error('Failed to update booking. Please try again.');
+    }
+  };
+  // const calculateAge = (dateOfBirth: string | number | Date) => {
+  //   const today = new Date();
+  //   const birthDate = new Date(dateOfBirth);
+  //   let age = today.getFullYear() - birthDate.getFullYear();
+  //   const monthDifference = today.getMonth() - birthDate.getMonth();
+    
+  //   if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+  //     age--;
+  //   }
+    
+  //   return age;
+  // };
 
   return (
     <div
       className="bg-white rounded w-[99%] flex flex-col items-center justify-center h-auto shadow-[0_0_10px_rgba(0,0,0,0.2)] font-PlusJakartaSans p-5"
       id="flightDetails"
     >
+      <div className=" bg-green-100 rounded w-[98%] mb-10  mt-6 border p-2 border-green-700">
+          <InfoBooking bookingId={bookingData._id}  />
+        </div>
+        <div className=" w-[98%] mb-8  p-2">
+              <h2 className='font-PlusJakartaSans font-bold text-lg text-gray-600'>Confirmation number: {bookingData._id}</h2>
+              <p className='mt-2 font-PlusJakartaSans font-normal text-gray-600 text-base '>Thank you for booking your travel with Godspeed! Below is a summary of your trip to Bengaluru. We’ve sent a copy of your booking confirmation to your email address.</p>
+              <button className='font-PlusJakartaSans mt-2 text-base font-bold text-blue-600 ' onClick={()=>handleClick()}>My Trips</button>
+        </div>
       <div className="w-full flex flex-col items-center justify-center">
         <div className="shadow-[0_0_10px_rgba(0,0,0,0.15)] bg-white rounded w-full  mb-5">
           <div className="mb-8  border-l-4 border-green-600  items-center">
@@ -231,10 +266,10 @@ const FlightDetails: React.FC<DataProps> = ({ flightChartId,fareType,bookingClas
             </div>
             <div className='flex items-center justify-center space-x-1 '>
               <p className="font-PlusJakartaSans font-bold">
-                {bookingClass} class
+                {bookingData.travelClass} class
               </p>
               <ChevronRightIcon className='h-4'/>
-              <p className='text-green-600  font-bold'>{fareType} fare</p>
+              <p className='text-green-600  font-bold'>{bookingData.fareType} fare</p>
             </div>
           </div>
           <div className="m-6 p-6 bg-neutral-100 mb-4">
@@ -281,7 +316,7 @@ const FlightDetails: React.FC<DataProps> = ({ flightChartId,fareType,bookingClas
               <img className="h-6" src={handlug} alt="" />
               <div className='mx-2 flex items-center space-x-1'>
                 <p ><span className='font-bold text-sm' ></span><span className='font-bold'>cabin bags:</span></p>
-                <p className='text-sm'>max weight {baggagePolicy?.cabinLimit} kgs / Adult</p>
+                <p className='text-sm'>max weight 7 kgs / Adult</p>
               </div>
               </div>
               
@@ -291,20 +326,39 @@ const FlightDetails: React.FC<DataProps> = ({ flightChartId,fareType,bookingClas
               <img className="h-6" src={luggage} alt="" />
               <div className='mx-2 flex items-center space-x-1'>
                 <p ><span className='font-bold text-sm' ></span><span className='font-bold'>checked bags:</span></p>
-                <p className='text-sm'>max weight {baggagePolicy?.luggageLimit} kgs / Adult</p>
+                <p className='text-sm'>max weight 23 kgs / Adult</p>
               </div>
               </div>
+              
             </div>
           </div>
           </div>
         </div>
-        <div className=" bg-purple-50 rounded w-[100%] my-4 p-5">
-          <p className='font-PlusJakartaSans1000 '>Cancellation Refund Policy</p>
-          <CancellationPolicy totalPrice={totalPrice} refundPolicy={refundPolicy} />
-        </div>
+        
       </div>
+      <div className="w-[95%] max-w-4xl mx-auto mb-10 p-4 rounded-lg bg-gray-100 border border-gray-600">
+      <h2 className="text-2xl font-bold mb-6 text-start text-gray-600">Traveller and Seat Information</h2>
+      
+      <div className="grid grid-cols-3 gap-4 font-semibold mb-2 text-gray-700">
+        <div className="flex items-center">
+          <span>Traveller</span>
+        </div>
+        <div className="flex items-center">
+          <span>Seat</span>
+        </div>
+        <div>Class</div>
+      </div>
+
+      {bookingData.travellers.map((traveller, index) => (
+        <div key={traveller._id} className="grid grid-cols-3 gap-4 py-2 border-b border-gray-200 last:border-b-0">
+          <div>{traveller.firstName} {traveller.lastName}, {traveller.gender}</div>
+          <div>{bookingData.seats[index]?.seatNumber || 'Not assigned'}</div>
+          <div>{bookingData.seats[index]?.class || 'N/A'}</div>
+        </div>
+      ))}
+    </div>
     </div>
   );
-};
+}
 
-export default FlightDetails;
+export default BookingInfo

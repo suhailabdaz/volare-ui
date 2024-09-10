@@ -58,7 +58,7 @@ function SearchBar() {
     }
   };
 
-  const hero=useSelector((state:RootState)=>state.HeroAuth)
+  // const hero=useSelector((state:RootState)=>state.HeroAuth)
   
   const isEqual = useCallback((obj1: any, obj2: any) => {
     return JSON.stringify(obj1) === JSON.stringify(obj2);

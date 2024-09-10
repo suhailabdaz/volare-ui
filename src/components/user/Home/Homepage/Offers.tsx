@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { useGetCouponsQuery } from '../../../../redux/apis/adminApiSlice';
 import createAxios from '../../../../services/axios/UserAxios';
 import { airlineEndpoints } from '../../../../services/endpoints/AirlineEndpoints';

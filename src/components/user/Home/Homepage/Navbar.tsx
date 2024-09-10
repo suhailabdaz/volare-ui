@@ -5,11 +5,7 @@ import { Link } from 'react-router-dom';
 import ModalManager from '../../Authentication/ModalManager';
 import logo from '../../../../assets/images/envato.png';
 import suitcase from '../../../../assets/images/luggage_8174282.png';
-import { useDispatch } from 'react-redux';
-import { logout } from '../../../../redux/slices/userSlice';
-import { logout as profileLogout } from '../../../../redux/slices/profileSlice';
-import { clearTravellers } from '../../../../redux/slices/travellersSlice';
-import userApi from '../../../../redux/apis/userApiSlice';
+
 
 function Navbar() {
   // Use useSelector at the top level to fetch state data
@@ -17,7 +13,7 @@ function Navbar() {
   const userName = useSelector((state: RootState) => state.UserAuth.userData?.name) || null;
 
   const [activeModal, setActiveModal] = useState<string | null>(null);
-const dispatch = useDispatch()
+// const dispatch = useDispatch()
   const closeModal = () => {
     setActiveModal(null);
   };
@@ -38,7 +34,7 @@ const dispatch = useDispatch()
         <Link to='/'>
           <div className='flex items-center p-2 space-x-2 text-white'>
             <img src={logo} className='h-10' alt="Logo" />
-            <h1 className="text-3xl font-extrabold font-Durk_bold_italic_1000">VOLARE</h1>
+            <h1 className="text-3xl font-extrabold font-Durk_bold_italic_1000">GODSPEED</h1>
           </div>
         </Link>
         <div className="space-x-10 text-white flex">

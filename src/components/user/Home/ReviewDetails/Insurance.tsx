@@ -4,7 +4,7 @@ interface CouponDetailsProps {
   onUpdateInsurance: (insurance: any) => void; 
 }
 
-const Insurance: React.FC<CouponDetailsProps> = ({ onUpdateInsurance }) => {
+const Insurance: React.FC<CouponDetailsProps> = ({ }) => {
   return (
     <div>Insurance</div>
   )

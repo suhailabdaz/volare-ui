@@ -1,4 +1,4 @@
-import  { SetStateAction, useCallback, useEffect, useState } from 'react';
+import  {  useCallback, useEffect, useState } from 'react';
 import Image from '../../../assets/images/Premium Vector _ Abstract gradient purple and blue background.jpeg';
 import FareSummary from '../../../components/user/Home/ReviewDetails/FareSummary';
 import FlightDetails from '../../../components/user/Home/ReviewDetails/FlightDetails';
@@ -15,10 +15,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import ShimmerReview from './pageShimmers/ShimmerReview';
 import { Link as ScrollLink } from 'react-scroll';
-import { useApplyCouponMutation } from '../../../redux/apis/userApiSlice';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../redux/store/store';
-import { setCoupon,setFareBreakdown, setTotalPrice } from '../../../redux/slices/bookingSlice';
+
+import { setCoupon } from '../../../redux/slices/bookingSlice';
 import { useDispatch } from 'react-redux';
 import ContactDetails from '../../../components/user/Home/ReviewDetails/ContactDetails';
 
@@ -76,33 +74,21 @@ function ReviewDetails() {
     []
   );
 
-  const [insuranceDetails, setInsuranceDetails] = useState({});
   const [couponDetails, setCouponDetails] = useState<Coupon | null>(null);
-  const [fareBreakdown, setFareBreakdown] = useState<FareBreakdown>({
-    baseFare: 0,
-    taxAmount: 0,
-    chargesAmount: 0,
-    couponDiscount:0,
-  });
-
-  const [contactDetails,setContactDetails] = useState<ContactDetails|null>(null)
-  const [totalPrice, setTotalPrice] = useState(0);
  
-  const userState = useSelector((state: RootState) => state.UserAuth.userData);
-  const statecouponDetails = useSelector((state: RootState) => state.BookingAuth.coupon);
-  const statefareBreakdown = useSelector((state: RootState) => state.BookingAuth.fareBreakdown);
-  const statetotalPrice = useSelector((state: RootState) => state.BookingAuth.totalPrice);
+  const [contactDetails,setContactDetails] = useState<ContactDetails|null>(null)
+  
 
   const dispatch = useDispatch()
 
   const navigate = useNavigate();
   const [updateBooking] = useUpdateBookingMutation();
-  const [applyCoupon] = useApplyCouponMutation();
+  // const [applyCoupon] = useApplyCouponMutation();
 
-  const updateInsuranceDetails = useCallback((details: SetStateAction<{}>) => {
-    setInsuranceDetails(details);
-    refetch();
-  }, []);
+  // const updateInsuranceDetails = useCallback((details: SetStateAction<{}>) => {
+  //   setInsuranceDetails(details);
+  //   refetch();
+  // }, []);
 
   const updateContactDetails = useCallback((details: Contactdetails) => {
 
@@ -120,13 +106,13 @@ function ReviewDetails() {
     }
   }, []);
 
-  const updateFareAndTotal = useCallback(
-    (newFareBreakdown: FareBreakdown, newTotal: number) => {
-      setFareBreakdown(newFareBreakdown);
-      setTotalPrice(newTotal);
-    },
-    []
-  );
+  // const updateFareAndTotal = useCallback(
+  //   (newFareBreakdown: FareBreakdown, newTotal: number) => {
+  //     setFareBreakdown(newFareBreakdown);
+  //     setTotalPrice(newTotal);
+  //   },
+  //   []
+  // );
 
   const handleContinue = async () => {
     try {
@@ -155,7 +141,6 @@ function ReviewDetails() {
     data: bookingData,
     isLoading,
     error,
-    refetch,
   } = useGetBookingQuery(params.bookingId || '', {
     refetchOnMountOrArgChange: true,
   });

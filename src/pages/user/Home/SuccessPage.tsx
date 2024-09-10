@@ -4,6 +4,10 @@ import { useDispatch } from 'react-redux';
 import createAxios from '../../../services/axios/UserAxios';
 import { userEndpoints } from '../../../services/endpoints/UserEndpoints';
 import { useGetBookingQuery } from '../../../redux/apis/userApiSlice';
+import PrNavbar from '../../../components/user/Home/Homepage/PrNavbar';
+import Image from '../../../assets/images/Premium Vector _ Abstract gradient purple and blue background.jpeg';
+import BookingInfo from '../../../components/user/Home/SuccessPage/BookingInfo';
+import FareBreakDown from '../../../components/user/Home/SuccessPage/FareBreakDown';
 
 interface TravellerType {
   adults: number;
@@ -15,6 +19,9 @@ interface FareBreakdown {
   baseFare: number;
   taxAmount: number;
   chargesAmount: number;
+  couponDiscount:number;
+  extraCharges:number;
+
 }
 
 interface Seat {
@@ -89,6 +96,7 @@ function SuccessPage() {
     };
 
     updateBookingStatus();
+   
   }, [location, dispatch, navigate, searchParams, bookingId]);
 
   useEffect(() => {
@@ -107,35 +115,38 @@ function SuccessPage() {
 
   return (
     booking && (
-      <div className="max-w-2xl mx-auto py-10 px-4">
-        <h1 className="text-3xl font-bold text-green-600 mb-6">Booking Successful!</h1>
-        <div className="bg-white shadow-md rounded-lg p-6">
-        <h2 className="text-xl font-semibold mb-4">Booking Details</h2>
-      <p><strong>Booking ID:</strong> {booking._id}</p>
-      <p><strong>Flight Chart ID:</strong> {booking.flightChartId}</p>
-      <p><strong>Travel Class:</strong> {booking.travelClass}</p>
-      <p><strong>Departure Time:</strong> {new Date(booking.departureTime).toLocaleString()}</p>
-      <p><strong>Total Price:</strong> ${booking.totalPrice.toFixed(2)}</p>
-      <p><strong>Status:</strong> {booking.status}</p>
-      <p><strong>Payment Status:</strong> {booking.paymentStatus}</p>
+    <div className="bg-[#f9f1fe] min-h-screen font-PlusJakartaSans">
+      <PrNavbar />
+      <div className="relative">
+        <div className="">
+          <img
+            src={Image}
+            className="w-full h-[40vh] absolute z-0 opacity-95 "
+            alt="Background"
+          />
+        </div>
+        <div className="relative z-10 ">
+          <div className="flex justify-between mx-[11%] pt-8    text-white ">
+            <h2 className="text-2xl font-PlusJakartaSans1000">
+               Booking confirmation
+            </h2>
+          </div>
+          <div className="flex justify-between pb-48 mx-[11%] mt-8">
+            <div className="w-3/4 pr-4 space-y-4">
+              <BookingInfo
+                bookingData={booking}
+              />
       
-      <h3 className="text-lg font-semibold mt-6 mb-2">Traveller Information</h3>
-      <p><strong>Adults:</strong> {booking.travellerType.adults}</p>
-      <p><strong>Children:</strong> {booking.travellerType.children}</p>
-      <p><strong>Infants:</strong> {booking.travellerType.infants}</p>
-      
-      <h3 className="text-lg font-semibold mt-6 mb-2">Seat Information</h3>
-      <ul>
-        {booking.seats.map((seat) => (
-          <li key={seat._id}>Seat {seat.seatNumber} - {seat.class}</li>
-        ))}
-      </ul>
-      
-      <h3 className="text-lg font-semibold mt-6 mb-2">Fare Breakdown</h3>
-      <p><strong>Base Fare:</strong> ${booking.fareBreakdown.baseFare.toFixed(2)}</p>
-      <p><strong>Tax:</strong> ${booking.fareBreakdown.taxAmount.toFixed(2)}</p>
-      <p><strong>Additional Charges:</strong> ${booking.fareBreakdown.chargesAmount.toFixed(2)}</p>        </div>
+            </div>
+            <div className="w-1/4 sticky top-12 h-full">
+              <FareBreakDown
+                bookingData={booking}
+              />
+            </div>
+          </div>
+        </div>
       </div>
+    </div>
     )
   );
 }

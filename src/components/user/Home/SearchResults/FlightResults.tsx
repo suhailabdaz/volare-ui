@@ -51,6 +51,7 @@ export interface FlightInstance {
     businessClass: Row[];
     firstClass: Row[];
   };
+  baggagePolicyId:string;
 }
 
 interface Seat {
@@ -80,11 +81,11 @@ function Content() {
   const [sortedSchedules, setSortedSchedules] = useState<FlightInstance[]>([]);
   const [classState, setClassState] = useState(params.class);
   const [filteredSchedules, setFilteredSchedules] = useState<FlightInstance[]>([]);
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
-  const [departureTime, setDepartureTime] = useState<string>('');
-  const [arrivalTime, setArrivalTime] = useState<string>('');
-  const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(10000);
+  // const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
+  // const [departureTime, setDepartureTime] = useState<string>('');
+  // const [arrivalTime, setArrivalTime] = useState<string>('');
+  // const [minPrice, setMinPrice] = useState(0);
+  // const [maxPrice, setMaxPrice] = useState(10000);
 
   const {
     data: schedules,

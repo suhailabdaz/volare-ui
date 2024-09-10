@@ -29,7 +29,7 @@ const AdminLoginModal = () => {
   ) => {
     console.log('Form submitted with values:', values);
     try {
-      const response = await createAxios().post(adminEndpoints.login, values);
+      const response = await createAxios(dispatch).post(adminEndpoints.login, values);
       if (response.data.success) {
         toast.message("Access Granted",{
           className:'border-2 border-black font-PlusJakartaSans1000 bg-gray-100 rounded-none'

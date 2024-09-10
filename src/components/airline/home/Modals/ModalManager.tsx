@@ -2,7 +2,10 @@ import React from 'react';
 import AddFlight from './AddFlight';
 import ViewFlightDetails from './ViewFlightDetails';
 import ScheduleBooking from './ScheduleBooking';
-import SeeFlight from './SeeFlight';
+import AddRefundPlicy from './AddRefundPolicy';
+import AddBackagePolicy from './AddBaggage';
+import AddMeal from './AddMeals'
+
 
 interface LoginModalProps {
   activeModal?: string;
@@ -22,7 +25,10 @@ const ModalManager :React.FC<LoginModalProps> =({ activeModal, closeModal, openM
   }
   return (
     <>
+          {activeModal === 'addMeal' && <AddMeal closeModal={closeModal} openModal={openModal}  />}
       {activeModal === 'addFlight' && <AddFlight closeModal={closeModal} openModal={openModal}  />}
+      {activeModal === 'addBaggage' && <AddBackagePolicy closeModal={closeModal} openModal={openModal}  />}
+      {activeModal === 'addCancelation' && <AddRefundPlicy closeModal={closeModal} openModal={openModal}  />}
       {activeModal === 'viewFlightDetails' && <ViewFlightDetails closeModal={closeModal} openModal={openModal} flightId={flightId||''}  />}
       {activeModal === 'bookSchedule' && <ScheduleBooking closeModal={closeModal} openModal={openModal} schedule={schedule||''} fromAirport={fromAirport} toAirport={toAirport} />}
     </>

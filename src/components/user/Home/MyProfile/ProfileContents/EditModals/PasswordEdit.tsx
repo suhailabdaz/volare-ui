@@ -28,7 +28,7 @@ const validationSchema = Yup.object({
     .required('Confirm Password is required')
 });
 
-const PasswordModal: React.FC<PasswordModalProps> = ({ closeModal,openModal}) => {
+const PasswordModal: React.FC<PasswordModalProps> = ({ closeModal}) => {
   const userAuth = useSelector((state: RootState) => state.UserAuth.userData);
   const userId = userAuth?._id
 
@@ -44,7 +44,7 @@ const PasswordModal: React.FC<PasswordModalProps> = ({ closeModal,openModal}) =>
   const onSubmit = async (values: typeof initialValues, { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }) => {
     try {
       console.log(userId,"usreid");
-      const response = await createAxios().patch(userEndpoints.resetPassword,{values:values , id:userId});
+      const response = await createAxios(dispatch).patch(userEndpoints.resetPassword,{values:values , id:userId});
       console.log("user",response);
       if (response.data.success) {
         dispatch(userProfileDetails(response.data))

@@ -30,10 +30,10 @@ const SchedulesList: React.FC<SchedulesListProps> = ({
   const schedulesPerPage = 3;
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const dispatch = useDispatch();
-  const [fromAirportstate, setFromAirport] = useState<AirportOption | null>(
+  const [fromAirportstate, ] = useState<AirportOption | null>(
     fromAirport
   );
-  const [toAirportstate, setToAirport] = useState<AirportOption | null>(
+  const [toAirportstate, ] = useState<AirportOption | null>(
     toAirport
   );
   const [activeModal, setActiveModal] = useState<string | null>(null);

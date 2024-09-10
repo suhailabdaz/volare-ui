@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { useDispatch,useSelector } from 'react-redux';
+import React from 'react';
+import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
-import { XMarkIcon } from '@heroicons/react/24/solid'; 
+// import { XMarkIcon } from '@heroicons/react/24/solid'; 
 import { ErrorMessage, Field, Form, Formik } from 'formik';
-import { Toaster, toast } from 'sonner';
-import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
-import { useNavigate } from 'react-router-dom';
+import {  toast } from 'sonner';
+// import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
+// import { useNavigate } from 'react-router-dom';
 import { createAxios } from "../../../services/axios/UserAxios";
 import { userEndpoints } from '../../../services/endpoints/UserEndpoints';
 import { login as userLogin } from '../../../redux/slices/userSlice';
@@ -34,7 +34,7 @@ const validationSchema = Yup.object({
 
 
 
-const SignupModal: React.FC<SignupModalProps> = ({ closeModal,openModal}) => {
+const SignupModal: React.FC<SignupModalProps> = ({ closeModal}) => {
   const userEmail = sessionStorage.getItem('userEmail')
   console.log("login in the login component");
   const initialValues = {
@@ -44,13 +44,13 @@ const SignupModal: React.FC<SignupModalProps> = ({ closeModal,openModal}) => {
     confirmPassword:''
   };
   
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const onSubmit = async (values: typeof initialValues, { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }) => {
     try {
       console.log("signup submit");
-      const response = await createAxios().post(userEndpoints.register,values);
+      const response = await createAxios(dispatch).post(userEndpoints.register,values);
       console.log(response.data)
       if (response.data) {
         localStorage.setItem("accessToken",response.data.accessToken)

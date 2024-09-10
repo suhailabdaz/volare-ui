@@ -46,7 +46,7 @@ const validationSchema = Yup.object({
     .required('Arrival time is required'),
 });
 
-const ScheduleAdd: React.FC<ScheduleAddProps> = ({ closeModal, openModal, fromAirport, toAirport, to, from }) => {
+const ScheduleAdd: React.FC<ScheduleAddProps> = ({ closeModal, fromAirport, toAirport, to, from }) => {
   const [fromAirportState, setFromAirport] = useState<AirportOption | null>(fromAirport);
   const [toAirportState, setToAirport] = useState<AirportOption | null>(toAirport);
   
@@ -89,7 +89,7 @@ const ScheduleAdd: React.FC<ScheduleAddProps> = ({ closeModal, openModal, fromAi
 
   const onSubmit = async (values: FormValues, { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }) => {
     try {
-      const response = await createAxios().post(authorityEndpoints.addSchedule, values);
+      const response = await createAxios(dispatch).post(authorityEndpoints.addSchedule, values);
       if (response.data.success) {
         dispatch(setSchedule(response.data.schedule));
         toast.success('Saved Successfully');

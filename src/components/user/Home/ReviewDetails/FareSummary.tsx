@@ -45,7 +45,6 @@ interface FareSummaryProps {
 
 const FareSummary: React.FC<FareSummaryProps> = ({
   inittotalPrice,
-  bookingData,
   fareBreakdown,
   selectedCoupon
 }) => {

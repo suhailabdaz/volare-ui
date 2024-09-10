@@ -1,5 +1,4 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
 
 const useCustomNavigation = () => {
   const navigate = useNavigate();

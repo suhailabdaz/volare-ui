@@ -1,18 +1,26 @@
 import React from 'react';
 
-interface CancellationPolicyProps {
-  totalPrice: number;
+interface refundPolicy{
+  _id:string;
+  firstPeriodPenalty:number;
+  secondPeriodPenalty:number;
+  thirdPeriodPenalty:number;
 }
 
-const CancellationPolicy: React.FC<CancellationPolicyProps> = ({ totalPrice }) => {
+interface CancellationPolicyProps {
+  totalPrice: number;
+  refundPolicy:refundPolicy | null
+}
+
+const CancellationPolicy: React.FC<CancellationPolicyProps> = ({ totalPrice,refundPolicy }) => {
   const calculateCancellationCharge = (percentage: number): number => {
     return totalPrice * (percentage / 100);
   };
 
   const policies = [
-    { timeFrame: "0-4h", charge: totalPrice, color: "#FF0000" },
-    { timeFrame: "4h-4d", charge: calculateCancellationCharge(80), color: "#FFA500" },
-    { timeFrame: "4d-365d", charge: calculateCancellationCharge(60), color: "#00FF00" },
+    { timeFrame: "0-4h", charge: calculateCancellationCharge(refundPolicy?.thirdPeriodPenalty ||100), color: "#FF0000" },
+    { timeFrame: "4h-4d", charge: calculateCancellationCharge(refundPolicy?.secondPeriodPenalty || 100), color: "#FFA500" },
+    { timeFrame: "4d-365d", charge: calculateCancellationCharge(refundPolicy?.firstPeriodPenalty|| 100), color: "#00FF00" },
   ];
 
   return (
@@ -40,7 +48,7 @@ const CancellationPolicy: React.FC<CancellationPolicyProps> = ({ totalPrice }) =
       </div>
       <div className="text-sm mt-5 text-gray-600">
         <p>* Cancellation charges include Airline fee + Volare fee per passenger</p>
-        <p>* The cancellation charge is calculated based on the total ticket price of ₹{totalPrice}</p>
+        <p>* The cancellation charge is calculated based on the total ticket price of ₹{totalPrice.toFixed(2)}</p>
       </div>
     </div>
   );

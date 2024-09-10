@@ -34,7 +34,7 @@ const OtpModal: React.FC<OtpModalProps> = ({ closeModal ,openModal,formData }) =
 
   const inputRef = useRef<(HTMLInputElement | null)[]>([]);
   const [countdown, setCountdown] = useState(30);
-  const [showResendButton, setShowResendButton] = useState(false);
+  const [, setShowResendButton] = useState(false);
 
   const formik = useFormik<FormValues>({
     initialValues: {

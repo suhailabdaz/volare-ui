@@ -2,12 +2,11 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
-import { Toaster, toast } from 'sonner';
+import { toast } from 'sonner';
 import { createAxios } from "../../../../../services/axios/UserAxios";
 import { userEndpoints } from '../../../../../services/endpoints/UserEndpoints';
 import { RootState } from '../../../../../redux/store/store';
-import { userProfileDetails } from '../../../../../redux/slices/profileSlice';
-import { userProfileDetails as authProfile } from '../../../../../redux/slices/userSlice';
+
 import {setTravellerDetails} from '../../../../../redux/slices/travellersSlice'
 
 interface ProfileModalProps {
@@ -29,8 +28,7 @@ const validationSchema = Yup.object({
   email: Yup.string().email("Invalid email").required("required")
 });
 
-const TravellerModal: React.FC<ProfileModalProps> = ({ closeModal, openModal }) => {
-  const userData = useSelector((state: RootState) => state.ProfileAuth.userData);
+const TravellerModal: React.FC<ProfileModalProps> = ({ closeModal }) => {
   const userAuth = useSelector((state: RootState) => state.UserAuth.userData);
   const userId = userAuth?._id;
 

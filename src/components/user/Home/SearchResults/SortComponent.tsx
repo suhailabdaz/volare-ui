@@ -74,6 +74,7 @@ export interface FlightInstance {
     businessClass: Row[];
     firstClass: Row[];
   };
+  baggagePolicyId:string
 }
 
 interface Seat {

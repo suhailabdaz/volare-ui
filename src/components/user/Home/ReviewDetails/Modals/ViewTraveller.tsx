@@ -1,4 +1,4 @@
-import React, {  useState } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
@@ -13,19 +13,19 @@ interface ProfileModalProps {
   openModal: (modalName: string) => any
   travellerId : string
 }
-interface TravellerFormValues {
-  firstName: string;
-  lastName: string;
-  gender: string;
-  dateOfBirth: string; 
-  nationality: string;
-  mealPreference: string;
-  passportNo: string;
-  passportNationality: string;
-  passportExpiry: Date;
-  phone: string;
-  email: string;
-}
+// interface TravellerFormValues {
+//   firstName: string;
+//   lastName: string;
+//   gender: string;
+//   dateOfBirth: string; 
+//   nationality: string;
+//   mealPreference: string;
+//   passportNo: string;
+//   passportNationality: string;
+//   passportExpiry: Date;
+//   phone: string;
+//   email: string;
+// }
 
 
 const validationSchema = Yup.object({
@@ -42,11 +42,8 @@ const validationSchema = Yup.object({
   email: Yup.string().email("Invalid email").required("required")
 });
 
-const ViewTraveller: React.FC<ProfileModalProps> = ({ closeModal, openModal,travellerId }) => {
-  const userData = useSelector((state: RootState) => state.ProfileAuth.userData);
-  const userAuth = useSelector((state: RootState) => state.UserAuth.userData);
-  const [fetchedTraveller, setFetchedTraveller] = useState(null);
-  const [isLoading, setIsLoading] = useState(false); // Optional loading state
+const ViewTraveller: React.FC<ProfileModalProps> = ({ closeModal,travellerId }) => {
+
 
   const foundTraveller = useSelector((state: RootState) => {
     const travellers = state.TravellerAuth.travellers; // Access travellers array

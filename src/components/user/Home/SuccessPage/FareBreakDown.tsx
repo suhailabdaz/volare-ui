@@ -1,83 +1,57 @@
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { setFareBreakdown, setTotalPrice } from '../../../../redux/slices/bookingSlice'; 
-import { RootState } from '../../../../redux/store/store'; 
+import React from 'react'
+
+
+interface TravellerType {
+  adults: number;
+  children: number;
+  infants: number;
+}
 
 interface FareBreakdown {
   baseFare: number;
   taxAmount: number;
   chargesAmount: number;
-  couponDiscount: number;
+  couponDiscount:number;
   extraCharges:number;
 }
 
-interface BookingData {
+interface Seat {
+  seatNumber: string;
+  travellerId: string;
+  class: string;
+  _id: string;
+}
+
+interface Booking {
+  travellerType: TravellerType;
+  fareBreakdown: FareBreakdown;
   _id: string;
   userId: string;
   flightChartId: string;
   fareType: string;
+  travellers: any[];
   travelClass: string;
-  seats: string[];
+  departureTime: string;
+  seats: Seat[];
   totalPrice: number;
-  travellerType: {
-    adults: number;
-    children: number;
-    infants: number;
-  };
-  fareBreakdown: FareBreakdown;
   status: string;
   paymentStatus: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  paymentId: string;
 }
 
-interface Coupon {
-  coupon_code: string;
-  coupon_description: string;
-  discount: number;
+
+interface props {
+  bookingData: Booking;
 }
 
-interface FareSummaryProps {
-  bookingData: BookingData;
-  inittotalPrice: number;
-  fareBreakdown: FareBreakdown;
-  selectedCoupon: Coupon | null;
-}
-
-const FareSummary: React.FC<FareSummaryProps> = ({
-  inittotalPrice,
-  fareBreakdown,
-  selectedCoupon
-}) => {
-  const dispatch = useDispatch();
-  const currentFareBreakdown = useSelector((state: RootState) => state.BookingAuth.fareBreakdown);
-  const totalPrice = useSelector((state: RootState) => state.BookingAuth.totalPrice);
-
-
-
-  useEffect(() => {
-    let newTotalPrice = inittotalPrice;
-    let newFareBreakdown = { ...fareBreakdown };
-
-    if (selectedCoupon) {
-      const discountAmount = (inittotalPrice * selectedCoupon.discount) / 100;
-      newTotalPrice -= discountAmount;
-      newFareBreakdown.couponDiscount = discountAmount;
-    }
-
-    if (newFareBreakdown.extraCharges) {
-      newTotalPrice += newFareBreakdown.extraCharges;
-    }
-
-    dispatch(setTotalPrice(newTotalPrice));
-    dispatch(setFareBreakdown({ FareBreakdown: newFareBreakdown }));
-  }, [selectedCoupon, inittotalPrice, fareBreakdown, dispatch]);
-
-  if (!currentFareBreakdown || !totalPrice) {
-    return null; 
-  }
-
+const FareBreakDown: React.FC<props> = ({ bookingData }) => {
   return (
-    <div className="bg-white mb-3 space-y-4 rounded w-full shadow-[0_0_10px_rgba(0,0,0,0.2)] font-PlusJakartaSans p-5">
+    <>
+<div className="bg-white mb-3 space-y-4 rounded w-full shadow-[0_0_10px_rgba(0,0,0,0.2)] font-PlusJakartaSans p-5">
       <h1 className="font-PlusJakartaSans1000 text-xl mb-3">Fare Summary</h1>
       
       <div className="flex font-bold text-sm justify-between items-center w-full">
@@ -85,7 +59,7 @@ const FareSummary: React.FC<FareSummaryProps> = ({
         <div className='flex justify-end'>
           <input
             type="number"
-            value={currentFareBreakdown.baseFare.toFixed(2)}
+            value={bookingData.fareBreakdown.baseFare.toFixed(2)}
             className="w-2/4" 
             readOnly
           />
@@ -97,7 +71,7 @@ const FareSummary: React.FC<FareSummaryProps> = ({
         <div className='flex justify-end'>
           <input
             type="number"
-            value={currentFareBreakdown.taxAmount.toFixed(2)}
+            value={bookingData.fareBreakdown.taxAmount.toFixed(2)}
             className="w-2/4"
             readOnly
           />
@@ -109,20 +83,20 @@ const FareSummary: React.FC<FareSummaryProps> = ({
         <div className='flex justify-end'>
           <input
             type="number"
-            value={currentFareBreakdown.chargesAmount.toFixed(2)}
+            value={bookingData.fareBreakdown.chargesAmount.toFixed(2)}
             className="w-2/4"
             readOnly
           />
         </div>
       </div>
 
-      {currentFareBreakdown.couponDiscount > 0 && (
+      {bookingData.fareBreakdown.couponDiscount > 0 && (
         <div className="flex font-bold text-sm justify-between items-center w-full  ">
           <label className='flex justify-start items-center'><PlusCircleIcon className='mr-2 h-4'/>Discount</label>
           <div className='flex justify-end'>
             <input
               type="number"
-              value={currentFareBreakdown.couponDiscount.toFixed(2)}
+              value={bookingData.fareBreakdown.couponDiscount.toFixed(2)}
               className="w-2/4"
               readOnly
             />
@@ -130,13 +104,13 @@ const FareSummary: React.FC<FareSummaryProps> = ({
         </div>
       )}
 
-      {currentFareBreakdown.extraCharges > 0 && (
+      {bookingData.fareBreakdown.extraCharges > 0 && (
         <div className="flex font-bold text-sm justify-between items-center w-full pb-3">
           <label className='flex justify-start items-center'><PlusCircleIcon className='mr-2 h-4'/>Extra</label>
           <div className='flex justify-end'>
             <input
               type="number"
-              value={currentFareBreakdown.extraCharges.toFixed(2)}
+              value={bookingData.fareBreakdown.extraCharges.toFixed(2)}
               className="w-2/4"
               readOnly
             />
@@ -147,10 +121,24 @@ const FareSummary: React.FC<FareSummaryProps> = ({
 
       <div className="mt-3 flex font-PlusJakartaSans1000 justify-between items-center w-full">
         <strong>Total Price</strong>
-        <strong className="w-2/4 flex justify-end">₹{totalPrice?.toFixed(2)}</strong>
+        <strong className="w-2/4 flex justify-end">₹{bookingData.totalPrice?.toFixed(2)}</strong>
       </div>
     </div>
-  );
+    <div className='mt-6 w-full '>
+      <h1 className='font-PlusJakartaSans1000 text-xl'>Payment Method</h1>
+      <div className='mt-2 w-full h-32 space-y-8 rounded-lg bg-gradient-to-br p-4 from-pink-400  to-pink-500'>
+        <div className='flex justify-start items-start'>
+        <h1 className='font-PlusJakartaSans1000 text-lg text-white'>Card Payment</h1>
+        </div>
+        <div className='flex items-end  justify-between'>
+          <h1 className='font-PlusJakartaSans text-lg text-white'></h1>
+        <h1 className='font-PlusJakartaSans text-lg text-white'>XX / XX</h1>
+        </div>
+      </div>
+    </div>
+    
+    </>
+  );  
 }
 
-export default FareSummary;
+export default FareBreakDown

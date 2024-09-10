@@ -39,11 +39,9 @@ interface BookingData {
 }
 
 const CouponSection: React.FC<CouponSectionProps> = ({ 
-  bookingId, 
-  totalPrice, 
+
   onCouponApplied, 
   addedCoupon, 
-  bookingData 
 }) => {
   const dispatch = useDispatch();
   const userState = useSelector((state: RootState) => state.UserAuth.userData);

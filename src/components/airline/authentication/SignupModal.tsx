@@ -2,10 +2,10 @@ import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
 import { Form, Formik } from 'formik';
 import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import { createAxios } from '../../../services/axios/AirlineAxios';
-import { authorityEndpoints } from '../../../services/endpoints/AuthorityEndpoints';
-import { login } from '../../../redux/slices/authoritySlice';
+// import { authorityEndpoints } from '../../../services/endpoints/AuthorityEndpoints';
+// import { login } from '../../../redux/slices/authoritySlice';
 import CustomField from './CustomField';
 import { ArrowRightCircleIcon } from '@heroicons/react/24/outline';
 import { airlineEndpoints } from '../../../services/endpoints/AirlineEndpoints';
@@ -61,7 +61,7 @@ const initialValues = {
 };
 
 const SignupModal: React.FC<LoginModalProps> = ({ setIsLogin }) => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const [activeModal, setActiveModal] = useState<string | null>(null);

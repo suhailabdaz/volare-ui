@@ -81,7 +81,7 @@ const SeeFlight: React.FC<ProfileModalProps> = ({
             enableReinitialize={true}
             onSubmit={onSubmit}
           >
-            {({ isSubmitting }) => (
+            {({ }) => (
               <Form className="overflow-y-auto max-h-[70vh] px-2 text-black">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <div className="flex flex-col">

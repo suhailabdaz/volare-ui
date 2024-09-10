@@ -34,7 +34,7 @@ const ContactDetails: React.FC<ContactDetailsProps> = ({
     email: bookingData.contactDetails?.email || userData?.email || ''
   };
   const onSubmit = async (
-    values: typeof initialValues,
+    _values: typeof initialValues,
     { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
   ) => {
     try {
@@ -56,7 +56,7 @@ const ContactDetails: React.FC<ContactDetailsProps> = ({
         validationSchema={validationSchema}
         onSubmit={onSubmit}
       >
-        {({ isSubmitting, setFieldValue,values }) => (
+        {({ setFieldValue,values }) => (
           <Form>
             <div className=" mb-4 flex  space-x-4">
               {/* Phone Number Field with react-phone-input-2 */}

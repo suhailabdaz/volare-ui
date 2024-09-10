@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import airlineApi from '../apis/airlineApiSlice';
+// import airlineApi from '../apis/airlineApiSlice';
 
 interface Schedule {
   _id: string;

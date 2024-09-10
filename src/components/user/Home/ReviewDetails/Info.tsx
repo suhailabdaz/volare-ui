@@ -1,4 +1,3 @@
-import React from 'react';
 import Warning from '../../../../assets/images/icons8-high-importance-48.png';
 
 function Info() {

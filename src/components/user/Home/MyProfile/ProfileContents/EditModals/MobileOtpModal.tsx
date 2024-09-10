@@ -1,14 +1,13 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+// import { useDispatch } from 'react-redux';
 import { XMarkIcon } from '@heroicons/react/24/solid'; 
 import { Toaster, toast } from 'sonner';
-import { createAxios } from "../../../../../../services/axios/UserAxios";
-import { userEndpoints } from '../../../../../../services/endpoints/UserEndpoints';
-import { login as userLogin } from '../../../../../../redux/slices/userSlice';
-import * as Yup from 'yup';
+// import { createAxios } from "../../../../../../services/axios/UserAxios";
+// import { userEndpoints } from '../../../../../../services/endpoints/UserEndpoints';
+// import { login as userLogin } from '../../../../../../redux/slices/userSlice';
+// import * as Yup from 'yup';
 import {
   ConfirmationResult,
-  RecaptchaVerifier,
 } from "firebase/auth";
 import { FormikErrors, useFormik } from "formik";
 
@@ -32,13 +31,13 @@ const validate = (values: FormValues) => {
 };
 
 const OtpModal: React.FC<OtpModalProps> = ({ closeModal ,openModal,sendOtp }) => {
-  const userEmail = sessionStorage.getItem('userEmail')
-  const dispatch = useDispatch()
+  // const userEmail = sessionStorage.getItem('userEmail')
+  // const dispatch = useDispatch()
 
   const inputRef = useRef<(HTMLInputElement | null)[]>([]);
   const [countdown, setCountdown] = useState(30);
-  const [showResendButton, setShowResendButton] = useState(false);
-  const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
+  const [, setShowResendButton] = useState(false);
+  const [confirmationResult, ] = useState<ConfirmationResult | null>(null);
 
   const formik = useFormik<FormValues>({
     initialValues: {
