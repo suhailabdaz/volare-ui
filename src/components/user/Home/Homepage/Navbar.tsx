@@ -34,7 +34,7 @@ function Navbar() {
         <Link to='/'>
           <div className='flex items-center p-2 space-x-2 text-white'>
             <img src={logo} className='h-10' alt="Logo" />
-            <h1 className="text-3xl font-extrabold font-Durk_bold_italic_1000">GODSPEED</h1>
+            <h1 className="text-3xl font-extrabold font-Durk_bold_italic_1000">GODSPEED FLIGHTS</h1>
           </div>
         </Link>
         <div className="space-x-10 text-white flex">

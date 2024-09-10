@@ -22,7 +22,7 @@ jobs:
         run: |
           echo "VITE_GOOGLE_API_KEY=${{ secrets.VITE_GOOGLE_API_KEY }}" >> .env
           echo "VITE_API_GATEWAY_URL=${{ secrets.VITE_API_GATEWAY_URL }}" >> .env
-          echo "VITE_NODE_ENV=PROD" >> .env
+          echo "VITE_NODE_ENV=DEV" >> .env
           echo "VITE_STRIPE_PUBLISH_KEY=${{ secrets.VITE_STRIPE_PUBLISH_KEY }}" >> .env
 
       - name: Install dependencies

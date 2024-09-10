@@ -156,7 +156,7 @@ function SeatSelection() {
 
       const session = response.data;
 
-      const stripe = await loadStripe('pk_test_51Ps4S9RoPJymCley7FFWtFji7AVcD3i3r9PyqNvn74X8g0SKMogyxyqE2wM659IvwsDLoDivY1vNci8YSqNcYoMj00xOGa4oxz');
+      const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLISH_KEY);
       if (stripe === null) {
         throw new Error('Failed to load Stripe');
       }
