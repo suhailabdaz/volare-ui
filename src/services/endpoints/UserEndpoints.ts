@@ -22,3 +22,5 @@ export const userEndpoints = {
     afterPayment:`${API_GATEWAY_BASE_URL}/api/v1/booking/update-booking-status`
 
 }
+
+

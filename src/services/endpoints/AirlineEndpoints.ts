@@ -17,3 +17,4 @@ export const airlineEndpoints = {
     getMeals:`${API_GATEWAY_BASE_URL}/api/v1/airline/get-meals`,
 
 }
+

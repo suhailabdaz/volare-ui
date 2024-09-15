@@ -10,4 +10,6 @@ export const authorityEndpoints = {
     addSchedule: `${API_GATEWAY_BASE_URL}/api/v1/authority/add-schedule`,
     getSchedules:`${API_GATEWAY_BASE_URL}/api/v1/authority/get-schedules`,
     suspendSchedule:`${API_GATEWAY_BASE_URL}/api/v1/authority/suspend-schedule`
+    
 }
+
