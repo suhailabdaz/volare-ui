@@ -25,11 +25,12 @@ jobs:
           echo "VITE_NODE_ENV=DEV" >> .env
           echo "VITE_STRIPE_PUBLISH_KEY=${{ secrets.VITE_STRIPE_PUBLISH_KEY }}" >> .env
 
+
       - name: Display .env file contents
         run: |
           echo "Contents of .env file:"
           cat .env
-          
+
       - name: Install dependencies
         run: npm ci
 
