@@ -8,12 +8,10 @@ import suitcase from '../../../../assets/images/luggage_8174282.png';
 
 
 function Navbar() {
-  // Use useSelector at the top level to fetch state data
   const isAuthenticated = useSelector((state: RootState) => state.UserAuth.token);
   const userName = useSelector((state: RootState) => state.UserAuth.userData?.name) || null;
 
   const [activeModal, setActiveModal] = useState<string | null>(null);
-// const dispatch = useDispatch()
   const closeModal = () => {
     setActiveModal(null);
   };
@@ -42,7 +40,7 @@ function Navbar() {
             <img src={suitcase} className='h-10' alt="Suitcase" />
             <div className='flex-1 items-start'>
               <Link to="/my-trips" className='text-sm font-semibold'>
-                Trips
+                My Trips
                 <p className='text-xs font-light'>Manage bookings</p>
               </Link>
             </div>
