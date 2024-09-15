@@ -42,7 +42,7 @@ function Navbar() {
             <img src={suitcase} className='h-10' alt="Suitcase" />
             <div className='flex-1 items-start'>
               <Link to="/my-trips" className='text-sm font-semibold'>
-                My Trips
+                Trips
                 <p className='text-xs font-light'>Manage bookings</p>
               </Link>
             </div>
