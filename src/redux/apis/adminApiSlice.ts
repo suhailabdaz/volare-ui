@@ -94,7 +94,7 @@ export const adminApi = createApi({
         method: 'GET',
       }),
       providesTags: ['Banners'],
-      async onQueryStarted( { queryFulfilled }) {
+      async onQueryStarted(_, { queryFulfilled }) {
         try {
           await queryFulfilled;
           invalidateTagAfterDelay('Banners', 10000);
