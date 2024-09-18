@@ -17,7 +17,9 @@ const BacktoFlightTrav: React.FC<props> = ({ flightChartId }) => {
     { refetchOnMountOrArgChange: true }
   );
 
-  const { data: scheduleData } = useGetChartedFlightQuery(flightChartId);
+  const { data: scheduleData } = useGetChartedFlightQuery(flightChartId,{
+    refetchOnMountOrArgChange:true
+  });
 
   const params = useParams();
 
@@ -53,7 +55,7 @@ const BacktoFlightTrav: React.FC<props> = ({ flightChartId }) => {
 
   return (
     <div
-      className="bg-white rounded w-[99%]   items-center h-auto shadow-[0_0_10px_rgba(0,0,0,0.2)] font-PlusJakartaSans px-5 py-2"
+      className="bg-white rounded w-[99%] items-center h-auto shadow-[0_0_10px_rgba(0,0,0,0.2)] font-PlusJakartaSans px-5 py-2"
       id="flight_travellers_details"
     >
       <h3 className='font-PlusJakartaSans1000 text-xl mt-3'>

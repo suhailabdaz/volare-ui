@@ -12,6 +12,13 @@ import { RootState } from '../../../../redux/store/store';
 type ClassType = 'Economy' | 'Business' | 'FirstClass';
 type SeatClass = 'economyClass' | 'businessClass' | 'firstClass';
 
+interface FareBreakdown {
+  baseFare: number;
+  taxAmount: number;
+  chargesAmount: number;
+  couponDiscount: number;
+  extraCharges: number;
+}
 interface DataProps {
   flightChartId: string;
   classType: ClassType;
@@ -70,19 +77,16 @@ const SeatLayout: React.FC<DataProps> = ({
       isPaid: boolean;
     }[]
   >([]);
-  const [additionalFare, setAdditionalFare] = useState(0);
   const dispatch = useDispatch();
   const fareBreakdown = useSelector((state: RootState) => state.BookingAuth.fareBreakdown);
 
   const updateFareBreakdown = useCallback((newExtraCharges: number) => {
-    console.log("newxtra", newExtraCharges);
     
     if (fareBreakdown) {
       const updatedFareBreakdown = {
         ...fareBreakdown,
         extraCharges: newExtraCharges,
       };
-      console.log("newfares", updatedFareBreakdown);
 
       dispatch(setFareBreakdown({ FareBreakdown: updatedFareBreakdown }));
     }
@@ -179,15 +183,17 @@ const SeatLayout: React.FC<DataProps> = ({
       );
 
       let newSelectedSeats;
-      let newAdditionalFare;
+      let extraChargesChange = 0;
 
       if (existingSeatIndex !== -1) {
         // Deselecting a seat
         newSelectedSeats = prevSelectedSeats.filter(
           (seat) => seat.seatNumber !== seatNumber
         );
-        newAdditionalFare = isPaid ? additionalFare - 500 : additionalFare;
-      } else if (prevSelectedSeats.length < travellers.length) {
+        if (isPaid) {
+          extraChargesChange = -500;
+        }
+            } else if (prevSelectedSeats.length < travellers.length) {
         // Selecting a new seat
         const availableTravellerId = travellers.find(
           (traveller) =>
@@ -202,23 +208,29 @@ const SeatLayout: React.FC<DataProps> = ({
             isPaid,
           };
           newSelectedSeats = [...prevSelectedSeats, newSeat];
-          newAdditionalFare = isPaid ? additionalFare + 500 : additionalFare;
-        } else {
+          if (isPaid) {
+            extraChargesChange = 500;
+          }
+                } else {
           return prevSelectedSeats; // No change if no available traveller
         }
       } else {
         return prevSelectedSeats; // No change if all travellers have seats
       }
+        // Update Redux store
+    const updatedFareBreakdown: FareBreakdown = {
+      baseFare: fareBreakdown.baseFare,
+      taxAmount: fareBreakdown.taxAmount,
+      chargesAmount: fareBreakdown.chargesAmount,
+      couponDiscount: fareBreakdown.couponDiscount,
+      extraCharges: (fareBreakdown.extraCharges || 0) + extraChargesChange
+    };
 
-      // Update state and trigger callbacks
-      setAdditionalFare(newAdditionalFare);
+    dispatch(setFareBreakdown({ FareBreakdown: updatedFareBreakdown }));
       onSeatSelected(newSelectedSeats);
-      onFareUpdate(newAdditionalFare);
-      updateFareBreakdown(newAdditionalFare);
-
       return newSelectedSeats;
     });
-  }, [travellers, classType, additionalFare, onSeatSelected, onFareUpdate, updateFareBreakdown, mapClassType]);
+  }, [travellers, classType, onSeatSelected, onFareUpdate, updateFareBreakdown, mapClassType]);
 
   
 

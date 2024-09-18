@@ -1,4 +1,8 @@
 import { useState } from 'react';
+import { useGetBookingsByStatusQuery } from '../../../../redux/apis/userApiSlice';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../../redux/store/store';
+import { useNavigate } from 'react-router-dom';
 
 interface TripStatus {
   upcoming: boolean;
@@ -6,14 +10,128 @@ interface TripStatus {
   cancelled: boolean;
   unsuccessful: boolean;
 }
+interface ITraveller {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  gender: string;
+  dateOfBirth: string; 
+  nationality: string;
+  mealPreference: string;
+  passportNo: string;
+  passportNationality: string;
+  passportExpiry: string;
+  phone: string;
+  email: string;
+  userId: string;
+  createdAt: string;
+  updatedAt: string; 
+  __v: number;
+}
+
+interface ISeat {
+  seatNumber: string;
+  travellerId: string;
+  class: 'economyClass' | 'businessClass' | 'firstClass';
+  _id: string;
+}
+
+interface IFareBreakdown {
+  baseFare: number;
+  taxAmount: number;
+  chargesAmount: number;
+  couponDiscount: number;
+  extraCharges: number;
+}
+
+interface IContactDetails {
+  phone: string;
+  email: string;
+}
+
+export interface IBooking {
+  _id: string;
+  userId: string;
+  flightChartId: string;
+  fareType: string;
+  travellers: ITraveller[];
+  travelClass: string;
+  departureTime: string; // ISO date string
+  seats: ISeat[];
+  totalPrice: number;
+  travellerType: {
+    adults: number;
+    children: number;
+    infants: number;
+  };
+  fareBreakdown: IFareBreakdown;
+  status: 'pending' | 'confirmed' | 'cancelled' | 'traveller' | 'seats' | 'expired';
+  paymentStatus: 'pending' | 'completed' | 'failed';
+  paymentId?: string;
+  couponCode?: string;
+  contactDetails?: IContactDetails;
+  createdAt: string; // ISO date string
+  updatedAt: string; // ISO date string
+  __v: number;
+}
 
 function MytripsList() {
+
+  
   const [selectedStatus, setSelectedStatus] = useState<TripStatus>({
     upcoming: true,
     completed: false,
     cancelled: false,
     unsuccessful: false,
   });
+  
+  const currentStatus = Object.keys(selectedStatus).find(
+    (key) => selectedStatus[key as keyof TripStatus]
+  ) as string;
+
+  const userData = useSelector((state:RootState)=>state.UserAuth.userData)
+
+
+  const { data: bookings, isLoading, isError } = useGetBookingsByStatusQuery({
+    id: userData?._id,
+    status: currentStatus
+  },{
+    refetchOnMountOrArgChange:true
+  });
+
+  const Navigate = useNavigate()
+
+
+  const renderBookingList = () => {
+    if (isLoading) return <p>Loading bookings...</p>;
+    if (isError) return <p>Error fetching bookings. Please try again.</p>;
+    if (!bookings || bookings.length === 0) return <div className='flex  justify-center items-center'>  
+      <div className='space-y-12'>
+      <p className='font-PlusJakartaSans1000 text-lg'>No bookings found for this status.</p>
+      <div className='flex justify-center items-center'>
+      <button onClick={()=>{Navigate('/')}} className='rounded-2xl bg-gradient-to-r from-purple-700 to bg-purple-500 px-8 py-3 text-white font-PlusJakartaSans1000 text-center'>Plan A trip</button>
+      </div>
+      </div> 
+      </div>
+
+    return (
+      <ul className="space-y-4">
+        {bookings.map((booking: IBooking) => (
+          <li key={booking._id}  onClick={() => {
+            if (booking.status === 'pending') {
+              Navigate(`/review-details/${booking._id}`);
+            }
+          }} className="bg-gray-100 p-4 rounded-md shadow">
+            <h3 className="font-bold text-lg">{booking.flightChartId}</h3>
+            <p>Status: {booking.status}</p>
+            <p>From: {booking.departureTime} To: {booking.paymentStatus}</p>
+            {/* Add more booking details as needed */}
+          </li>
+        ))}
+      </ul>
+    );
+  };
+
 
   const handleStatusChange = (status: keyof TripStatus) => {
     setSelectedStatus((prevStatus) => ({
@@ -86,7 +204,7 @@ function MytripsList() {
           </div>
         </div>
 
-        {/* Your content goes here */}
+        {renderBookingList()}
       </div>
     </div>
   );

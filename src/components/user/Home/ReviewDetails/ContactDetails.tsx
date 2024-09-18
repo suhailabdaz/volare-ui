@@ -4,6 +4,7 @@ import * as Yup from 'yup';
 import { RootState } from '../../../../redux/store/store';
 import { useSelector } from 'react-redux';
 import { BookingData } from '../../../../pages/user/Home/ReviewDetails';
+import { useEffect } from 'react';
 
 
 interface ContactDetails {
@@ -43,6 +44,14 @@ const ContactDetails: React.FC<ContactDetailsProps> = ({
       setSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    onUpdateContact({
+      phone: initialValues.phoneNumber,
+      email: initialValues.email,
+    });
+  }, [initialValues.phoneNumber, initialValues.email, onUpdateContact]);
+
   return (
     <div className="bg-white px-8 w-[99%] py-6 mt-3  rounded-md shadow-custom_shadow " id='contactDetails'>
       <div className="items-center mb-5">

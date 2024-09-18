@@ -47,7 +47,10 @@ const FlightDetails: React.FC<DataProps> = ({ flightChartId,fareType,bookingClas
     data: scheduleData,
     isLoading,
     error: chartError,
-  } = useGetChartedFlightQuery(flightChartId);
+  } = useGetChartedFlightQuery(flightChartId,{
+    refetchOnMountOrArgChange:true
+  });
+
   const { data: airportData } = useGetsearchAirportsQuery(
     {},
     { refetchOnMountOrArgChange: true }

@@ -35,6 +35,7 @@ interface FareBreakdown {
   taxAmount: number;
   chargesAmount: number;
   couponDiscount:number;
+  extraCharges:number;
 }
 
 interface Contactdetails {

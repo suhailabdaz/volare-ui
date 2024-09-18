@@ -39,7 +39,6 @@ interface BookingData {
 }
 
 const CouponSection: React.FC<CouponSectionProps> = ({ 
- 
   onCouponApplied, 
   addedCoupon, 
 }) => {

@@ -59,7 +59,7 @@ const invalidateTagAfterDelay = (tag: any, delay: number) => {
 export const userApi = createApi({
   reducerPath: 'userApi',
   baseQuery: baseQueryWithReauth,
-  tagTypes: ['searchAirports','updateBooking','applyCoupon','searchSchedules','searchAirline','searchFlights','searchBooking','usedCoupons','applyCoupon'],
+  tagTypes: ['searchAirports','bookingstatus','updateBooking','applyCoupon','searchSchedules','searchAirline','searchFlights','searchBooking','usedCoupons','applyCoupon'],
   endpoints: (builder) => ({
     getsearchAirports: builder.query({
       query: () => ({
@@ -186,6 +186,21 @@ export const userApi = createApi({
       }),
     }),
 
+    getBookingsByStatus: builder.query({
+      query: ({ id, status }) => ({
+        url: 'api/v1/booking/get-booking-by-status',
+        method: 'GET',
+        params: { id, status }
+      }),
+      providesTags: ['bookingstatus'],
+      async onQueryStarted(_,{ queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          invalidateTagAfterDelay('bookingstatus', 10000);
+        } catch {}
+      }, 
+    }),
+
     updateBookingSeats: builder.mutation({
       query: ({ bookingId, seats }) => ({
         url: `/api/v1/booking/update-seats/${bookingId}`,
@@ -193,13 +208,14 @@ export const userApi = createApi({
         body: seats,
       }),
     }),
+    
   }),
   
 })
 
 
 export const {
-  
+  useGetBookingsByStatusQuery,
   useGetsearchAirportsQuery,
   useGetSearchSchedulesQuery,
   useGetsearchAirlineQuery,

@@ -5,7 +5,6 @@ import CouponSection from '../../../components/user/Home/SeatSelection/CouponSec
 import FareSummary from '../../../components/user/Home/SeatSelection/FareSummary';
 import {
   useGetBookingQuery,
-
   useUpdateBookingSeatsMutation,
   useApplyCouponMutation
 } from '../../../redux/apis/userApiSlice';
@@ -36,6 +35,7 @@ interface FareBreakdown {
   taxAmount: number;
   chargesAmount: number;
   couponDiscount:number;
+  extraCharges:number;
 }
 
 interface BookingData {
@@ -73,21 +73,17 @@ function SeatSelection() {
   const stateCoupon = useSelector((state:RootState)=>state.BookingAuth.coupon)
 
   const [mealsseats, seatmealsseats] = useState('seats');
-  // const [fareBreakdown, setFareBreakdown] = useState<FareBreakdown>({
-  //   baseFare: 0,
-  //   taxAmount: 0,
-  //   chargesAmount: 0,
-  //   couponDiscount:0
-  // });
-  // const [totalPrice, setTotalPrice] = useState(0);
+
   const [updateBookingSeat] = useUpdateBookingSeatsMutation();
+  
   useEffect(() => {
     if (stateCoupon) {
       setLocalCoupon(stateCoupon);
     }
   }, [stateCoupon]);
+
+
   const updateCouponDetails = useCallback(async (coupon: Coupon | null) => {
-    console.log('Updating coupon:', coupon);
     setLocalCoupon(coupon);
     if (coupon) {
       dispatch(setCoupon(coupon));
@@ -98,7 +94,6 @@ function SeatSelection() {
 
   const handleFareUpdate = useCallback((details: SetStateAction<{}>) => {
     console.log(details);
-    
   }, []);
 
   const updateSelectedSeats = useCallback((newSelectedSeats: { 
@@ -116,6 +111,8 @@ function SeatSelection() {
   //   },
   //   []
   // );
+  
+  
   const userState = useSelector((state: RootState) => state.UserAuth.userData);
 
 
@@ -182,7 +179,6 @@ function SeatSelection() {
     try {
       const couponToApply = localCoupon || stateCoupon;
       if (couponToApply) {
-        console.log('Applying coupon:', couponToApply);
         await applyCoupon({
           bookingId: params.bookingId,
           userId: userState?._id,
@@ -227,8 +223,8 @@ function SeatSelection() {
           <div className="flex justify-between pb-48 mx-[11%] mt-8">
             <div className="w-3/4 pr-4 space-y-4">
               <BacktoFlightTrav flightChartId={bookingData.flightChartId} />
-              <div className="bg-white p-5 items-center">
-                <div className="flex justify-start items-center font-PlusJakartaSans1000 mb-4 w-full space-x-1 bg-white ">
+              <div className="bg-white p-5 items-center shadow-custom_shadow">
+                <div className="flex justify-start items-center font-PlusJakartaSans1000  mb-4 w-full space-x-1 bg-white ">
                   <button
                     className={`flex items-center justify-start space-x-1 p-2 ${
                       mealsseats === 'seats'
@@ -262,7 +258,9 @@ function SeatSelection() {
                     onFareUpdate={handleFareUpdate}
                   />
                 ) : (
-                  <MealSelection />
+                  <MealSelection
+                  flightChartId={bookingData.flightChartId}
+                  />
                 )}
               </div>
               <button

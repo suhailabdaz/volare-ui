@@ -18,14 +18,20 @@ extraCharges:number,
 
 interface BookingState{
   coupon:Coupon | null
-  fareBreakdown:fareBreakdown | null
+  fareBreakdown:fareBreakdown
   totalPrice:number | null
 }
 
 const initialState: BookingState = {
+  fareBreakdown: {
+    baseFare: 0,
+    taxAmount: 0,
+    chargesAmount: 0,
+    couponDiscount: 0,
+    extraCharges: 0,
+  },
+  totalPrice: 0,
   coupon: null,
-  fareBreakdown:null,
-  totalPrice: null ,
 };
 
 const BookingSlice = createSlice({
@@ -37,7 +43,6 @@ const BookingSlice = createSlice({
     },
     removeBooking:(state)=>{
       state.coupon = null
-      state.fareBreakdown = null
     },
     setFareBreakdown: (state, action: PayloadAction<{ FareBreakdown: fareBreakdown }>) => {
       state.fareBreakdown = action.payload.FareBreakdown;
@@ -45,7 +50,6 @@ const BookingSlice = createSlice({
     setTotalPrice: (state, action: PayloadAction< number >) => {
       state.totalPrice = action.payload;
     },
-   
     
   },
 });
